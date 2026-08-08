@@ -29,7 +29,7 @@ function rolledNow(){return turnRolled[turn]}
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 
 
-const diceRollAudio=new Audio("sounds/dice-roll-real-v3.mp3?v=282");
+const diceRollAudio=new Audio("sounds/dice-roll-real-v3.mp3?v=283");
 const diceLockAudio=new Audio("sounds/dice-lock-impact.wav");
 diceRollAudio.preload="auto"; diceLockAudio.preload="auto";
 
@@ -187,7 +187,7 @@ async function preloadDiceRollBuffer(){
     const ctx=ensureAudio();
     if(!ctx)return;
     const [rollRes,lockRes]=await Promise.all([
-      fetch("sounds/dice-roll-real-v3.mp3?v=250",{cache:"force-cache"}),
+      fetch("sounds/dice-roll-real-v3.mp3?v=283",{cache:"reload"}),
       fetch("sounds/dice-lock-impact.wav?v=250",{cache:"force-cache"})
     ]);
     const [rollArr,lockArr]=await Promise.all([rollRes.arrayBuffer(),lockRes.arrayBuffer()]);
@@ -224,34 +224,45 @@ async function warmUpGameAudio(){
 
 function playDiceRollInstant(){
   if(!soundEnabled)return;
-  duckBgm(.035,760);
-  try{
-    diceRollAudio.pause();
-    diceRollAudio.currentTime=0;
-    diceRollAudio.volume=1.0;
-    const p=diceRollAudio.play();
-    if(p&&p.catch){
-      p.catch(()=>{
-        // WebAudio fallback only if direct media playback fails.
-        try{
-          const ctx=ensureAudio();
-          if(ctx && diceRollBuffer){
-            const src=ctx.createBufferSource();
-            const gain=ctx.createGain();
-            src.buffer=diceRollBuffer;
-            gain.gain.value=1.0;
-            src.connect(gain);
-            gain.connect(ctx.destination);
-            if(ctx.state==="suspended"){
-              ctx.resume().then(()=>src.start(0)).catch(()=>{});
-            }else{
-              src.start(0);
-            }
-          }
-        }catch(e){}
-      });
+
+  // Dice must sit clearly above the music.
+  duckBgm(.008,900);
+
+  const playHtml=()=>{
+    try{
+      diceRollAudio.pause();
+      diceRollAudio.currentTime=0;
+      diceRollAudio.volume=1.0;
+      const p=diceRollAudio.play();
+      if(p&&p.catch)p.catch(()=>{});
+    }catch(e){}
+  };
+
+  const ctx=ensureAudio();
+  const playBoosted=()=>{
+    if(!ctx || !diceRollBuffer){
+      playHtml();
+      return;
     }
-  }catch(e){}
+    try{
+      const src=ctx.createBufferSource();
+      const gain=ctx.createGain();
+      src.buffer=diceRollBuffer;
+      // The source recording is much quieter than the other SFX.
+      gain.gain.value=2.8;
+      src.connect(gain);
+      gain.connect(ctx.destination);
+      src.start(0);
+    }catch(e){
+      playHtml();
+    }
+  };
+
+  if(ctx && ctx.state==="suspended"){
+    ctx.resume().then(playBoosted).catch(playHtml);
+  }else{
+    playBoosted();
+  }
 }
 
 // Loading/decoding does not produce sound.
