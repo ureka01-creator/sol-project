@@ -914,3 +914,37 @@ body.main-home #soundToggle{
   box-shadow:0 5px 0 #1e40af!important;
 }
 .home-title{margin-top:12px!important}
+
+/* V3.0.4 - title-screen tap to start */
+.tap-start{
+ position:fixed;inset:0;z-index:9999;
+ display:flex;align-items:flex-end;justify-content:center;
+ padding:0 20px calc(34px + env(safe-area-inset-bottom));
+ background:rgba(225,246,255,.06);
+ backdrop-filter:blur(.5px);
+ -webkit-backdrop-filter:blur(.5px);
+ cursor:pointer;
+}
+.tap-start.hidden{display:none!important}
+.tap-start-inner{
+ display:flex;flex-direction:column;align-items:center;
+ color:#173b79;text-align:center;
+ animation:tapPulse 1.25s ease-in-out infinite;
+ text-shadow:0 2px 0 rgba(255,255,255,.9);
+}
+.tap-start-inner b{font-size:16px;font-weight:1000;letter-spacing:-.3px}
+.tap-start-inner small{margin-top:4px;font-size:9px;font-weight:1000;letter-spacing:2px;opacity:.55}
+.tap-start-ball{
+ width:31px;height:31px;border:3px solid #173b79;border-radius:50%;
+ position:relative;margin-bottom:9px;overflow:hidden;background:linear-gradient(#ef4444 0 46%,#fff 46% 54%,#fff 54%);
+ box-shadow:0 3px 0 rgba(23,59,121,.12);
+}
+.tap-start-ball:before{
+ content:"";position:absolute;left:-3px;right:-3px;top:50%;height:3px;
+ background:#173b79;transform:translateY(-50%);
+}
+.tap-start-ball span{
+ position:absolute;z-index:2;width:9px;height:9px;border:3px solid #173b79;
+ border-radius:50%;background:#fff;left:50%;top:50%;transform:translate(-50%,-50%);
+}
+@keyframes tapPulse{0%,100%{opacity:.58;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
