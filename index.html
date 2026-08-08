@@ -1,458 +1,119 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>포켓몬 주사위 배틀</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#111827">
+<title>포켓몬 주사위 배틀 V1</title>
 <style>
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-    background: linear-gradient(180deg, #dff4ff 0%, #f9fbff 55%, #eef2f7 100%);
-    color: #172033;
-    min-height: 100vh;
-  }
-  .app {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 16px 14px 40px;
-  }
-  h1 {
-    font-size: 28px;
-    margin: 8px 0 2px;
-    text-align: center;
-  }
-  .sub {
-    text-align: center;
-    color: #64748b;
-    font-size: 14px;
-    margin-bottom: 14px;
-  }
-  .arena {
-    display: grid;
-    grid-template-columns: 1fr 70px 1fr;
-    gap: 10px;
-    align-items: center;
-  }
-  .pokemon {
-    background: rgba(255,255,255,.92);
-    border-radius: 20px;
-    padding: 14px;
-    box-shadow: 0 10px 30px rgba(15,23,42,.08);
-    min-height: 215px;
-  }
-  .pokemon.enemy { text-align: right; }
-  .poke-emoji {
-    font-size: 66px;
-    line-height: 1;
-    margin: 8px 0;
-  }
-  .name {
-    font-weight: 800;
-    font-size: 20px;
-  }
-  .type {
-    font-size: 12px;
-    color: #64748b;
-  }
-  .hpbar {
-    width: 100%;
-    height: 14px;
-    border-radius: 999px;
-    background: #e5e7eb;
-    overflow: hidden;
-    margin-top: 8px;
-  }
-  .hpfill {
-    height: 100%;
-    background: #22c55e;
-    transition: width .35s ease;
-  }
-  .hptext {
-    font-size: 13px;
-    margin-top: 5px;
-    color: #475569;
-  }
-  .vs {
-    text-align: center;
-    font-size: 22px;
-    font-weight: 900;
-    color: #94a3b8;
-  }
-  .panel {
-    background: rgba(255,255,255,.94);
-    border-radius: 20px;
-    margin-top: 14px;
-    padding: 14px;
-    box-shadow: 0 10px 30px rgba(15,23,42,.08);
-  }
-  .dice-row {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin: 10px 0 12px;
-  }
-  .die {
-    width: 70px;
-    height: 70px;
-    border-radius: 16px;
-    background: #fff;
-    border: 2px solid #dbe4ef;
-    display: grid;
-    place-items: center;
-    font-size: 34px;
-    font-weight: 900;
-    box-shadow: 0 6px 14px rgba(15,23,42,.08);
-  }
-  .actions {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-  button {
-    appearance: none;
-    border: 0;
-    border-radius: 14px;
-    padding: 13px 12px;
-    font-weight: 800;
-    font-size: 15px;
-    background: #172033;
-    color: white;
-    cursor: pointer;
-  }
-  button.secondary { background: #475569; }
-  button.green { background: #16a34a; }
-  button.orange { background: #ea580c; }
-  button:disabled {
-    opacity: .42;
-    cursor: not-allowed;
-  }
-  .log {
-    margin-top: 10px;
-    background: #0f172a;
-    color: #e2e8f0;
-    padding: 12px;
-    border-radius: 14px;
-    min-height: 110px;
-    font-size: 14px;
-    line-height: 1.5;
-    white-space: pre-line;
-  }
-  .team {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    margin-top: 8px;
-    flex-wrap: wrap;
-  }
-  .chip {
-    background: #f1f5f9;
-    border-radius: 999px;
-    padding: 7px 10px;
-    font-size: 12px;
-  }
-  .chip.fainted {
-    opacity: .35;
-    text-decoration: line-through;
-  }
-  .rule {
-    font-size: 13px;
-    color: #475569;
-    line-height: 1.5;
-    margin-top: 8px;
-  }
-  @media (max-width: 560px) {
-    .arena { grid-template-columns: 1fr 42px 1fr; }
-    .pokemon { padding: 10px; min-height: 190px; }
-    .poke-emoji { font-size: 54px; }
-    .die { width: 62px; height: 62px; }
-    h1 { font-size: 24px; }
-  }
-</style>
-</head>
-<body>
-<div class="app">
-  <h1>⚡ 포켓몬 주사위 배틀</h1>
-  <div class="sub">아빠 vs 한솔 · 3마리 팀전</div>
+:root{--bg:#f3f6fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#e5e7eb;--blue:#2563eb;--red:#ef4444;--green:#16a34a}
+*{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;background:linear-gradient(#dff3ff,#f8fafc 45%,#eef2f7);color:var(--ink);min-height:100vh}
+.app{max-width:760px;margin:auto;padding:calc(10px + env(safe-area-inset-top)) 12px calc(30px + env(safe-area-inset-bottom))}
+h1{font-size:25px;text-align:center;margin:6px}.sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:12px}
+.card{background:#fff;border-radius:20px;padding:14px;margin:12px 0;box-shadow:0 8px 25px #0f172a14}
+.hidden{display:none!important}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.pick{border:2px solid transparent;background:#f8fafc;color:var(--ink);padding:10px;border-radius:16px;text-align:center}
+.pick.selected{border-color:#2563eb;background:#eff6ff}.pick img{height:110px;max-width:100%;object-fit:contain;display:block;margin:auto}.pick b{display:block;font-size:17px}
+button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;background:#172033;color:#fff}.wide{width:100%;margin-top:10px}.blue{background:#2563eb}.green{background:#16a34a}.orange{background:#ea580c}.gray{background:#64748b}button:disabled{opacity:.35}
+.arena{display:grid;grid-template-columns:1fr 42px 1fr;gap:8px;align-items:center}.fighter{background:#fff;border-radius:18px;padding:10px;text-align:center;min-height:230px}.fighter img{width:100%;height:135px;object-fit:contain}.vs{text-align:center;font-weight:900;color:#94a3b8}
+.name{font-size:19px;font-weight:900}.type{font-size:12px;color:#64748b}.hpbar{height:13px;background:#e5e7eb;border-radius:20px;overflow:hidden;margin:6px 0}.hp{height:100%;background:#22c55e;transition:.3s}.hptext{font-size:12px}
+.dice{display:flex;justify-content:center;gap:9px;margin:10px}.die{width:64px;height:64px;border:2px solid #dbe3ee;border-radius:15px;display:grid;place-items:center;font-size:30px;font-weight:900;background:#fff}.die.keep{border-color:#2563eb;background:#eff6ff}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.skill{min-height:58px}.skill small{display:block;font-weight:500;opacity:.85;margin-top:3px}
+.teams{display:flex;gap:6px;flex-wrap:wrap}.chip{font-size:11px;background:#f1f5f9;padding:6px 8px;border-radius:999px}.dead{opacity:.35;text-decoration:line-through}
+.log{background:#0f172a;color:#e5e7eb;border-radius:14px;padding:11px;min-height:80px;white-space:pre-line;font-size:13px;line-height:1.45;margin-top:10px}
+.turn{text-align:center;font-size:18px;font-weight:900;margin-bottom:8px}.notice{font-size:12px;color:#64748b;line-height:1.45}
+</style></head>
+<body><div class="app">
+<h1>⚡ 포켓몬 주사위 배틀</h1><div class="sub">🔵 블루팀 vs 🔴 레드팀 · 2인용</div>
 
-  <div class="arena">
-    <div class="pokemon">
-      <div class="name" id="playerName"></div>
-      <div class="type" id="playerType"></div>
-      <div class="poke-emoji" id="playerEmoji"></div>
-      <div class="hpbar"><div class="hpfill" id="playerHpFill"></div></div>
-      <div class="hptext" id="playerHpText"></div>
-    </div>
+<section id="selectScreen" class="card">
+ <h2 style="margin-top:0">① 포켓몬을 골라!</h2>
+ <div id="pickTitle" class="turn">블루팀 · 3마리 선택</div>
+ <div id="pickGrid" class="grid"></div>
+ <button id="confirmPick" class="wide blue" disabled>선택 완료</button>
+ <p class="notice">이미지는 온라인 포켓몬 이미지 저장소에서 불러와. 연결이 안 되면 이름만 표시될 수 있어.</p>
+</section>
 
-    <div class="vs">VS</div>
+<section id="gameScreen" class="hidden">
+ <div id="turnText" class="turn"></div>
+ <div class="arena">
+  <div class="fighter"><div id="p1name" class="name"></div><div id="p1type" class="type"></div><img id="p1img"><div class="hpbar"><div id="p1hp" class="hp"></div></div><div id="p1hptext" class="hptext"></div></div>
+  <div class="vs">VS</div>
+  <div class="fighter"><div id="p2name" class="name"></div><div id="p2type" class="type"></div><img id="p2img"><div class="hpbar"><div id="p2hp" class="hp"></div></div><div id="p2hptext" class="hptext"></div></div>
+ </div>
 
-    <div class="pokemon enemy">
-      <div class="name" id="enemyName"></div>
-      <div class="type" id="enemyType"></div>
-      <div class="poke-emoji" id="enemyEmoji"></div>
-      <div class="hpbar"><div class="hpfill" id="enemyHpFill"></div></div>
-      <div class="hptext" id="enemyHpText"></div>
-    </div>
+ <div class="card">
+  <b>🎲 주사위 3개</b><div class="notice">주사위를 누르면 보관/해제할 수 있어. 보관한 주사위는 다음 턴에도 남아.</div>
+  <div class="dice"><div class="die" data-i="0">?</div><div class="die" data-i="1">?</div><div class="die" data-i="2">?</div></div>
+  <button id="roll" class="wide blue">주사위 굴리기</button>
+ </div>
+
+ <div class="card">
+  <div class="actions">
+   <button id="skill1" class="skill gray"></button>
+   <button id="skill2" class="skill orange"></button>
+   <button id="switch" class="skill green">🔄 포켓몬 교체<small>공격 대신 교체</small></button>
+   <button id="pass" class="skill">턴 넘기기<small>주사위 보관</small></button>
   </div>
+  <div id="log" class="log"></div>
+ </div>
 
-  <div class="panel">
-    <strong>내 팀</strong>
-    <div class="team" id="playerTeam"></div>
-    <strong style="display:block;margin-top:10px;">상대 팀</strong>
-    <div class="team" id="enemyTeam"></div>
-  </div>
-
-  <div class="panel">
-    <strong>🎲 이번 턴 주사위</strong>
-    <div class="dice-row">
-      <div class="die" id="d1">?</div>
-      <div class="die" id="d2">?</div>
-      <div class="die" id="d3">?</div>
-    </div>
-
-    <div class="actions">
-      <button id="rollBtn" onclick="rollDice()">주사위 굴리기</button>
-      <button class="secondary" id="attackBtn" onclick="basicAttack()" disabled>기본 공격</button>
-      <button class="orange" id="skillBtn" onclick="specialAttack()" disabled>필살기</button>
-      <button class="green" id="healBtn" onclick="heal()" disabled>회복</button>
-    </div>
-
-    <div class="rule">
-      기본 공격: 주사위 합 ÷ 2 만큼 피해<br>
-      필살기: 5 또는 6이 2개 이상이면 강력한 공격<br>
-      회복: 짝수가 2개 이상이면 HP 회복
-    </div>
-
-    <div class="log" id="log">게임 시작! 주사위를 굴려봐.</div>
-  </div>
-
-  <div class="panel">
-    <button style="width:100%" onclick="resetGame()">🔄 처음부터 다시</button>
-  </div>
+ <div class="card"><b>팀 상태</b><div id="teams" class="teams" style="margin-top:8px"></div><button class="wide" onclick="location.reload()">처음부터</button></div>
+</section>
 </div>
-
 <script>
-const pokemonPool = [
-  { name: "피카츄", emoji: "⚡🐭", type: "전기", maxHp: 48, power: 1.0 },
-  { name: "리자몽", emoji: "🔥🐲", type: "불꽃", maxHp: 58, power: 1.15 },
-  { name: "꼬부기", emoji: "💧🐢", type: "물", maxHp: 54, power: 0.95 },
-  { name: "이상해씨", emoji: "🌿🐸", type: "풀", maxHp: 56, power: 0.9 },
-  { name: "팬텀", emoji: "👻😈", type: "고스트", maxHp: 50, power: 1.1 },
-  { name: "잠만보", emoji: "💤🐻", type: "노말", maxHp: 68, power: 0.82 }
+const P=[
+ {id:25,n:"피카츄",t:"전기",hp:60,s1:["전광석화",10,1,"아무 주사위 1개"],s2:["10만볼트",30,2,"합계 10 이상"]},
+ {id:6,n:"리자몽",t:"불꽃",hp:80,s1:["베어가르기",15,1,"4 이상 1개"],s2:["화염방사",35,2,"5 이상 2개"]},
+ {id:7,n:"꼬부기",t:"물",hp:70,s1:["물대포",15,1,"아무 주사위 1개"],s2:["아쿠아테일",28,2,"짝수 2개"]},
+ {id:1,n:"이상해씨",t:"풀",hp:70,s1:["덩굴채찍",15,1,"아무 주사위 1개"],s2:["씨폭탄",28,2,"합계 8 이상"]},
+ {id:94,n:"팬텀",t:"고스트",hp:60,s1:["핥기",15,1,"홀수 1개"],s2:["섀도볼",32,2,"같은 눈 2개"]},
+ {id:143,n:"잠만보",t:"노말",hp:100,s1:["몸통박치기",14,1,"아무 주사위 1개"],s2:["기가임팩트",35,3,"주사위 3개"]}
 ];
-
-let playerTeam, enemyTeam, playerIndex, enemyIndex, dice, rolled, gameOver;
-
-function makeTeam(indices) {
-  return indices.map(i => ({ ...pokemonPool[i], hp: pokemonPool[i].maxHp }));
+const img=id=>`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+let selecting=0, picks=[[],[]], selected=[], teams=[],active=[0,0],turn=0,dice=[null,null,null],kept=[false,false,false],rolled=false,over=false;
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+function pickRender(){
+ $("#pickTitle").textContent=(selecting===0?"블루팀":"레드팀")+" 팀 · 3마리 선택";
+ $("#pickGrid").innerHTML=P.map((p,i)=>`<button class="pick ${selected.includes(i)?"selected":""}" data-p="${i}"><img src="${img(p.id)}"><b>${p.n}</b><span>${p.t} · HP ${p.hp}</span></button>`).join("");
+ $$(".pick").forEach(b=>b.onclick=()=>{let i=+b.dataset.p;if(selected.includes(i))selected=selected.filter(x=>x!==i);else if(selected.length<3)selected.push(i);pickRender()});
+ $("#confirmPick").disabled=selected.length!==3;
 }
-
-function resetGame() {
-  playerTeam = makeTeam([0,1,2]);
-  enemyTeam = makeTeam([3,4,5]);
-  playerIndex = 0;
-  enemyIndex = 0;
-  dice = [0,0,0];
-  rolled = false;
-  gameOver = false;
-  setDice(["?","?","?"]);
-  log("게임 시작! 주사위를 굴려봐.");
-  setButtons(false);
-  render();
+$("#confirmPick").onclick=()=>{picks[selecting]=[...selected];selected=[];if(selecting===0){selecting=1;pickRender()}else start()};
+function start(){teams=picks.map(a=>a.map(i=>({...P[i],cur:P[i].hp})));$("#selectScreen").classList.add("hidden");$("#gameScreen").classList.remove("hidden");log("배틀 시작! 블루팀부터 주사위를 굴려.");render()}
+function cur(x){return teams[x][active[x]]}
+function render(){
+ let a=cur(0),b=cur(1); $("#p1name").textContent="블루팀 · "+a.n;$("#p2name").textContent="레드팀 · "+b.n;$("#p1type").textContent=a.t+" 타입";$("#p2type").textContent=b.t+" 타입";$("#p1img").src=img(a.id);$("#p2img").src=img(b.id);
+ [["p1",a],["p2",b]].forEach(([x,p])=>{$("#"+x+"hp").style.width=(p.cur/p.hp*100)+"%";$("#"+x+"hptext").textContent=`HP ${p.cur} / ${p.hp}`});
+ $("#turnText").textContent=(turn===0?"🔵 블루팀":"🔴 레드팀")+" 차례";
+ let me=cur(turn);$("#skill1").innerHTML=`${me.s1[0]} · ${me.s1[1]}<small>${me.s1[3]}</small>`;$("#skill2").innerHTML=`${me.s2[0]} · ${me.s2[1]}<small>${me.s2[3]}</small>`;
+ $$(".die").forEach((d,i)=>{d.textContent=dice[i]??"?";d.classList.toggle("keep",kept[i])});
+ $("#teams").innerHTML=teams.map((tm,x)=>tm.map((p,i)=>`<span class="chip ${p.cur<=0?"dead":""}">${x?"레드":"블루"} ${i===active[x]?"▶":""}${p.n} ${p.cur}</span>`).join("")).join("");
+ $("#roll").disabled=rolled||over;$("#skill1").disabled=!rolled||over;$("#skill2").disabled=!rolled||over;$("#switch").disabled=over;$("#pass").disabled=over;
 }
-
-function currentPlayer(){ return playerTeam[playerIndex]; }
-function currentEnemy(){ return enemyTeam[enemyIndex]; }
-
-function rollDice() {
-  if (gameOver || rolled) return;
-  dice = [1,2,3].map(() => Math.floor(Math.random()*6)+1);
-  setDice(dice);
-  rolled = true;
-  setButtons(true);
-  log(`🎲 ${dice.join(", ")} 이 나왔어!\n어떤 행동을 할까?`);
+$("#roll").onclick=()=>{dice=dice.map((v,i)=>kept[i]?v:Math.floor(Math.random()*6)+1);rolled=true;log("🎲 "+dice.join(" · ")+"! 기술을 고르거나 주사위를 눌러 보관해.");render()};
+$$(".die").forEach(d=>d.onclick=()=>{if(!rolled)return;let i=+d.dataset.i;kept[i]=!kept[i];render()});
+function valid(skill){
+ let vals=dice.filter(v=>v!=null),n=skill[0];
+ if(n==="전광석화"||n==="물대포"||n==="덩굴채찍"||n==="몸통박치기")return vals.length>=1;
+ if(n==="베어가르기")return vals.some(v=>v>=4);
+ if(n==="10만볼트")return vals.length>=2&&[...vals].sort((a,b)=>b-a)[0]+[...vals].sort((a,b)=>b-a)[1]>=10;
+ if(n==="화염방사")return vals.filter(v=>v>=5).length>=2;
+ if(n==="아쿠아테일")return vals.filter(v=>v%2===0).length>=2;
+ if(n==="씨폭탄")return vals.length>=2&&[...vals].sort((a,b)=>b-a)[0]+[...vals].sort((a,b)=>b-a)[1]>=8;
+ if(n==="핥기")return vals.some(v=>v%2===1);
+ if(n==="섀도볼")return new Set(vals).size<vals.length;
+ if(n==="기가임팩트")return vals.length===3;
+ return true
 }
-
-function basicAttack() {
-  if (!rolled || gameOver) return;
-  const p = currentPlayer();
-  const dmg = Math.max(4, Math.round((dice.reduce((a,b)=>a+b,0)/2) * p.power));
-  hitEnemy(dmg, `${p.name}의 기본 공격!`);
-}
-
-function specialAttack() {
-  if (!rolled || gameOver) return;
-  const high = dice.filter(d => d >= 5).length;
-  if (high < 2) {
-    log("❌ 필살기는 5 또는 6이 2개 이상 있어야 해!");
-    return;
-  }
-  const p = currentPlayer();
-  const dmg = Math.round((18 + dice.reduce((a,b)=>a+b,0)) * p.power);
-  hitEnemy(dmg, `💥 ${p.name}의 필살기!!`);
-}
-
-function heal() {
-  if (!rolled || gameOver) return;
-  const evens = dice.filter(d => d % 2 === 0).length;
-  if (evens < 2) {
-    log("❌ 회복은 짝수 주사위가 2개 이상 있어야 해!");
-    return;
-  }
-  const p = currentPlayer();
-  const amount = 14 + evens * 2;
-  const before = p.hp;
-  p.hp = Math.min(p.maxHp, p.hp + amount);
-  const healed = p.hp - before;
-  log(`💚 ${p.name}이(가) HP ${healed} 회복!`);
-  endPlayerTurn();
-}
-
-function hitEnemy(dmg, text) {
-  const e = currentEnemy();
-  e.hp = Math.max(0, e.hp - dmg);
-  log(`${text}\n${e.name}에게 ${dmg} 피해!`);
-  render();
-
-  if (e.hp <= 0) {
-    setTimeout(() => {
-      log(`✨ ${e.name}을(를) 쓰러뜨렸다!`);
-      if (!switchEnemy()) {
-        gameOver = true;
-        log("🏆 승리! 상대 포켓몬을 전부 쓰러뜨렸어!");
-        setButtons(false);
-        document.getElementById("rollBtn").disabled = true;
-        render();
-      } else {
-        endPlayerTurn();
-      }
-    }, 450);
-  } else {
-    endPlayerTurn();
-  }
-}
-
-function endPlayerTurn() {
-  rolled = false;
-  setButtons(false);
-  render();
-  setTimeout(enemyTurn, 650);
-}
-
-function enemyTurn() {
-  if (gameOver) return;
-  const e = currentEnemy();
-  const edice = [1,2,3].map(() => Math.floor(Math.random()*6)+1);
-  const high = edice.filter(d => d >= 5).length;
-  const evens = edice.filter(d => d % 2 === 0).length;
-
-  let text = `🤖 상대 주사위: ${edice.join(", ")}\n`;
-  if (e.hp <= e.maxHp * 0.35 && evens >= 2) {
-    const amount = 14 + evens*2;
-    const before = e.hp;
-    e.hp = Math.min(e.maxHp, e.hp + amount);
-    text += `💚 ${e.name}이(가) ${e.hp-before} 회복!`;
-  } else {
-    let dmg;
-    if (high >= 2) {
-      dmg = Math.round((18 + edice.reduce((a,b)=>a+b,0)) * e.power);
-      text += `💥 ${e.name}의 필살기! ${dmg} 피해!`;
-    } else {
-      dmg = Math.max(4, Math.round((edice.reduce((a,b)=>a+b,0)/2) * e.power));
-      text += `${e.name}의 공격! ${dmg} 피해!`;
-    }
-    currentPlayer().hp = Math.max(0, currentPlayer().hp - dmg);
-  }
-
-  log(text);
-  render();
-
-  if (currentPlayer().hp <= 0) {
-    setTimeout(() => {
-      log(`😵 ${currentPlayer().name}이(가) 쓰러졌다!`);
-      if (!switchPlayer()) {
-        gameOver = true;
-        log("💀 패배... 다음 판에 다시 도전!");
-        setButtons(false);
-        document.getElementById("rollBtn").disabled = true;
-        render();
-      } else {
-        document.getElementById("rollBtn").disabled = false;
-        log(`👉 ${currentPlayer().name} 출전! 주사위를 굴려봐.`);
-        render();
-      }
-    }, 450);
-  } else {
-    document.getElementById("rollBtn").disabled = false;
-    log(text + "\n\n👉 이제 네 차례야!");
-  }
-}
-
-function switchEnemy() {
-  for (let i = enemyIndex+1; i < enemyTeam.length; i++) {
-    if (enemyTeam[i].hp > 0) {
-      enemyIndex = i;
-      log(`🤖 상대가 ${currentEnemy().name}을(를) 내보냈어!`);
-      render();
-      return true;
-    }
-  }
-  return false;
-}
-
-function switchPlayer() {
-  for (let i = playerIndex+1; i < playerTeam.length; i++) {
-    if (playerTeam[i].hp > 0) {
-      playerIndex = i;
-      render();
-      return true;
-    }
-  }
-  return false;
-}
-
-function setButtons(canAct) {
-  document.getElementById("attackBtn").disabled = !canAct;
-  document.getElementById("skillBtn").disabled = !canAct;
-  document.getElementById("healBtn").disabled = !canAct;
-  document.getElementById("rollBtn").disabled = gameOver || rolled;
-}
-
-function setDice(values) {
-  ["d1","d2","d3"].forEach((id,i) => document.getElementById(id).textContent = values[i]);
-}
-
-function render() {
-  const p = currentPlayer();
-  const e = currentEnemy();
-
-  document.getElementById("playerName").textContent = p.name;
-  document.getElementById("playerType").textContent = `${p.type} 타입`;
-  document.getElementById("playerEmoji").textContent = p.emoji;
-  document.getElementById("playerHpText").textContent = `HP ${p.hp} / ${p.maxHp}`;
-  document.getElementById("playerHpFill").style.width = `${p.hp/p.maxHp*100}%`;
-
-  document.getElementById("enemyName").textContent = e.name;
-  document.getElementById("enemyType").textContent = `${e.type} 타입`;
-  document.getElementById("enemyEmoji").textContent = e.emoji;
-  document.getElementById("enemyHpText").textContent = `HP ${e.hp} / ${e.maxHp}`;
-  document.getElementById("enemyHpFill").style.width = `${e.hp/e.maxHp*100}%`;
-
-  document.getElementById("playerTeam").innerHTML = playerTeam.map((x,i) =>
-    `<span class="chip ${x.hp<=0?'fainted':''}">${i===playerIndex?'▶ ':''}${x.name} ${x.hp}/${x.maxHp}</span>`
-  ).join("");
-
-  document.getElementById("enemyTeam").innerHTML = enemyTeam.map((x,i) =>
-    `<span class="chip ${x.hp<=0?'fainted':''}">${i===enemyIndex?'▶ ':''}${x.name} ${x.hp}/${x.maxHp}</span>`
-  ).join("");
-}
-
-function log(t) {
-  document.getElementById("log").textContent = t;
-}
-
-resetGame();
-</script>
-</body>
-</html>
+function use(which){if(!rolled)return;let me=cur(turn),sk=me[which];if(!valid(sk)){log("❌ "+sk[0]+" 조건이 안 돼! ("+sk[3]+")");return}let enemy=cur(1-turn),dmg=sk[1],mult=1;
+ if((me.t==="불꽃"&&enemy.t==="풀")||(me.t==="풀"&&enemy.t==="물")||(me.t==="물"&&enemy.t==="불꽃"))mult=1.5;
+ dmg=Math.round(dmg*mult);enemy.cur=Math.max(0,enemy.cur-dmg);log(`💥 ${me.n}의 ${sk[0]}! ${dmg} 피해!${mult>1?" 효과가 굉장했다!":""}`);dice=[null,null,null];kept=[false,false,false];rolled=false;render();if(enemy.cur<=0)setTimeout(faint,350);else setTimeout(next,450)}
+$("#skill1").onclick=()=>use("s1");$("#skill2").onclick=()=>use("s2");
+function faint(){let x=1-turn,idx=teams[x].findIndex(p=>p.cur>0);if(idx<0){over=true;log("🏆 "+(turn===0?"블루팀":"레드팀")+" 승리!!");render();return}active[x]=idx;log(`😵 쓰러졌다! ${cur(x).n} 출전!`);render();setTimeout(next,500)}
+function next(){turn=1-turn;rolled=false;log((turn===0?"🔵 블루팀":"🔴 레드팀")+" 차례! 보관한 주사위는 그대로야.");render()}
+$("#pass").onclick=()=>{if(rolled)log("주사위를 보관하고 턴을 넘겼어.");next()};
+$("#switch").onclick=()=>{let alive=teams[turn].map((p,i)=>p.cur>0&&i!==active[turn]?i:-1).filter(i=>i>=0);if(!alive.length){log("교체할 포켓몬이 없어!");return}let pos=alive.indexOf(active[turn]);active[turn]=alive[(pos+1)%alive.length];log("🔄 "+cur(turn).n+"으로 교체!");render();setTimeout(next,400)};
+pickRender();
+</script></body></html>
