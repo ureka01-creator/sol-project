@@ -32,6 +32,44 @@ const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const diceRollAudio=new Audio("sounds/dice-roll-real-v3.mp3?v=250");
 const diceLockAudio=new Audio("sounds/dice-lock-impact.wav");
 diceRollAudio.preload="auto"; diceLockAudio.preload="auto";
+
+const battleBgm=new Audio("sounds/battle-bgm.mp3?v=274");
+battleBgm.preload="auto";
+battleBgm.loop=true;
+battleBgm.volume=.20;
+let bgmWanted=false;
+
+function startBattleBgm(){
+  bgmWanted=true;
+  if(!soundEnabled)return;
+  try{
+    battleBgm.volume=.20;
+    const p=battleBgm.play();
+    if(p&&p.catch)p.catch(()=>{});
+  }catch(e){}
+}
+function stopBattleBgm(fade=true){
+  bgmWanted=false;
+  if(!fade){
+    battleBgm.pause();
+    battleBgm.currentTime=0;
+    return;
+  }
+  const from=battleBgm.volume||.20;
+  const steps=8;
+  let n=0;
+  const timer=setInterval(()=>{
+    n++;
+    battleBgm.volume=Math.max(0,from*(1-n/steps));
+    if(n>=steps){
+      clearInterval(timer);
+      battleBgm.pause();
+      battleBgm.currentTime=0;
+      battleBgm.volume=.20;
+    }
+  },45);
+}
+
 function playFileSfx(audio,vol=0.8){
   if(!soundEnabled)return;
   try{
@@ -187,7 +225,17 @@ function sfx(name,type){
 $("#soundToggle").onclick=()=>{
   soundEnabled=!soundEnabled;
   $("#soundToggle").textContent=soundEnabled?"🔊":"🔇";
-  if(soundEnabled){ensureAudio();tone(660,.06,"sine",.05)}
+  if(soundEnabled){
+    ensureAudio();
+    tone(660,.06,"sine",.05);
+    if(bgmWanted){
+      battleBgm.volume=.20;
+      const p=battleBgm.play();
+      if(p&&p.catch)p.catch(()=>{});
+    }
+  }else{
+    battleBgm.pause();
+  }
 };
 
 
@@ -352,6 +400,7 @@ function start(){
 
  $("#selectScreen").classList.add("hidden");
  $("#gameScreen").classList.remove("hidden");
+ startBattleBgm();
 
  const firstLabel=gameMode==="solo" && aiTeam===0 ? "컴퓨터" : "블루팀";
  log(`배틀 시작! ${firstLabel}부터 시작!`);
@@ -699,7 +748,8 @@ function showVictory(winner){
     team.textContent=actualWinner===0?"블루팀 승리!":"레드팀 승리!";
   }
 
-  sfx("victory");
+  stopBattleBgm(true);
+  setTimeout(()=>sfx("victory"),260);
   $("#victoryOverlay").classList.remove("hidden");
   if(navigator.vibrate) navigator.vibrate([120,70,180]);
 }
