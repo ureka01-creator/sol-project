@@ -384,6 +384,9 @@ function render(){
     });
   });
 
+
+  const hint=$("#keepHint");
+  if(hint) hint.classList.toggle("hidden", !rolledNow() || over || ai);
 }
 
 
@@ -414,6 +417,9 @@ function renderDiceControlsOnly(){
 
   $("#switch").disabled=over||ai;
   $("#pass").disabled=over||ai;
+
+  const hint=$("#keepHint");
+  if(hint) hint.classList.toggle("hidden", !rolledNow() || over || ai);
 }
 
 function lockInDice(diceEls,onDone){
@@ -668,3 +674,23 @@ function chooseSwitch(i){
   setTimeout(next,450);
 }
 $("#switch").onclick=openSwitchModal;
+
+document.addEventListener("click",(e)=>{
+  const die=e.target.closest(".die");
+  if(!die)return;
+  const diceEls=$$(".die");
+  const idx=diceEls.indexOf(die);
+  if(idx<0 || !rolledNow() || over || isAiTurn())return;
+
+  const kept=keptNow();
+  kept[idx]=!kept[idx];
+  die.classList.toggle("keep",kept[idx]);
+
+  const hint=$("#keepHint");
+  if(hint){
+    const count=kept.filter(Boolean).length;
+    hint.textContent=count>0
+      ? `📌 ${count}개 보관 중 · 다시 누르면 해제`
+      : "🎯 보관할 주사위를 눌러 선택해";
+  }
+});
