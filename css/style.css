@@ -320,3 +320,31 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
   box-shadow:none!important;
   filter:none!important;
 }
+
+
+/* V2.5.3 - single continuous dice animation: no roll/lock handoff */
+@keyframes diceRollToConfirm{
+  0%   { transform:translateZ(0) scale(1) rotate(0deg); background:#fff; border-color:#dbe3ee; }
+  10%  { transform:translateZ(0) scale(1.16) rotate(-18deg); }
+  20%  { transform:translateZ(0) scale(1.27) rotate(19deg); }
+  30%  { transform:translateZ(0) scale(1.22) rotate(-16deg); }
+  40%  { transform:translateZ(0) scale(1.25) rotate(14deg); }
+  50%  { transform:translateZ(0) scale(1.13) rotate(-8deg); }
+  56%  { transform:translateZ(0) scale(1) rotate(0deg); background:#fff; border-color:#dbe3ee; }
+  64%  { transform:translateZ(0) scale(1.52) rotate(0deg); background:#fde047; border-color:#eab308; }
+  78%  { transform:translateZ(0) scale(1.38) rotate(0deg); background:#fef08a; border-color:#eab308; }
+  90%  { transform:translateZ(0) scale(1.12) rotate(0deg); background:#fef9c3; border-color:#eab308; }
+  100% { transform:translateZ(0) scale(1) rotate(0deg); background:#fff; border-color:#dbe3ee; }
+}
+.die.rolling{
+  animation:diceRollToConfirm 1.14s linear!important;
+  transform-origin:center center;
+  will-change:transform;
+  box-shadow:none!important;
+  filter:none!important;
+}
+.die.locked{
+  animation:none!important;
+  box-shadow:none!important;
+  filter:none!important;
+}
