@@ -371,6 +371,19 @@ function render(){
  $("#skill1").classList.toggle("unavailable",!s1ok); $("#skill2").classList.toggle("unavailable",!s2ok);
  $("#skill1").classList.toggle("available",s1ok); $("#skill2").classList.toggle("available",s2ok);
  $("#switch").disabled=over||ai;$("#pass").disabled=over||ai;
+
+  // V2.5.7: visual state must follow the CURRENT turn's roll state.
+  // A new turn showing ? ? ? must never inherit yellow confirmation.
+  requestAnimationFrame(()=>{
+    $$(".die").forEach((d,i)=>{
+      if(!rolledNow()){
+        d.classList.remove("confirmed","locked","rolling","keep");
+      }else{
+        d.classList.toggle("confirmed", diceNow()[i] != null);
+      }
+    });
+  });
+
 }
 
 
