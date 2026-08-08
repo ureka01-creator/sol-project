@@ -327,8 +327,8 @@ function chooseSoloTeam(team){
  $("#soloTeamScreen").classList.add("hidden");
  $("#selectScreen").classList.remove("hidden");
  $("#subtitle").innerHTML=playerTeam===0
-   ? `🔵 블루팀 vs 🤖 컴퓨터 <span class="difficulty-badge">${difficultyName()}</span>`
-   : `🤖 컴퓨터 vs 🔴 레드팀 <span class="difficulty-badge">${difficultyName()}</span>`;
+   ? `🔵 블루팀 vs 🔴 레드팀 <span class="difficulty-badge">${difficultyName()}</span>`
+   : `🔵 블루팀 vs 🔴 레드팀 <span class="difficulty-badge">${difficultyName()}</span>`;
  pickRender();
 }
 function typeAdv(att,def){
@@ -441,7 +441,7 @@ function start(){
  $("#gameScreen").classList.remove("hidden");
  startBattleBgm();
 
- const firstLabel=gameMode==="solo" && aiTeam===0 ? "컴퓨터" : "블루팀";
+ const firstLabel=teamName(0);
  log(`배틀 시작! ${firstLabel}부터 시작!`);
  render();
  showTurnBanner();
@@ -451,25 +451,23 @@ function log(t){const el=$("#log"); if(el) el.textContent=t;}
 
 
 function teamName(teamIndex){
- if(gameMode==="solo" && teamIndex===aiTeam)return "컴퓨터";
  return teamIndex===0?"블루팀":"레드팀";
 }
 function teamIcon(teamIndex){
- if(gameMode==="solo" && teamIndex===aiTeam)return "🤖";
  return teamIndex===0?"🔵":"🔴";
 }
 
 function showTurnBanner(){
  const el=$("#turnBanner");
- el.textContent=`${teamIcon(turn)} ${gameMode==="solo"&&turn===aiTeam?"COMPUTER TURN":(turn===0?"BLUE TEAM TURN":"RED TEAM TURN")}`;
+ el.textContent=turn===0?"🔵 BLUE TEAM TURN":"🔴 RED TEAM TURN";
  el.className="turn-banner "+(turn===0?"blue":"red")+" show";
  setTimeout(()=>el.classList.remove("show"),800);
 }
 function updateTurnUX(){
  const strip=$("#turnStrip");
  if(strip){
-   strip.textContent=gameMode==="solo"&&turn===aiTeam
-     ? `🤖 컴퓨터의 차례 · ${difficultyName()}`
+   strip.textContent=gameMode==="solo"
+     ? `${teamIcon(turn)} ${teamName(turn)}의 차례 · ${difficultyName()}`
      : `${teamIcon(turn)} ${teamName(turn)}의 차례`;
    strip.className="turn-strip "+(turn===0?"blue":"red");
  }
@@ -788,7 +786,7 @@ function showVictory(winner){
   if(gameMode==="solo"){
     const playerWon=actualWinner===playerTeam;
     title.textContent=playerWon?"VICTORY!":"DEFEAT";
-    team.textContent=playerWon?`${teamName(playerTeam)} 승리!`:"컴퓨터 승리!";
+    team.textContent=`${teamName(actualWinner)} 승리!`;
   }else{
     title.textContent=actualWinner===0?"BLUE TEAM WINS!":"RED TEAM WINS!";
     team.textContent=actualWinner===0?"블루팀 승리!":"레드팀 승리!";
@@ -832,7 +830,7 @@ $("#pass").onclick=()=>{if(rolledNow())log("주사위를 보관하고 턴을 넘
 
 function aiRoll(onDone){
   animateDiceRoll(aiTeam,()=>{
-    log("🤖 컴퓨터 주사위: "+turnDice[aiTeam].join(" · ")+" 확정!");
+    log(`${teamIcon(aiTeam)} ${teamName(aiTeam)} 주사위: ${turnDice[aiTeam].join(" · ")} 확정!`);
     if(onDone)onDone();
   });
 }
@@ -881,7 +879,7 @@ function aiSwitch(){
  if(!alive.length)return false;
  alive.sort((a,b)=>aiSwitchScore(teams[aiTeam][b],enemy)-aiSwitchScore(teams[aiTeam][a],enemy));
  active[aiTeam]=aiDifficulty>=2?alive[0]:alive[Math.floor(Math.random()*alive.length)];
- sfx("switch");log("🤖 컴퓨터가 "+cur(aiTeam).n+"으로 교체!");
+ sfx("switch");log(`${teamIcon(aiTeam)} ${teamName(aiTeam)}가 ${cur(aiTeam).n}으로 교체!`);
  render();setTimeout(next,500);return true;
 }
 function aiTakeTurn(){
@@ -890,7 +888,7 @@ function aiTakeTurn(){
  if(aiShouldSwitch()){
    aiBusy=false; aiSwitch(); return;
  }
- log("🤖 컴퓨터가 주사위를 굴린다!");
+ log(`${teamIcon(aiTeam)} ${teamName(aiTeam)}가 주사위를 굴린다!`);
  aiRoll(()=>{
    setTimeout(()=>{
      let move=aiBestMove();
@@ -909,7 +907,7 @@ function aiTakeTurn(){
      }else{
        aiChooseKeep();
        log(aiDifficulty===3
-         ?"🤖 컴퓨터가 다음 강한 기술을 노리고 주사위를 보관한다."
+         ?`${teamIcon(aiTeam)} ${teamName(aiTeam)}가 다음 강한 기술을 노리고 주사위를 보관한다.`
          :"🤖 기술 조건이 안 돼서 주사위를 보관하고 턴을 넘긴다.");
        render();
        aiBusy=false;
