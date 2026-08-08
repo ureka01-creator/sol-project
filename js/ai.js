@@ -49,7 +49,7 @@ function aiSwitch(){
  if(!alive.length)return false;
  alive.sort((a,b)=>aiSwitchScore(teams[aiTeam][b],enemy)-aiSwitchScore(teams[aiTeam][a],enemy));
  active[aiTeam]=aiDifficulty>=2?alive[0]:alive[Math.floor(Math.random()*alive.length)];
- sfx("switch");log(`${teamIcon(aiTeam)} ${teamName(aiTeam)}가 ${cur(aiTeam).n}으로 교체!`);
+ playCombatAudio(switchAudio,.74,.04,650);log(`${teamIcon(aiTeam)} ${teamName(aiTeam)}가 ${cur(aiTeam).n}으로 교체!`);
  render();setTimeout(next,500);return true;
 }
 function aiTakeTurn(){

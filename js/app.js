@@ -24,3 +24,13 @@ $("#switch").onclick=openSwitchModal;
 
 
 document.addEventListener("pointerdown",warmUpGameAudio,{once:true,passive:true});
+
+
+// V2.9.6 - shared menu selection sound
+document.addEventListener("click",(e)=>{
+  const b=e.target.closest("button");
+  if(!b || b.disabled)return;
+  if(b.closest("#gameScreen"))return;
+  if(b.classList.contains("pick") || b.id==="confirmPick")return;
+  playCombatAudio(selectAudio,.72,.055,180);
+});
