@@ -1,4 +1,5 @@
 function start(){
+ stopMenuBgm(true);
  teams=picks.map(a=>a.map(i=>{
    const base={...P[i]};
    base.cur=base.hp;

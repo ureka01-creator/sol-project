@@ -1,6 +1,5 @@
 function chooseMode(mode){
   warmUpGameAudio();
-  stopMenuBgm(true);
   document.body.classList.remove("main-home");
  gameMode=mode;
  $("#modeScreen").classList.add("hidden");
