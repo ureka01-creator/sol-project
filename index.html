@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#111827">
-<title>포켓몬 주사위 배틀 V2.3</title>
+<title>포켓몬 주사위 배틀 V2.3.1</title>
 <style>
 :root{--bg:#f3f6fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#e5e7eb;--blue:#2563eb;--red:#ef4444;--green:#16a34a}
 *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;background:linear-gradient(#dff3ff,#f8fafc 45%,#eef2f7);color:var(--ink);min-height:100vh}
@@ -24,7 +24,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .log{background:#0f172a;color:#e5e7eb;border-radius:14px;padding:11px;min-height:80px;white-space:pre-line;font-size:13px;line-height:1.45;margin-top:10px}
 .turn{text-align:center;font-size:18px;font-weight:900;margin-bottom:8px}.notice{font-size:12px;color:#64748b;line-height:1.45}
 
-/* V2.3 UX */
+/* V2.3.1 UX */
 .turn-banner{
   position:fixed;left:50%;top:42%;transform:translate(-50%,-50%) scale(.85);
   z-index:9999;padding:18px 28px;border-radius:22px;color:#fff;font-weight:1000;
@@ -80,7 +80,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .close-btn{background:#334155;padding:10px 14px}
 
 
-/* V2.3 battle feel */
+/* V2.3.1 battle feel */
 @keyframes pokeHitBig{
   0%{transform:translate(0,0) scale(1)}
   12%{transform:translate(-18px,-3px) rotate(-4deg) scale(1.05)}
@@ -130,7 +130,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .switch-choice .hpmini{font-size:12px;font-weight:800}
 
 
-/* V2.3 */
+/* V2.3.1 */
 .difficulty-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .diff-btn{background:#f8fafc;color:#172033;border:2px solid #e5e7eb;min-height:105px}
 .diff-btn b{display:block;font-size:17px;margin-top:6px}.diff-btn small{display:block;color:#64748b;margin-top:3px}
@@ -182,7 +182,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 @keyframes lockCheck{0%{opacity:0;transform:scale(.2)}60%{opacity:1;transform:scale(1.25)}100%{transform:scale(1)}}
 
 
-/* V2.3 */
+/* V2.3.1 */
 @keyframes diceRollFast{
   0%{transform:scale(1) rotate(0)}
   30%{transform:scale(1.48) rotate(-22deg)}
@@ -225,7 +225,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 }
 
 
-/* V2.3 dice polish */
+/* V2.3.1 dice polish */
 @keyframes diceLockYellow{
   0%{transform:scale(1.08);background:#fff;border-color:#dbe3ee}
   35%{transform:scale(1.85);background:#fef9c3;border-color:#facc15;box-shadow:0 0 0 10px #facc1540,0 22px 45px #0004}
@@ -254,7 +254,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 }
 
 
-/* V2.3 arcade dice finish */
+/* V2.3.1 arcade dice finish */
 @keyframes diceLockArcade{
   0%{transform:scale(1.05);filter:brightness(1)}
   28%{transform:scale(2.05);background:#fde047;border-color:#eab308;
@@ -266,7 +266,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .die.locked{animation:diceLockArcade .43s cubic-bezier(.18,.9,.2,1)!important}
 
 
-/* V2.3 longer dice confirmation */
+/* V2.3.1 longer dice confirmation */
 @keyframes diceLockImpact{
   0%{transform:scale(1.05);background:#fff;border-color:#dbe3ee}
   22%{transform:scale(2.08);background:#fde047;border-color:#eab308;
@@ -408,7 +408,22 @@ const diceLockAudio=new Audio("sounds/dice-lock-impact.wav");
 diceRollAudio.preload="auto"; diceLockAudio.preload="auto";
 function playFileSfx(audio,vol=0.8){
   if(!soundEnabled)return;
-  try{audio.pause();audio.currentTime=0;audio.volume=vol;audio.play().catch(()=>{});}catch(e){}
+  try{
+    audio.pause();
+    audio.currentTime=0;
+    audio.volume=vol;
+    const p=audio.play();
+    if(p&&p.catch)p.catch(()=>{});
+  }catch(e){}
+}
+function unlockFileAudio(){
+  [diceRollAudio,diceLockAudio].forEach(a=>{
+    try{
+      a.muted=true;
+      const p=a.play();
+      if(p&&p.then)p.then(()=>{a.pause();a.currentTime=0;a.muted=false;}).catch(()=>{a.muted=false;});
+    }catch(e){}
+  });
 }
 
 let audioCtx=null;
@@ -474,8 +489,8 @@ $("#soundToggle").onclick=()=>{
   $("#soundToggle").textContent=soundEnabled?"🔊":"🔇";
   if(soundEnabled){ensureAudio();tone(660,.06,"sine",.05)}
 };
-document.addEventListener("touchstart",()=>ensureAudio(),{once:true,passive:true});
-document.addEventListener("click",()=>ensureAudio(),{once:true});
+document.addEventListener("touchstart",()=>{ensureAudio();unlockFileAudio();},{once:true,passive:true});
+document.addEventListener("click",()=>{ensureAudio();unlockFileAudio();},{once:true});
 
 
 function chooseMode(mode){
@@ -719,6 +734,7 @@ function animateDiceRoll(forTurn,onDone){
         diceEls[i].classList.add("locked");
       });
       if(navigator.vibrate)navigator.vibrate(45);
+      playFileSfx(diceLockAudio,1.0);
       setTimeout(()=>{
         activeIndexes.forEach(i=>diceEls[i].classList.remove("locked"));
         diceWrap.classList.remove("burst","cpu-rolling");
