@@ -408,19 +408,32 @@ function animateDiceRoll(forTurn,onDone){
       turnDice[forTurn]=turnDice[forTurn].map((v,i)=>turnKept[forTurn][i]?v:Math.floor(Math.random()*6)+1);
       turnRolled[forTurn]=true;
       const activeIndexes=[0,1,2].filter(i=>!turnKept[forTurn][i]);
-      diceEls.forEach((d,i)=>d.textContent=turnDice[forTurn][i]);
-      activeIndexes.forEach(i=>{
-        diceEls[i].classList.remove("rolling");
-        diceEls[i].classList.add("locked");
+
+      // Paint final numbers first, without starting the heavy effect yet.
+      diceEls.forEach((d,i)=>{
+        d.textContent=turnDice[forTurn][i];
+        d.classList.remove("rolling");
       });
-      if(navigator.vibrate)navigator.vibrate(45);
-      playDiceLockInstant();
-      setTimeout(()=>{
-        activeIndexes.forEach(i=>diceEls[i].classList.remove("locked"));
-        diceWrap.classList.remove("burst","cpu-rolling");
-        render();
-        if(onDone)onDone();
-      },780);
+
+      // Start confirmation on the next visual frame.
+      requestAnimationFrame(()=>{
+        activeIndexes.forEach(i=>diceEls[i].classList.add("locked"));
+
+        // Audio is already decoded; play exactly with the POP.
+        playDiceLockInstant();
+        if(navigator.vibrate)navigator.vibrate(35);
+
+        setTimeout(()=>{
+          activeIndexes.forEach(i=>diceEls[i].classList.remove("locked"));
+          diceWrap.classList.remove("burst","cpu-rolling");
+
+          // Avoid doing the full battle UI render in the same frame as the effect end.
+          requestAnimationFrame(()=>{
+            render();
+            if(onDone)onDone();
+          });
+        },640);
+      });
     }
   },92);
 }
