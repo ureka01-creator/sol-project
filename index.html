@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#111827">
-<title>포켓몬 주사위 배틀 V1.5</title>
+<title>포켓몬 주사위 배틀 V1.6</title>
 <style>
 :root{--bg:#f3f6fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#e5e7eb;--blue:#2563eb;--red:#ef4444;--green:#16a34a}
 *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;background:linear-gradient(#dff3ff,#f8fafc 45%,#eef2f7);color:var(--ink);min-height:100vh}
@@ -24,7 +24,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .log{background:#0f172a;color:#e5e7eb;border-radius:14px;padding:11px;min-height:80px;white-space:pre-line;font-size:13px;line-height:1.45;margin-top:10px}
 .turn{text-align:center;font-size:18px;font-weight:900;margin-bottom:8px}.notice{font-size:12px;color:#64748b;line-height:1.45}
 
-/* V1.5 UX */
+/* V1.6 UX */
 .turn-banner{
   position:fixed;left:50%;top:42%;transform:translate(-50%,-50%) scale(.85);
   z-index:9999;padding:18px 28px;border-radius:22px;color:#fff;font-weight:1000;
@@ -80,7 +80,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .close-btn{background:#334155;padding:10px 14px}
 
 
-/* V1.5 battle feel */
+/* V1.6 battle feel */
 @keyframes pokeHitBig{
   0%{transform:translate(0,0) scale(1)}
   12%{transform:translate(-18px,-3px) rotate(-4deg) scale(1.05)}
@@ -130,15 +130,11 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .switch-choice .hpmini{font-size:12px;font-weight:800}
 
 
-/* V1.5 */
+/* V1.6 */
 .difficulty-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .diff-btn{background:#f8fafc;color:#172033;border:2px solid #e5e7eb;min-height:105px}
 .diff-btn b{display:block;font-size:17px;margin-top:6px}.diff-btn small{display:block;color:#64748b;margin-top:3px}
-.ball{width:38px;height:38px;border-radius:50%;display:inline-block;position:relative;border:3px solid #172033;background:linear-gradient(#ef4444 0 46%,#172033 46% 56%,#fff 56% 100%);vertical-align:middle}
-.ball:after{content:"";position:absolute;width:11px;height:11px;background:#fff;border:3px solid #172033;border-radius:50%;left:50%;top:51%;transform:translate(-50%,-50%)}
-.ball.super{background:linear-gradient(#2563eb 0 46%,#172033 46% 56%,#fff 56% 100%)}
-.ball.hyper{background:linear-gradient(#111827 0 46%,#facc15 46% 56%,#fff 56% 100%);box-shadow:inset 9px 0 0 #facc15,inset -9px 0 0 #facc15}
-.ball.master{background:linear-gradient(#7c3aed 0 46%,#ec4899 46% 56%,#fff 56% 100%);box-shadow:inset 9px 0 0 #a855f7,inset -9px 0 0 #a855f7}
+
 .difficulty-badge{font-weight:900;margin-left:5px}
 
 .skill.unavailable{filter:grayscale(.75);opacity:.28!important;transform:none!important}
@@ -165,6 +161,26 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 @keyframes victoryIn{0%{opacity:0;transform:scale(.55) rotate(-3deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
 @keyframes trophyBounce{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-10px) rotate(4deg)}}
 
+
+.ball-img{
+  width:68px;height:68px;object-fit:contain;display:block;margin:0 auto 4px;
+  image-rendering:auto;filter:drop-shadow(0 6px 9px #0003)
+}
+@keyframes diceLock{
+  0%{transform:scale(1);box-shadow:0 0 0 #0000}
+  35%{transform:scale(1.55);box-shadow:0 0 0 8px #facc1544,0 18px 35px #0003}
+  62%{transform:scale(.9)}
+  100%{transform:scale(1);box-shadow:0 0 0 3px #22c55e55,0 6px 18px #0002}
+}
+.die.locked{animation:diceLock .38s cubic-bezier(.2,.9,.2,1);border-color:#22c55e;background:#f0fdf4}
+.die.locked::after{
+  content:"✓";position:absolute;right:-8px;top:-11px;width:24px;height:24px;border-radius:50%;
+  background:#16a34a;color:#fff;font-size:15px;display:grid;place-items:center;border:2px solid #fff;
+  animation:lockCheck .38s ease
+}
+.die{position:relative}
+@keyframes lockCheck{0%{opacity:0;transform:scale(.2)}60%{opacity:1;transform:scale(1.25)}100%{transform:scale(1)}}
+
 </style></head>
 <body><div id="turnBanner" class="turn-banner"></div><div id="superText" class="super-text">효과가 굉장했다!</div><div class="app">
 <h1>⚡ 포켓몬 주사위 배틀</h1><div id="subtitle" class="sub">게임 모드를 선택해</div>
@@ -186,10 +202,10 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 <section id="difficultyScreen" class="card hidden">
  <h2 style="margin-top:0">🤖 AI 난이도 선택</h2>
  <div class="difficulty-grid">
-  <button class="diff-btn" onclick="chooseDifficulty(0)"><span class="ball"></span><b>몬스터볼</b><small>쉬움</small></button>
-  <button class="diff-btn" onclick="chooseDifficulty(1)"><span class="ball super"></span><b>슈퍼볼</b><small>보통</small></button>
-  <button class="diff-btn" onclick="chooseDifficulty(2)"><span class="ball hyper"></span><b>하이퍼볼</b><small>어려움</small></button>
-  <button class="diff-btn" onclick="chooseDifficulty(3)"><span class="ball master"></span><b>마스터볼</b><small>아주 어려움</small></button>
+  <button class="diff-btn" onclick="chooseDifficulty(0)"><img class="ball-img" src="poke-ball.png"><b>몬스터볼</b><small>쉬움</small></button>
+  <button class="diff-btn" onclick="chooseDifficulty(1)"><img class="ball-img" src="great-ball.png"><b>슈퍼볼</b><small>보통</small></button>
+  <button class="diff-btn" onclick="chooseDifficulty(2)"><img class="ball-img" src="ultra-ball.png"><b>하이퍼볼</b><small>어려움</small></button>
+  <button class="diff-btn" onclick="chooseDifficulty(3)"><img class="ball-img" src="master-ball.png"><b>마스터볼</b><small>아주 어려움</small></button>
  </div>
  <button class="wide gray" onclick="backToMode()">뒤로</button>
 </section>
@@ -410,6 +426,22 @@ function render(){
  $("#skill1").classList.toggle("available",s1ok); $("#skill2").classList.toggle("available",s2ok);
  $("#switch").disabled=over||ai;$("#pass").disabled=over||ai;
 }
+
+function lockInDice(diceEls, onDone){
+  const activeIndexes=[0,1,2].filter(i=>!keptNow()[i]);
+  if(!activeIndexes.length){ if(onDone)onDone(); return; }
+  activeIndexes.forEach((idx,order)=>{
+    setTimeout(()=>{
+      const d=diceEls[idx];
+      d.classList.remove("rolling");
+      d.classList.add("locked");
+      if(navigator.vibrate) navigator.vibrate(35);
+      setTimeout(()=>d.classList.remove("locked"),520);
+      if(order===activeIndexes.length-1 && onDone)setTimeout(onDone,120);
+    }, order*180);
+  });
+}
+
 $("#roll").onclick=()=>{
   if(rolledNow()||over)return;
   const diceEls=$$(".die"); $(".dice").classList.add("burst");
@@ -422,9 +454,12 @@ $("#roll").onclick=()=>{
       clearInterval(timer);
       turnDice[turn]=diceNow().map((v,i)=>keptNow()[i]?v:Math.floor(Math.random()*6)+1);
       turnRolled[turn]=true;
-      diceEls.forEach(d=>d.classList.remove("rolling")); $(".dice").classList.remove("burst");
-      log("🎲 "+diceNow().join(" · ")+"! 기술을 고르거나 주사위를 눌러 보관해.");
-      render();
+      diceEls.forEach((d,i)=>d.textContent=turnDice[turn][i]);
+      lockInDice(diceEls,()=>{
+        $(".dice").classList.remove("burst");
+        log("🎲 "+diceNow().join(" · ")+" 확정! 기술을 골라.");
+        render();
+      });
     }
   },75);
 };
