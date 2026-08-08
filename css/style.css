@@ -948,3 +948,56 @@ body.main-home #soundToggle{
  border-radius:50%;background:#fff;left:50%;top:50%;transform:translate(-50%,-50%);
 }
 @keyframes tapPulse{0%,100%{opacity:.58;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+
+/* V3.0.5 - true title screen flow */
+.tap-start{display:none!important}
+.hero-tap-start{
+ position:absolute;
+ z-index:20;
+ left:50%;
+ bottom:27px;
+ transform:translateX(-50%);
+ width:auto;
+ min-width:220px;
+ padding:10px 18px 9px;
+ border:0;
+ border-radius:999px;
+ background:rgba(255,255,255,.86);
+ box-shadow:0 8px 22px rgba(15,60,100,.13);
+ color:#173b79;
+ text-align:center;
+ animation:heroTapPulse 1.25s ease-in-out infinite;
+}
+.hero-tap-start b{
+ display:block;
+ font-size:15px;
+ font-weight:1000;
+ letter-spacing:-.4px;
+ white-space:nowrap;
+}
+.hero-tap-start small{
+ display:block;
+ margin-top:2px;
+ font-size:8px;
+ font-weight:1000;
+ letter-spacing:1.8px;
+ opacity:.55;
+}
+.hero-tap-start.hidden{display:none!important}
+.pre-start-hidden{display:none!important}
+.home-menu.menu-reveal{
+ display:grid!important;
+ animation:menuReveal .28s ease-out both;
+}
+.home-footer.menu-reveal{
+ display:block!important;
+ animation:menuReveal .28s ease-out both;
+}
+@keyframes heroTapPulse{
+ 0%,100%{opacity:.68;transform:translateX(-50%) translateY(0)}
+ 50%{opacity:1;transform:translateX(-50%) translateY(-3px)}
+}
+@keyframes menuReveal{
+ from{opacity:0;transform:translateY(12px)}
+ to{opacity:1;transform:translateY(0)}
+}
