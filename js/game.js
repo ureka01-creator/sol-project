@@ -385,6 +385,8 @@ function render(){
   });
 
   updateKeepHint();
+
+  updateDiceTeamColor();
 }
 
 
@@ -416,6 +418,8 @@ function renderDiceControlsOnly(){
   $("#switch").disabled=over||ai;
   $("#pass").disabled=over||ai;
   updateKeepHint();
+
+  updateDiceTeamColor();
 }
 
 function lockInDice(diceEls,onDone){
@@ -434,6 +438,15 @@ function lockInDice(diceEls,onDone){
 }
 
 
+
+
+function updateDiceTeamColor(){
+  const isBlue = turn===0;
+  $$(".die").forEach(d=>{
+    d.classList.toggle("keep-blue", isBlue);
+    d.classList.toggle("keep-red", !isBlue);
+  });
+}
 
 function updateKeepHint(){
   const hint=$("#keepHint");
