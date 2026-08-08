@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#111827">
 <title>포켓몬 주사위 배틀 V2.3.1</title>
-<link rel="stylesheet" href="css/style.css?v=271">
+<link rel="stylesheet" href="css/style.css?v=293">
 </head>
 <body><button id="soundToggle" class="sound-toggle" aria-label="효과음 켜기/끄기">🔊</button><div id="turnBanner" class="turn-banner"></div><div id="superText" class="super-text">효과가 굉장했다!</div><div class="app">
 <h1>⚡ 포켓몬 주사위 배틀</h1><div id="subtitle" class="sub">게임 모드를 선택해</div>
@@ -40,11 +40,13 @@
 <section id="soloTeamScreen" class="card hidden">
  <h2 style="margin-top:0">내 팀을 선택해</h2>
  <div class="solo-team-grid">
-  <button class="solo-team-btn blue-choice" onclick="chooseSoloTeam(0)">
-   <span class="team-mark blue-mark"><span>B</span></span><b>블루팀</b><small>BLUE TEAM</small>
+  <button class="solo-team-btn blue-choice trainer-choice" onclick="chooseSoloTeam(0)">
+   <span class="trainer-art-wrap"><img class="trainer-art" src="images/trainer-blue-team.jpg?v=293" alt="블루팀 트레이너"></span>
+   <b>블루팀</b>
   </button>
-  <button class="solo-team-btn red-choice" onclick="chooseSoloTeam(1)">
-   <span class="team-mark red-mark"><span>R</span></span><b>레드팀</b><small>RED TEAM</small>
+  <button class="solo-team-btn red-choice trainer-choice" onclick="chooseSoloTeam(1)">
+   <span class="trainer-art-wrap"><img class="trainer-art" src="images/trainer-red.jpg?v=293" alt="레드 트레이너"></span>
+   <b>레드팀</b>
   </button>
  </div>
  <button class="wide gray" onclick="backToDifficulty()">뒤로</button>
