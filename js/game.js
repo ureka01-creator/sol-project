@@ -36,14 +36,14 @@ diceRollAudio.preload="auto"; diceLockAudio.preload="auto";
 const battleBgm=new Audio("sounds/battle-bgm.mp3?v=274");
 battleBgm.preload="auto";
 battleBgm.loop=true;
-battleBgm.volume=.20;
+battleBgm.volume=.12;
 let bgmWanted=false;
 
 function startBattleBgm(){
   bgmWanted=true;
   if(!soundEnabled)return;
   try{
-    battleBgm.volume=.20;
+    battleBgm.volume=.12;
     const p=battleBgm.play();
     if(p&&p.catch)p.catch(()=>{});
   }catch(e){}
@@ -55,7 +55,7 @@ function stopBattleBgm(fade=true){
     battleBgm.currentTime=0;
     return;
   }
-  const from=battleBgm.volume||.20;
+  const from=battleBgm.volume||.12;
   const steps=8;
   let n=0;
   const timer=setInterval(()=>{
@@ -65,12 +65,26 @@ function stopBattleBgm(fade=true){
       clearInterval(timer);
       battleBgm.pause();
       battleBgm.currentTime=0;
-      battleBgm.volume=.20;
+      battleBgm.volume=.12;
     }
   },45);
 }
 
+let bgmDuckTimer=null;
+function duckBgm(level=.055, holdMs=260){
+  if(!bgmWanted || battleBgm.paused)return;
+  clearTimeout(bgmDuckTimer);
+  battleBgm.volume=level;
+  bgmDuckTimer=setTimeout(()=>{
+    if(bgmWanted && soundEnabled && !battleBgm.paused){
+      battleBgm.volume=.12;
+    }
+  },holdMs);
+}
+
+
 function playFileSfx(audio,vol=0.8){
+  duckBgm(.05,320);
   if(!soundEnabled)return;
   try{
     audio.pause();
@@ -127,6 +141,7 @@ async function warmUpGameAudio(){
 
 
 function playDiceRollInstant(){
+  duckBgm(.045,700);
   if(!soundEnabled)return;
   const ctx=ensureAudio();
   if(!ctx)return;
@@ -147,6 +162,7 @@ function playDiceRollInstant(){
 
 // Loading/decoding does not produce sound.
 function playDiceLockInstant(){
+  duckBgm(.04,420);
   if(!soundEnabled)return;
   const ctx=ensureAudio();
   if(!ctx)return;
@@ -178,6 +194,7 @@ function ensureAudio(){
   return audioCtx;
 }
 function tone(freq=440,dur=.08,type="sine",gain=.08,delay=0){
+  if(bgmWanted) duckBgm(.06,180);
   const ctx=ensureAudio(); if(!ctx)return;
   const o=ctx.createOscillator(), g=ctx.createGain();
   o.type=type; o.frequency.setValueAtTime(freq,ctx.currentTime+delay);
@@ -199,6 +216,7 @@ function noise(dur=.08,gain=.08,delay=0){
   src.connect(g); g.connect(ctx.destination); src.start(ctx.currentTime+delay);
 }
 function sfx(name,type){
+  duckBgm(.045,360);
   if(!soundEnabled)return;
   ensureAudio();
   if(name==="diceTick"){ tone(900+Math.random()*240,.025,"square",.025); return; }
@@ -229,7 +247,7 @@ $("#soundToggle").onclick=()=>{
     ensureAudio();
     tone(660,.06,"sine",.05);
     if(bgmWanted){
-      battleBgm.volume=.20;
+      battleBgm.volume=.12;
       const p=battleBgm.play();
       if(p&&p.catch)p.catch(()=>{});
     }
