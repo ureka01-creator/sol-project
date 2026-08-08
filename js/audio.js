@@ -87,17 +87,34 @@ function playCombatAudio(audio,volume=.72,duck=.04,hold=420){
   }
 }
 
+const menuBgm=new Audio("sounds/menu-bgm.mp3?v=303");
+menuBgm.preload="auto"; menuBgm.loop=true; menuBgm.volume=.10;
+let menuBgmWanted=true;
+function startMenuBgm(){
+ menuBgmWanted=true;
+ if(!soundEnabled)return;
+ menuBgm.volume=.10;
+ const p=menuBgm.play(); if(p&&p.catch)p.catch(()=>{});
+}
+function stopMenuBgm(fade=true){
+ menuBgmWanted=false;
+ if(!fade){menuBgm.pause();menuBgm.currentTime=0;menuBgm.volume=.10;return;}
+ const from=menuBgm.volume||.10; let n=0;
+ const timer=setInterval(()=>{n++;menuBgm.volume=Math.max(0,from*(1-n/10));
+  if(n>=10){clearInterval(timer);menuBgm.pause();menuBgm.currentTime=0;menuBgm.volume=.10;}
+ },30);
+}
 const battleBgm=new Audio("sounds/battle-bgm.mp3?v=274");
 battleBgm.preload="auto";
 battleBgm.loop=true;
-battleBgm.volume=.12;
+battleBgm.volume=.08;
 let bgmWanted=false;
 
 function startBattleBgm(){
   bgmWanted=true;
   if(!soundEnabled)return;
   try{
-    battleBgm.volume=.12;
+    battleBgm.volume=.08;
     const p=battleBgm.play();
     if(p&&p.catch)p.catch(()=>{});
   }catch(e){}
@@ -109,7 +126,7 @@ function stopBattleBgm(fade=true){
     battleBgm.currentTime=0;
     return;
   }
-  const from=battleBgm.volume||.12;
+  const from=battleBgm.volume||.08;
   const steps=8;
   let n=0;
   const timer=setInterval(()=>{
@@ -119,7 +136,7 @@ function stopBattleBgm(fade=true){
       clearInterval(timer);
       battleBgm.pause();
       battleBgm.currentTime=0;
-      battleBgm.volume=.12;
+      battleBgm.volume=.08;
     }
   },45);
 }
@@ -131,7 +148,7 @@ function duckBgm(level=.055, holdMs=260){
   battleBgm.volume=level;
   bgmDuckTimer=setTimeout(()=>{
     if(bgmWanted && soundEnabled && !battleBgm.paused){
-      battleBgm.volume=.12;
+      battleBgm.volume=.08;
     }
   },holdMs);
 }
@@ -325,11 +342,12 @@ $("#soundToggle").onclick=()=>{
     ensureAudio();
     tone(660,.06,"sine",.05);
     if(bgmWanted){
-      battleBgm.volume=.12;
+      battleBgm.volume=.08;
       const p=battleBgm.play();
       if(p&&p.catch)p.catch(()=>{});
     }
   }else{
+    menuBgm.pause();
     battleBgm.pause();
   }
 };

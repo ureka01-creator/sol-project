@@ -40,3 +40,13 @@ document.addEventListener("click",(e)=>{
   if(b.classList.contains("pick") || b.id==="confirmPick")return;
   playCombatAudio(selectAudio,.72,.055,180);
 });
+
+// V3.0.4 - Pokémon-style title screen. First tap unlocks audio on iOS.
+const tapStart=$("#tapStart");
+if(tapStart){
+ tapStart.addEventListener("pointerdown",()=>{
+  warmUpGameAudio();
+  startMenuBgm();
+  tapStart.classList.add("hidden");
+ },{once:true,passive:true});
+}

@@ -1,5 +1,6 @@
 function chooseMode(mode){
   warmUpGameAudio();
+  stopMenuBgm(true);
   document.body.classList.remove("main-home");
  gameMode=mode;
  $("#modeScreen").classList.add("hidden");
@@ -14,6 +15,7 @@ function chooseMode(mode){
 }
 function backToMode(){
  document.body.classList.add("main-home");
+ startMenuBgm();
  $("#difficultyScreen").classList.add("hidden");
  $("#modeScreen").classList.remove("hidden");
  $("#subtitle").textContent="게임 모드를 선택해";
