@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#111827">
-<title>포켓몬 주사위 배틀 V1.9</title>
+<title>포켓몬 주사위 배틀 V2.0</title>
 <style>
 :root{--bg:#f3f6fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#e5e7eb;--blue:#2563eb;--red:#ef4444;--green:#16a34a}
 *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;background:linear-gradient(#dff3ff,#f8fafc 45%,#eef2f7);color:var(--ink);min-height:100vh}
@@ -24,7 +24,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .log{background:#0f172a;color:#e5e7eb;border-radius:14px;padding:11px;min-height:80px;white-space:pre-line;font-size:13px;line-height:1.45;margin-top:10px}
 .turn{text-align:center;font-size:18px;font-weight:900;margin-bottom:8px}.notice{font-size:12px;color:#64748b;line-height:1.45}
 
-/* V1.9 UX */
+/* V2.0 UX */
 .turn-banner{
   position:fixed;left:50%;top:42%;transform:translate(-50%,-50%) scale(.85);
   z-index:9999;padding:18px 28px;border-radius:22px;color:#fff;font-weight:1000;
@@ -80,7 +80,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .close-btn{background:#334155;padding:10px 14px}
 
 
-/* V1.9 battle feel */
+/* V2.0 battle feel */
 @keyframes pokeHitBig{
   0%{transform:translate(0,0) scale(1)}
   12%{transform:translate(-18px,-3px) rotate(-4deg) scale(1.05)}
@@ -130,7 +130,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .switch-choice .hpmini{font-size:12px;font-weight:800}
 
 
-/* V1.9 */
+/* V2.0 */
 .difficulty-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .diff-btn{background:#f8fafc;color:#172033;border:2px solid #e5e7eb;min-height:105px}
 .diff-btn b{display:block;font-size:17px;margin-top:6px}.diff-btn small{display:block;color:#64748b;margin-top:3px}
@@ -182,7 +182,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 @keyframes lockCheck{0%{opacity:0;transform:scale(.2)}60%{opacity:1;transform:scale(1.25)}100%{transform:scale(1)}}
 
 
-/* V1.9 */
+/* V2.0 */
 @keyframes diceRollFast{
   0%{transform:scale(1) rotate(0)}
   30%{transform:scale(1.48) rotate(-22deg)}
@@ -225,7 +225,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 }
 
 
-/* V1.9 dice polish */
+/* V2.0 dice polish */
 @keyframes diceLockYellow{
   0%{transform:scale(1.08);background:#fff;border-color:#dbe3ee}
   35%{transform:scale(1.85);background:#fef9c3;border-color:#facc15;box-shadow:0 0 0 10px #facc1540,0 22px 45px #0004}
@@ -246,8 +246,15 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
   font-size:12px;font-weight:900;color:#475569;white-space:nowrap
 }
 
+
+.sound-toggle{
+ position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:11000;
+ width:48px;height:48px;border-radius:50%;padding:0;font-size:22px;background:#111827dd;
+ box-shadow:0 8px 22px #0004
+}
+
 </style></head>
-<body><div id="turnBanner" class="turn-banner"></div><div id="superText" class="super-text">효과가 굉장했다!</div><div class="app">
+<body><button id="soundToggle" class="sound-toggle" aria-label="효과음 켜기/끄기">🔊</button><div id="turnBanner" class="turn-banner"></div><div id="superText" class="super-text">효과가 굉장했다!</div><div class="app">
 <h1>⚡ 포켓몬 주사위 배틀</h1><div id="subtitle" class="sub">게임 모드를 선택해</div>
 <div class="top-actions">
   <button class="gray" onclick="openDex()">📘 포켓몬 도감</button>
@@ -369,6 +376,73 @@ function diceNow(){return turnDice[turn]}
 function keptNow(){return turnKept[turn]}
 function rolledNow(){return turnRolled[turn]}
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+
+let audioCtx=null;
+let soundEnabled=true;
+
+function ensureAudio(){
+  if(!soundEnabled)return null;
+  if(!audioCtx){
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC)return null;
+    audioCtx=new AC();
+  }
+  if(audioCtx.state==="suspended")audioCtx.resume();
+  return audioCtx;
+}
+function tone(freq=440,dur=.08,type="sine",gain=.08,delay=0){
+  const ctx=ensureAudio(); if(!ctx)return;
+  const o=ctx.createOscillator(), g=ctx.createGain();
+  o.type=type; o.frequency.setValueAtTime(freq,ctx.currentTime+delay);
+  g.gain.setValueAtTime(0.0001,ctx.currentTime+delay);
+  g.gain.exponentialRampToValueAtTime(gain,ctx.currentTime+delay+.005);
+  g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+delay+dur);
+  o.connect(g); g.connect(ctx.destination);
+  o.start(ctx.currentTime+delay); o.stop(ctx.currentTime+delay+dur+.02);
+}
+function noise(dur=.08,gain=.08,delay=0){
+  const ctx=ensureAudio(); if(!ctx)return;
+  const len=Math.floor(ctx.sampleRate*dur);
+  const buf=ctx.createBuffer(1,len,ctx.sampleRate);
+  const data=buf.getChannelData(0);
+  for(let i=0;i<len;i++)data[i]=(Math.random()*2-1)*(1-i/len);
+  const src=ctx.createBufferSource(), g=ctx.createGain();
+  src.buffer=buf; g.gain.setValueAtTime(gain,ctx.currentTime+delay);
+  g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+delay+dur);
+  src.connect(g); g.connect(ctx.destination); src.start(ctx.currentTime+delay);
+}
+function sfx(name,type){
+  if(!soundEnabled)return;
+  ensureAudio();
+  if(name==="diceTick"){ tone(900+Math.random()*240,.025,"square",.025); return; }
+  if(name==="diceLock"){ tone(660,.07,"square",.09); tone(990,.09,"square",.06,.02); return; }
+  if(name==="switch"){ tone(420,.08,"sine",.06); tone(720,.12,"sine",.05,.05); return; }
+  if(name==="faint"){ tone(300,.13,"sawtooth",.06); tone(180,.22,"sawtooth",.05,.11); return; }
+  if(name==="victory"){
+    [523,659,784,1047].forEach((f,i)=>tone(f,.18,"triangle",.07,i*.11));
+    tone(1319,.34,"triangle",.08,.44); return;
+  }
+  if(name==="hit"){
+    noise(.09,.13); tone(110,.12,"square",.09); return;
+  }
+  if(name==="attack"){
+    if(type==="전기"){ tone(1200,.05,"square",.07); tone(1700,.07,"square",.05,.035); }
+    else if(type==="불꽃"){ noise(.14,.08); tone(260,.13,"sawtooth",.05); }
+    else if(type==="물"){ tone(520,.09,"sine",.05); tone(360,.12,"sine",.04,.05); }
+    else if(type==="풀"){ tone(680,.08,"triangle",.045); tone(820,.08,"triangle",.04,.05); }
+    else if(type==="고스트"){ tone(240,.18,"sine",.04); tone(190,.18,"sine",.035,.04); }
+    else { tone(180,.09,"square",.06); }
+    return;
+  }
+}
+$("#soundToggle").onclick=()=>{
+  soundEnabled=!soundEnabled;
+  $("#soundToggle").textContent=soundEnabled?"🔊":"🔇";
+  if(soundEnabled){ensureAudio();tone(660,.06,"sine",.05)}
+};
+document.addEventListener("touchstart",()=>ensureAudio(),{once:true,passive:true});
+document.addEventListener("click",()=>ensureAudio(),{once:true});
+
 
 function chooseMode(mode){
  gameMode=mode;
@@ -583,7 +657,7 @@ function lockInDice(diceEls,onDone){
     d.classList.remove("rolling");
     d.classList.add("locked");
   });
-  if(navigator.vibrate)navigator.vibrate(45);
+  if(navigator.vibrate)navigator.vibrate(45); sfx("diceLock");
   setTimeout(()=>{
     activeIndexes.forEach(idx=>diceEls[idx].classList.remove("locked"));
     if(onDone)onDone();
@@ -601,6 +675,7 @@ function animateDiceRoll(forTurn,onDone){
   const timer=setInterval(()=>{
     diceEls.forEach((d,i)=>{
       if(!turnKept[forTurn][i])d.textContent=Math.floor(Math.random()*6)+1;
+    if(ticks%2===0)sfx("diceTick");
     });
     ticks++;
     if(ticks>=6){
@@ -648,16 +723,16 @@ function use(which){if(!rolledNow())return;let me=cur(turn),sk=me[which];if(!val
  if((me.t==="불꽃"&&enemy.t==="풀")||(me.t==="풀"&&enemy.t==="물")||(me.t==="물"&&enemy.t==="불꽃"))mult=1.5;
  dmg=Math.round(dmg*mult);
  if(gameMode==="solo"&&turn===1)dmg=Math.round(dmg*aiDamageMultiplier());
- enemy.cur=Math.max(0,enemy.cur-dmg);log(`💥 ${me.n}의 ${sk[0]}! ${dmg} 피해!${mult>1?" 효과가 굉장했다!":""}`);playHitEffect(1-turn,dmg,me.t,mult>1);turnDice[turn]=[null,null,null];turnKept[turn]=[false,false,false];turnRolled[turn]=false;render();if(enemy.cur<=0)setTimeout(faint,350);else setTimeout(next,450)}
+ enemy.cur=Math.max(0,enemy.cur-dmg);sfx("attack",me.t);setTimeout(()=>sfx("hit"),90);log(`💥 ${me.n}의 ${sk[0]}! ${dmg} 피해!${mult>1?" 효과가 굉장했다!":""}`);playHitEffect(1-turn,dmg,me.t,mult>1);turnDice[turn]=[null,null,null];turnKept[turn]=[false,false,false];turnRolled[turn]=false;render();if(enemy.cur<=0)setTimeout(faint,350);else setTimeout(next,450)}
 $("#skill1").onclick=()=>use("s1");$("#skill2").onclick=()=>use("s2");
 
 function showVictory(winner){
  $("#victoryTeam").textContent=winner+" 승리!";
- $("#victoryOverlay").classList.remove("hidden");
+ sfx("victory");$("#victoryOverlay").classList.remove("hidden");
  if(navigator.vibrate) navigator.vibrate([120,70,180]);
 }
 
-function faint(){let x=1-turn,idx=teams[x].findIndex(p=>p.cur>0);if(idx<0){over=true;const winner=(turn===0?"블루팀":(gameMode==="solo"?"컴퓨터":"레드팀"));log("🏆 "+winner+" 승리!!");render();setTimeout(()=>showVictory(winner),500);return}active[x]=idx;log(`😵 쓰러졌다! ${cur(x).n} 출전!`);render();setTimeout(next,500)}
+function faint(){let x=1-turn,idx=teams[x].findIndex(p=>p.cur>0);if(idx<0){over=true;const winner=(turn===0?"블루팀":(gameMode==="solo"?"컴퓨터":"레드팀"));log("🏆 "+winner+" 승리!!");render();setTimeout(()=>showVictory(winner),500);return}active[x]=idx;sfx("faint");log(`😵 쓰러졌다! ${cur(x).n} 출전!`);render();setTimeout(next,500)}
 function next(){
   turn=1-turn;
   turnRolled[turn]=false;
@@ -718,7 +793,7 @@ function aiSwitch(){
  if(!alive.length)return false;
  alive.sort((a,b)=>aiSwitchScore(teams[1][b],enemy)-aiSwitchScore(teams[1][a],enemy));
  active[1]=aiDifficulty>=2?alive[0]:alive[Math.floor(Math.random()*alive.length)];
- log("🤖 컴퓨터가 "+cur(1).n+"으로 교체!");
+ sfx("switch");log("🤖 컴퓨터가 "+cur(1).n+"으로 교체!");
  render();setTimeout(next,500);return true;
 }
 function aiTakeTurn(){
@@ -772,7 +847,7 @@ function openSwitchModal(){
 function closeSwitchModal(){ $("#switchModal").classList.add("hidden"); }
 function chooseSwitch(i){
   active[turn]=i; closeSwitchModal();
-  log("🔄 "+cur(turn).n+"으로 교체!");
+  sfx("switch");log("🔄 "+cur(turn).n+"으로 교체!");
   turnRolled[turn]=false;
   render();
   setTimeout(next,450);
