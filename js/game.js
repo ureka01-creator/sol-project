@@ -391,49 +391,64 @@ function lockInDice(diceEls,onDone){
 
 function animateDiceRoll(forTurn,onDone){
   playDiceRollInstant();
+
   const diceEls=$$(".die");
   const diceWrap=$(".dice");
   if(forTurn===1&&gameMode==="solo")diceWrap.classList.add("cpu-rolling");
   diceWrap.classList.add("burst");
-  diceEls.forEach((d,i)=>{if(!turnKept[forTurn][i])d.classList.add("rolling")});
+
+  const activeIndexes=[0,1,2].filter(i=>!turnKept[forTurn][i]);
+
+  // Restart the roll animation from a known neutral state.
+  activeIndexes.forEach(i=>{
+    const d=diceEls[i];
+    d.classList.remove("locked","rolling");
+    void d.offsetWidth;
+    d.classList.add("rolling");
+  });
+
   let ticks=0;
   const timer=setInterval(()=>{
-    diceEls.forEach((d,i)=>{
-      if(!turnKept[forTurn][i])d.textContent=Math.floor(Math.random()*6)+1;
-
+    activeIndexes.forEach(i=>{
+      diceEls[i].textContent=Math.floor(Math.random()*6)+1;
     });
+
     ticks++;
     if(ticks>=7){
       clearInterval(timer);
-      turnDice[forTurn]=turnDice[forTurn].map((v,i)=>turnKept[forTurn][i]?v:Math.floor(Math.random()*6)+1);
+
+      turnDice[forTurn]=turnDice[forTurn].map(
+        (v,i)=>turnKept[forTurn][i]?v:Math.floor(Math.random()*6)+1
+      );
       turnRolled[forTurn]=true;
-      const activeIndexes=[0,1,2].filter(i=>!turnKept[forTurn][i]);
 
-      // Paint final numbers first, without starting the heavy effect yet.
-      diceEls.forEach((d,i)=>{
-        d.textContent=turnDice[forTurn][i];
-        d.classList.remove("rolling");
-      });
+      // Let the .64s rolling transform finish at scale(1)/rotate(0)
+      // before switching visual states.
+      setTimeout(()=>{
+        activeIndexes.forEach(i=>{
+          diceEls[i].textContent=turnDice[forTurn][i];
+          diceEls[i].classList.remove("rolling");
+        });
 
-      // Start confirmation on the next visual frame.
-      requestAnimationFrame(()=>{
-        activeIndexes.forEach(i=>diceEls[i].classList.add("locked"));
-
-        // Audio is already decoded; play exactly with the POP.
+        // Sound slightly before POP so audio + style work don't land in one frame.
         playDiceLockInstant();
-        if(navigator.vibrate)navigator.vibrate(35);
 
-        setTimeout(()=>{
-          activeIndexes.forEach(i=>diceEls[i].classList.remove("locked"));
-          diceWrap.classList.remove("burst","cpu-rolling");
-
-          // Avoid doing the full battle UI render in the same frame as the effect end.
+        requestAnimationFrame(()=>{
           requestAnimationFrame(()=>{
-            render();
-            if(onDone)onDone();
+            activeIndexes.forEach(i=>diceEls[i].classList.add("locked"));
+
+            setTimeout(()=>{
+              activeIndexes.forEach(i=>diceEls[i].classList.remove("locked"));
+              diceWrap.classList.remove("burst","cpu-rolling");
+
+              requestAnimationFrame(()=>{
+                render();
+                if(onDone)onDone();
+              });
+            },500);
           });
-        },640);
-      });
+        });
+      },8);
     }
   },92);
 }
