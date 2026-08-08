@@ -32,7 +32,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
  <div id="pickTitle" class="turn">블루팀 · 3마리 선택</div>
  <div id="pickGrid" class="grid"></div>
  <button id="confirmPick" class="wide blue" disabled>선택 완료</button>
- <p class="notice">이미지는 온라인 포켓몬 이미지 저장소에서 불러와. 연결이 안 되면 이름만 표시될 수 있어.</p>
+ 
 </section>
 
 <section id="gameScreen" class="hidden">
@@ -90,6 +90,7 @@ function pickRender(){
 }
 $("#confirmPick").onclick=()=>{picks[selecting]=[...selected];selected=[];if(selecting===0){selecting=1;pickRender()}else start()};
 function start(){teams=picks.map(a=>a.map(i=>({...P[i],cur:P[i].hp})));$("#selectScreen").classList.add("hidden");$("#gameScreen").classList.remove("hidden");log("배틀 시작! 블루팀부터 주사위를 굴려.");render()}
+function log(t){const el=$("#log"); if(el) el.textContent=t;}
 function cur(x){return teams[x][active[x]]}
 function render(){
  let a=cur(0),b=cur(1); $("#p1name").textContent="블루팀 · "+a.n;$("#p2name").textContent="레드팀 · "+b.n;$("#p1type").textContent=a.t+" 타입";$("#p2type").textContent=b.t+" 타입";$("#p1img").src=img(a.id);$("#p2img").src=img(b.id);
