@@ -29,7 +29,7 @@ function rolledNow(){return turnRolled[turn]}
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 
 
-const diceRollAudio=new Audio("sounds/dice-roll-real-v2.mp3?v=245");
+const diceRollAudio=new Audio("sounds/dice-roll-real-v2.mp3?v=246");
 const diceLockAudio=new Audio("sounds/dice-lock-impact.wav");
 diceRollAudio.preload="auto"; diceLockAudio.preload="auto";
 function playFileSfx(audio,vol=0.8){
@@ -326,39 +326,45 @@ function lockInDice(diceEls,onDone){
 
 
 function animateDiceRoll(forTurn,onDone){
-  playFileSfx(diceRollAudio,.72);
-  const diceEls=$$(".die");
-  const diceWrap=$(".dice");
-  if(forTurn===1&&gameMode==="solo")diceWrap.classList.add("cpu-rolling");
-  diceWrap.classList.add("burst");
-  diceEls.forEach((d,i)=>{if(!turnKept[forTurn][i])d.classList.add("rolling")});
-  let ticks=0;
-  const timer=setInterval(()=>{
-    diceEls.forEach((d,i)=>{
-      if(!turnKept[forTurn][i])d.textContent=Math.floor(Math.random()*6)+1;
+  // v2.4.6: sound-led dice animation.
+  // The three dice spin together, lock together, then hold the yellow POP.
+  playFileSfx(diceRollAudio,.82);
 
-    });
-    ticks++;
-    if(ticks>=5){
+  const diceEls=$$(".die");
+  diceEls.forEach(d=>{
+    d.classList.remove("locked");
+    d.classList.add("rolling");
+  });
+
+  let tick=0;
+  const tickMs=55;
+  const spinTicks=7; // ~385 ms
+  const timer=setInterval(()=>{
+    tick++;
+    diceEls.forEach(d=>d.textContent=randDie());
+    if(tick>=spinTicks){
       clearInterval(timer);
-      turnDice[forTurn]=turnDice[forTurn].map((v,i)=>turnKept[forTurn][i]?v:Math.floor(Math.random()*6)+1);
-      turnRolled[forTurn]=true;
-      diceEls.forEach((d,i)=>d.textContent=turnDice[forTurn][i]);
-      const activeIndexes=[0,1,2].filter(i=>!turnKept[forTurn][i]);
-      activeIndexes.forEach(i=>{
-        diceEls[i].classList.remove("rolling");
-        diceEls[i].classList.add("locked");
+
+      // All three final values appear at exactly the same moment.
+      dice=roll3();
+      diceEls.forEach((d,i)=>{
+        d.textContent=dice[i];
+        d.classList.remove("rolling");
+        d.classList.add("locked");
       });
-      if(navigator.vibrate)navigator.vibrate(45);
+
+      // Impact/confirmation exactly on visual lock.
       playFileSfx(diceLockAudio,1.0);
+      if(navigator.vibrate) navigator.vibrate(55);
+
+      // Keep the confirmed yellow result readable before returning to normal.
       setTimeout(()=>{
-        activeIndexes.forEach(i=>diceEls[i].classList.remove("locked"));
-        diceWrap.classList.remove("burst","cpu-rolling");
-        render();
-        if(onDone)onDone();
-      },780);
+        diceEls.forEach(d=>d.classList.remove("locked"));
+        update();
+        if(onDone) onDone();
+      },480);
     }
-  },72);
+  },tickMs);
 }
 
 $("#roll").onclick=()=>{
