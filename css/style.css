@@ -882,3 +882,35 @@ body.main-home #soundToggle{
   .home-squirtle{width:112px;height:112px}
   .home-bulbasaur{width:117px;height:117px}
 }
+
+/* V3.0.1 - calmer home title */
+.home-kicker{display:none!important}
+.home-logo{top:47%!important}
+.home-title{
+  font-size:37px!important;
+  line-height:1.02!important;
+  letter-spacing:-2.2px!important;
+  text-shadow:0 3px 0 rgba(255,255,255,.96),0 7px 16px rgba(15,80,140,.13)!important;
+}
+.home-title span{
+  display:inline-block;
+  margin-top:4px;
+  font-size:43px;
+  color:#173b79;
+}
+.home-tagline{margin-top:9px!important;letter-spacing:1.6px!important;opacity:.74}
+
+/* V3.0.2 - restore POKÉMON wordmark, keep the layout calmer */
+.home-kicker{
+  display:inline-block!important;
+  padding:4px 13px!important;
+  border-radius:999px!important;
+  background:#2563eb!important;
+  border:3px solid #facc15!important;
+  color:#fff!important;
+  font-weight:1000!important;
+  font-size:13px!important;
+  letter-spacing:2.6px!important;
+  box-shadow:0 5px 0 #1e40af!important;
+}
+.home-title{margin-top:12px!important}
