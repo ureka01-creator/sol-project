@@ -399,7 +399,7 @@ function animateDiceRoll(forTurn,onDone){
 
   const activeIndexes=[0,1,2].filter(i=>!turnKept[forTurn][i]);
 
-  // Restart the roll animation from a known neutral state.
+  // Start one continuous roll -> confirm animation.
   activeIndexes.forEach(i=>{
     const d=diceEls[i];
     d.classList.remove("locked","rolling");
@@ -408,6 +408,7 @@ function animateDiceRoll(forTurn,onDone){
   });
 
   let ticks=0;
+  const tickMs=92;
   const timer=setInterval(()=>{
     activeIndexes.forEach(i=>{
       diceEls[i].textContent=Math.floor(Math.random()*6)+1;
@@ -422,35 +423,27 @@ function animateDiceRoll(forTurn,onDone){
       );
       turnRolled[forTurn]=true;
 
-      // Let the .64s rolling transform finish at scale(1)/rotate(0)
-      // before switching visual states.
-      setTimeout(()=>{
-        activeIndexes.forEach(i=>{
-          diceEls[i].textContent=turnDice[forTurn][i];
-          diceEls[i].classList.remove("rolling");
-        });
+      // Final numbers change while the same CSS animation is still running.
+      activeIndexes.forEach(i=>{
+        diceEls[i].textContent=turnDice[forTurn][i];
+      });
 
-        // Sound slightly before POP so audio + style work don't land in one frame.
-        playDiceLockInstant();
+      playDiceLockInstant();
+      if(navigator.vibrate)navigator.vibrate(30);
+
+      // Do not swap animation classes at confirmation.
+      // Wait for the single animation to complete.
+      setTimeout(()=>{
+        activeIndexes.forEach(i=>diceEls[i].classList.remove("rolling"));
+        diceWrap.classList.remove("burst","cpu-rolling");
 
         requestAnimationFrame(()=>{
-          requestAnimationFrame(()=>{
-            activeIndexes.forEach(i=>diceEls[i].classList.add("locked"));
-
-            setTimeout(()=>{
-              activeIndexes.forEach(i=>diceEls[i].classList.remove("locked"));
-              diceWrap.classList.remove("burst","cpu-rolling");
-
-              requestAnimationFrame(()=>{
-                render();
-                if(onDone)onDone();
-              });
-            },500);
-          });
+          render();
+          if(onDone)onDone();
         });
-      },8);
+      },500);
     }
-  },92);
+  },tickMs);
 }
 
 $("#roll").onclick=()=>{
