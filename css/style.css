@@ -610,3 +610,61 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .pick-title-blue{color:#1d4ed8!important}
 .pick-title-red{color:#b91c1c!important}
 .wide.red{background:#dc2626!important;color:#fff!important}
+
+
+/* V2.7.0 - polished solo team selector */
+.solo-team-grid{gap:14px!important}
+.solo-team-btn{
+  position:relative;
+  overflow:hidden;
+  min-height:142px!important;
+  border-width:2px!important;
+  border-radius:22px!important;
+  box-shadow:0 10px 24px rgba(15,23,42,.07)!important;
+  transition:transform .12s ease, box-shadow .12s ease!important;
+}
+.solo-team-btn:active{transform:scale(.975)}
+.solo-team-btn.blue-choice{
+  background:linear-gradient(145deg,#ffffff 0%,#eff6ff 62%,#dbeafe 100%)!important;
+  border-color:#93c5fd!important;
+}
+.solo-team-btn.red-choice{
+  background:linear-gradient(145deg,#ffffff 0%,#fff1f2 62%,#fee2e2 100%)!important;
+  border-color:#fca5a5!important;
+}
+.team-orb{display:none!important}
+.team-mark{
+  width:64px;height:64px;border-radius:18px;
+  display:grid;place-items:center;
+  transform:rotate(45deg);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 9px 18px rgba(15,23,42,.16);
+}
+.team-mark span{
+  transform:rotate(-45deg);
+  color:#fff;font-size:29px;font-weight:1000;letter-spacing:-2px;
+}
+.blue-mark{background:linear-gradient(145deg,#60a5fa,#1d4ed8)}
+.red-mark{background:linear-gradient(145deg,#fb7185,#b91c1c)}
+.solo-team-btn b{font-size:21px!important;line-height:1!important}
+.solo-team-btn small{
+  font-size:10px!important;
+  font-weight:900!important;
+  letter-spacing:1.5px!important;
+  opacity:.52;
+  margin-top:-3px;
+}
+
+/* High-res game-model balls: cleaner, less oversized */
+.diff-btn .ball-img{
+  width:104px!important;
+  height:104px!important;
+  object-fit:contain!important;
+  filter:drop-shadow(0 10px 12px rgba(15,23,42,.22))!important;
+}
+
+/* V2.9.3 - local trainer artwork */
+.solo-team-btn.trainer-choice{min-height:250px!important;padding:10px 7px 14px!important;justify-content:flex-end!important;overflow:hidden}
+.trainer-art-wrap{width:100%;height:185px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;border-radius:16px}
+.trainer-art{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
+.solo-team-btn.trainer-choice b{margin-top:7px}
+@media(max-width:430px){.solo-team-btn.trainer-choice{min-height:230px!important}.trainer-art-wrap{height:165px}}
