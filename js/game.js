@@ -29,7 +29,7 @@ function rolledNow(){return turnRolled[turn]}
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 
 
-const diceRollAudio=new Audio("sounds/dice-roll-arcade.wav");
+const diceRollAudio=new Audio("sounds/dice-roll.mp3");
 const diceLockAudio=new Audio("sounds/dice-lock-impact.wav");
 diceRollAudio.preload="auto"; diceLockAudio.preload="auto";
 function playFileSfx(audio,vol=0.8){
