@@ -493,3 +493,29 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
   white-space:nowrap;
   z-index:4;
 }
+
+
+/* V2.6.5 - kept dice follow team color */
+.die.keep.keep-blue,
+.die.confirmed.keep.keep-blue{
+  border-color:#2563eb!important;
+  outline-color:#bfdbfe!important;
+}
+.die.keep.keep-blue::before,
+.die.confirmed.keep.keep-blue::before,
+.die.keep.keep-blue::after,
+.die.confirmed.keep.keep-blue::after{
+  background:#2563eb!important;
+}
+
+.die.keep.keep-red,
+.die.confirmed.keep.keep-red{
+  border-color:#ef4444!important;
+  outline-color:#fecaca!important;
+}
+.die.keep.keep-red::before,
+.die.confirmed.keep.keep-red::before,
+.die.keep.keep-red::after,
+.die.confirmed.keep.keep-red::after{
+  background:#ef4444!important;
+}
