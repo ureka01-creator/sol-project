@@ -6,9 +6,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#111827">
 <title>포켓몬 주사위 배틀 V2.3.1</title>
-<link rel="stylesheet" href="css/style.css?v=293">
+<link rel="stylesheet" href="css/style.css?v=300">
 </head>
-<body><button id="soundToggle" class="sound-toggle" aria-label="효과음 켜기/끄기">🔊</button><div id="turnBanner" class="turn-banner"></div><div id="superText" class="super-text">효과가 굉장했다!</div><div class="app">
+<body class="main-home"><button id="soundToggle" class="sound-toggle" aria-label="효과음 켜기/끄기">🔊</button><div id="turnBanner" class="turn-banner"></div><div id="superText" class="super-text">효과가 굉장했다!</div><div class="app">
 <h1>⚡ 포켓몬 주사위 배틀</h1><div id="subtitle" class="sub">게임 모드를 선택해</div>
 <div class="top-actions">
   <button class="gray" onclick="openDex()">📘 포켓몬 도감</button>
@@ -17,12 +17,45 @@
 
 
 
-<section id="modeScreen" class="card">
- <h2 style="margin-top:0">🎮 플레이 모드</h2>
- <div class="actions">
-  <button class="skill blue" onclick="chooseMode('solo')">🤖 혼자 플레이</button>
-  <button class="skill orange" onclick="chooseMode('two')">👥 2인 플레이</button>
+<section id="modeScreen" class="home-screen">
+ <div class="home-hero">
+  <div class="home-glow home-glow-a"></div>
+  <div class="home-glow home-glow-b"></div>
+
+  <img class="home-mon home-pikachu" src="images/pikachu.png" alt="">
+  <img class="home-mon home-charmander" src="images/charmander.png" alt="">
+  <img class="home-mon home-squirtle" src="images/squirtle.png" alt="">
+  <img class="home-mon home-bulbasaur" src="images/bulbasaur.png" alt="">
+
+  <div class="home-logo">
+   <div class="home-kicker">POKÉMON</div>
+   <div class="home-title">주사위 배틀</div>
+   <div class="home-tagline">ROLL · KEEP · BATTLE!</div>
+  </div>
+
+  <div class="home-ball" aria-hidden="true">
+   <span class="home-ball-line"></span>
+   <span class="home-ball-core"></span>
+  </div>
  </div>
+
+ <div class="home-menu">
+  <button class="home-play solo" onclick="chooseMode('solo')">
+   <span class="home-play-icon">⚡</span>
+   <span><b>혼자 플레이</b><small>난이도를 선택하고 배틀</small></span>
+   <span class="home-arrow">›</span>
+  </button>
+
+  <button class="home-play two" onclick="chooseMode('two')">
+   <span class="home-play-icon">VS</span>
+   <span><b>2인 플레이</b><small>한 화면에서 번갈아 배틀</small></span>
+   <span class="home-arrow">›</span>
+  </button>
+
+  <button class="home-dex" onclick="openDex()">📘 포켓몬 도감</button>
+ </div>
+
+ <div class="home-footer">UREKA01 · POKÉMON DICE BATTLE</div>
 </section>
 
 <section id="difficultyScreen" class="card hidden">
@@ -124,7 +157,7 @@
 <script src="js/data.js?v=290"></script>
 <script src="js/state.js?v=290"></script>
 <script src="js/audio.js?v=295"></script>
-<script src="js/setup.js?v=295"></script>
+<script src="js/setup.js?v=300"></script>
 <script src="js/ui.js?v=290"></script>
 <script src="js/dice.js?v=290"></script>
 <script src="js/battle.js?v=291"></script>
