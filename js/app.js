@@ -31,6 +31,7 @@ document.addEventListener("click",(e)=>{
   const b=e.target.closest("button");
   if(!b || b.disabled)return;
   if(b.closest("#gameScreen"))return;
+  if(b.closest("#switchModal") || b.classList.contains("switch-choice"))return;
   if(b.classList.contains("pick") || b.id==="confirmPick")return;
   playCombatAudio(selectAudio,.72,.055,180);
 });
