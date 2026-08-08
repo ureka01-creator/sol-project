@@ -668,3 +668,217 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .trainer-art{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
 .solo-team-btn.trainer-choice b{margin-top:7px}
 @media(max-width:430px){.solo-team-btn.trainer-choice{min-height:230px!important}.trainer-art-wrap{height:165px}}
+
+
+/* =========================================================
+   V3.0.0 — Pokémon-style main home screen
+   ========================================================= */
+body.main-home{
+  background:
+    radial-gradient(circle at 50% 7%,rgba(255,255,255,.92),rgba(255,255,255,0) 32%),
+    linear-gradient(180deg,#87d8ff 0%,#dff6ff 47%,#f8fbff 100%);
+}
+body.main-home .app{
+  max-width:520px;
+  padding:calc(8px + env(safe-area-inset-top)) 12px calc(20px + env(safe-area-inset-bottom));
+}
+body.main-home .app>h1,
+body.main-home .app>.sub,
+body.main-home .app>.top-actions{
+  display:none;
+}
+body.main-home #soundToggle{
+  background:rgba(255,255,255,.88);
+  box-shadow:0 7px 18px rgba(15,23,42,.13);
+}
+.home-screen{
+  min-height:calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 28px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:14px;
+}
+.home-hero{
+  height:390px;
+  position:relative;
+  overflow:hidden;
+  border-radius:34px;
+  background:
+    radial-gradient(circle at 50% 30%,rgba(255,255,255,.98) 0 19%,rgba(255,255,255,.58) 36%,transparent 58%),
+    linear-gradient(155deg,#4fbdf9,#8fdcff 48%,#dbf6ff);
+  border:1px solid rgba(255,255,255,.85);
+  box-shadow:0 24px 55px rgba(15,75,120,.18),inset 0 1px 0 #fff;
+}
+.home-hero::before{
+  content:"";
+  position:absolute;
+  width:330px;height:330px;
+  border-radius:50%;
+  border:52px solid rgba(255,255,255,.22);
+  left:50%;top:49%;
+  transform:translate(-50%,-50%);
+}
+.home-hero::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:50%;
+  height:22px;
+  background:rgba(255,255,255,.18);
+  transform:translateY(-50%);
+}
+.home-glow{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(2px);
+  background:rgba(255,255,255,.32);
+}
+.home-glow-a{width:160px;height:160px;left:-55px;top:-45px}
+.home-glow-b{width:190px;height:190px;right:-75px;bottom:-75px}
+.home-logo{
+  position:absolute;
+  z-index:5;
+  left:50%;top:46%;
+  transform:translate(-50%,-50%);
+  width:88%;
+  text-align:center;
+  text-shadow:0 3px 0 #fff,0 8px 18px rgba(15,80,140,.16);
+}
+.home-kicker{
+  display:inline-block;
+  padding:4px 13px;
+  border-radius:999px;
+  background:#2563eb;
+  border:3px solid #facc15;
+  color:#fff;
+  font-weight:1000;
+  font-size:13px;
+  letter-spacing:2.6px;
+  box-shadow:0 5px 0 #1e40af;
+}
+.home-title{
+  margin-top:12px;
+  font-size:45px;
+  line-height:.95;
+  letter-spacing:-3.3px;
+  font-weight:1000;
+  color:#173b79;
+}
+.home-tagline{
+  margin-top:12px;
+  color:#52709a;
+  font-size:11px;
+  font-weight:1000;
+  letter-spacing:2.2px;
+}
+.home-mon{
+  position:absolute;
+  z-index:3;
+  object-fit:contain;
+  filter:drop-shadow(0 12px 9px rgba(27,56,92,.17));
+}
+.home-pikachu{width:137px;height:137px;left:-7px;top:4px;transform:rotate(-8deg)}
+.home-charmander{width:125px;height:125px;right:-3px;top:20px;transform:rotate(8deg)}
+.home-squirtle{width:126px;height:126px;left:5px;bottom:4px;transform:rotate(5deg)}
+.home-bulbasaur{width:132px;height:132px;right:0;bottom:0;transform:rotate(-4deg)}
+.home-ball{
+  position:absolute;
+  z-index:2;
+  width:164px;height:164px;
+  left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  border:13px solid rgba(23,59,121,.08);
+}
+.home-ball-line{
+  position:absolute;left:-13px;right:-13px;top:50%;
+  height:13px;background:rgba(23,59,121,.08);
+  transform:translateY(-50%);
+}
+.home-ball-core{
+  position:absolute;width:50px;height:50px;
+  left:50%;top:50%;
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  border:10px solid rgba(23,59,121,.08);
+  background:rgba(255,255,255,.3);
+}
+.home-menu{
+  display:grid;
+  gap:10px;
+}
+.home-play{
+  width:100%;
+  min-height:76px;
+  padding:10px 15px;
+  display:grid;
+  grid-template-columns:49px 1fr 22px;
+  align-items:center;
+  gap:12px;
+  text-align:left;
+  border-radius:22px;
+  color:#fff;
+  border:0;
+  box-shadow:0 10px 20px rgba(15,23,42,.13),inset 0 1px 0 rgba(255,255,255,.4);
+}
+.home-play.solo{background:linear-gradient(135deg,#2468e5,#438af7)}
+.home-play.two{background:linear-gradient(135deg,#ef5b44,#f47b45)}
+.home-play-icon{
+  width:49px;height:49px;
+  border-radius:16px;
+  display:grid;
+  place-items:center;
+  background:rgba(255,255,255,.18);
+  border:1px solid rgba(255,255,255,.28);
+  font-weight:1000;
+  font-size:18px;
+}
+.home-play b{display:block;font-size:20px;line-height:1.12}
+.home-play small{
+  display:block;
+  margin-top:4px;
+  color:rgba(255,255,255,.78);
+  font-size:11px;
+  font-weight:700;
+}
+.home-arrow{
+  font-size:34px;
+  font-weight:300;
+  opacity:.78;
+  text-align:right;
+}
+.home-play:active{transform:scale(.985)}
+.home-dex{
+  min-height:49px;
+  border-radius:17px;
+  background:rgba(255,255,255,.9);
+  color:#334155;
+  border:1px solid rgba(148,163,184,.25);
+  box-shadow:0 7px 18px rgba(15,23,42,.07);
+  font-weight:900;
+}
+.home-footer{
+  text-align:center;
+  font-size:9px;
+  letter-spacing:1.25px;
+  font-weight:900;
+  color:#7190aa;
+  opacity:.75;
+  margin-top:2px;
+}
+@media(max-height:760px){
+  .home-hero{height:335px}
+  .home-pikachu{width:119px;height:119px}
+  .home-charmander{width:110px;height:110px}
+  .home-squirtle{width:111px;height:111px}
+  .home-bulbasaur{width:116px;height:116px}
+  .home-title{font-size:40px}
+  .home-play{min-height:68px}
+}
+@media(max-width:390px){
+  .home-hero{height:360px;border-radius:29px}
+  .home-title{font-size:40px}
+  .home-pikachu{width:119px;height:119px}
+  .home-charmander{width:110px;height:110px}
+  .home-squirtle{width:112px;height:112px}
+  .home-bulbasaur{width:117px;height:117px}
+}
