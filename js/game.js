@@ -70,6 +70,32 @@ async function preloadDiceRollBuffer(){
   }
 }
 
+let audioWarmPromise=null;
+async function warmUpGameAudio(){
+  if(audioWarmPromise)return audioWarmPromise;
+  audioWarmPromise=(async()=>{
+    try{
+      ensureAudio();
+      if(audioCtx && audioCtx.state==="suspended") await audioCtx.resume();
+      await preloadDiceRollBuffer();
+      if(diceRollAudio){
+        const oldVol=diceRollAudio.volume;
+        diceRollAudio.volume=0;
+        try{
+          diceRollAudio.currentTime=0;
+          const p=diceRollAudio.play();
+          if(p && p.then) await p;
+          diceRollAudio.pause();
+          diceRollAudio.currentTime=0;
+        }catch(e){}
+        diceRollAudio.volume=oldVol;
+      }
+    }catch(e){}
+  })();
+  return audioWarmPromise;
+}
+
+
 function playDiceRollInstant(){
   if(!soundEnabled)return;
   const ctx=ensureAudio();
@@ -174,6 +200,7 @@ $("#soundToggle").onclick=()=>{
 
 
 function chooseMode(mode){
+  warmUpGameAudio();
  gameMode=mode;
  $("#modeScreen").classList.add("hidden");
  if(mode==="solo"){
@@ -194,6 +221,7 @@ function difficultyName(){
  return ["쉬움","보통","어려움","챔피언급"][aiDifficulty];
 }
 function chooseDifficulty(level){
+  warmUpGameAudio();
  aiDifficulty=level;
  $("#difficultyScreen").classList.add("hidden");
  $("#soloTeamScreen").classList.remove("hidden");
@@ -209,6 +237,7 @@ function backToDifficulty(){
 }
 
 function chooseSoloTeam(team){
+  warmUpGameAudio();
  playerTeam=team;
  aiTeam=1-team;
  selecting=playerTeam;
@@ -821,3 +850,5 @@ function chooseSwitch(i){
 $("#switch").onclick=openSwitchModal;
 
 
+
+document.addEventListener("pointerdown",warmUpGameAudio,{once:true,passive:true});
