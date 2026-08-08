@@ -376,7 +376,7 @@ function animateDiceRoll(forTurn,onDone){
 
     });
     ticks++;
-    if(ticks>=5){
+    if(ticks>=7){
       clearInterval(timer);
       turnDice[forTurn]=turnDice[forTurn].map((v,i)=>turnKept[forTurn][i]?v:Math.floor(Math.random()*6)+1);
       turnRolled[forTurn]=true;
