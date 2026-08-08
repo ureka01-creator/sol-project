@@ -356,3 +356,11 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
   border-color:#eab308!important;
   box-shadow:none!important;
 }
+
+
+/* V2.5.7 safety: JS clears confirmed on every unrolled turn.
+   Neutral dice always use white unless explicitly confirmed. */
+.die:not(.confirmed):not(.rolling):not(.locked){
+  background:#fff!important;
+  border-color:#dbe3ee!important;
+}
