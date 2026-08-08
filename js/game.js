@@ -384,9 +384,7 @@ function render(){
     });
   });
 
-
-  const hint=$("#keepHint");
-  if(hint) hint.classList.toggle("hidden", !rolledNow() || over || ai);
+  updateKeepHint();
 }
 
 
@@ -417,9 +415,7 @@ function renderDiceControlsOnly(){
 
   $("#switch").disabled=over||ai;
   $("#pass").disabled=over||ai;
-
-  const hint=$("#keepHint");
-  if(hint) hint.classList.toggle("hidden", !rolledNow() || over || ai);
+  updateKeepHint();
 }
 
 function lockInDice(diceEls,onDone){
@@ -437,6 +433,27 @@ function lockInDice(diceEls,onDone){
   },360);
 }
 
+
+
+function updateKeepHint(){
+  const hint=$("#keepHint");
+  if(!hint)return;
+
+  if(!rolledNow() || over || isAiTurn()){
+    hint.textContent="🎯 보관할 주사위를 눌러 선택해";
+    hint.classList.toggle("hidden", !rolledNow() || over || isAiTurn());
+    return;
+  }
+
+  const selected=turnKept[turn]
+    .map((on,i)=>on ? turnDice[turn][i] : null)
+    .filter(v=>v!=null);
+
+  hint.classList.remove("hidden");
+  hint.textContent=selected.length
+    ? `📌 보관: ${selected.join(" · ")} · 다시 누르면 해제`
+    : "🎯 보관할 주사위를 눌러 선택해";
+}
 
 function animateDiceRoll(forTurn,onDone){
   playDiceRollInstant();
