@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#111827">
-<title>포켓몬 주사위 배틀 V1.6</title>
+<title>포켓몬 주사위 배틀 V1.7</title>
 <style>
 :root{--bg:#f3f6fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#e5e7eb;--blue:#2563eb;--red:#ef4444;--green:#16a34a}
 *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;background:linear-gradient(#dff3ff,#f8fafc 45%,#eef2f7);color:var(--ink);min-height:100vh}
@@ -24,7 +24,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .log{background:#0f172a;color:#e5e7eb;border-radius:14px;padding:11px;min-height:80px;white-space:pre-line;font-size:13px;line-height:1.45;margin-top:10px}
 .turn{text-align:center;font-size:18px;font-weight:900;margin-bottom:8px}.notice{font-size:12px;color:#64748b;line-height:1.45}
 
-/* V1.6 UX */
+/* V1.7 UX */
 .turn-banner{
   position:fixed;left:50%;top:42%;transform:translate(-50%,-50%) scale(.85);
   z-index:9999;padding:18px 28px;border-radius:22px;color:#fff;font-weight:1000;
@@ -80,7 +80,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .close-btn{background:#334155;padding:10px 14px}
 
 
-/* V1.6 battle feel */
+/* V1.7 battle feel */
 @keyframes pokeHitBig{
   0%{transform:translate(0,0) scale(1)}
   12%{transform:translate(-18px,-3px) rotate(-4deg) scale(1.05)}
@@ -130,7 +130,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .switch-choice .hpmini{font-size:12px;font-weight:800}
 
 
-/* V1.6 */
+/* V1.7 */
 .difficulty-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .diff-btn{background:#f8fafc;color:#172033;border:2px solid #e5e7eb;min-height:105px}
 .diff-btn b{display:block;font-size:17px;margin-top:6px}.diff-btn small{display:block;color:#64748b;margin-top:3px}
@@ -150,7 +150,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 }
 .die.rolling{animation:diceRollXL .9s cubic-bezier(.15,.8,.2,1)!important;z-index:20;box-shadow:0 22px 45px #2563eb66!important}
 .dice{position:relative;min-height:82px;align-items:center}
-@keyframes diceAreaPulse{0%{transform:scale(1)}35%{transform:scale(1.12)}70%{transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes diceAreaPulse{0%{transform:scale(1)}45%{transform:scale(1.06)}100%{transform:scale(1)}}
 .dice.burst{animation:diceAreaPulse .9s ease}
 
 .victory-overlay{position:fixed;inset:0;z-index:12000;background:#0f172ae8;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -180,6 +180,49 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 }
 .die{position:relative}
 @keyframes lockCheck{0%{opacity:0;transform:scale(.2)}60%{opacity:1;transform:scale(1.25)}100%{transform:scale(1)}}
+
+
+/* V1.7 */
+@keyframes diceRollFast{
+  0%{transform:scale(1) rotate(0)}
+  30%{transform:scale(1.48) rotate(-22deg)}
+  60%{transform:scale(1.58) rotate(24deg)}
+  100%{transform:scale(1.1) rotate(-8deg)}
+}
+.die.rolling{
+  animation:diceRollFast .46s linear!important;
+  z-index:20;
+  box-shadow:0 16px 34px #2563eb55!important;
+}
+@keyframes diceLockTogether{
+  0%{transform:scale(1.1)}
+  38%{transform:scale(1.48);box-shadow:0 0 0 8px #facc154c,0 18px 35px #0003}
+  68%{transform:scale(.92)}
+  100%{transform:scale(1);box-shadow:0 0 0 3px #22c55e55,0 7px 18px #0002}
+}
+.die.locked{animation:diceLockTogether .32s cubic-bezier(.18,.9,.2,1)!important;border-color:#22c55e;background:#f0fdf4}
+.die.locked::after{content:"✓";position:absolute;right:-8px;top:-11px;width:24px;height:24px;border-radius:50%;background:#16a34a;color:#fff;font-size:15px;display:grid;place-items:center;border:2px solid #fff}
+
+.team-panels{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.team-panel{border-radius:16px;padding:10px;background:#f8fafc;border:2px solid #e5e7eb}
+.team-panel.blue-team{border-color:#93c5fd;background:#eff6ff}
+.team-panel.red-team{border-color:#fca5a5;background:#fff1f2}
+.team-title{font-size:14px;font-weight:1000;margin-bottom:8px}
+.team-mon{display:grid;grid-template-columns:48px 1fr;gap:8px;align-items:center;padding:7px;background:#fff;border-radius:12px;margin-top:7px;border:2px solid transparent;position:relative}
+.team-mon.active-mon{border-color:#22c55e;box-shadow:0 0 0 3px #22c55e18}
+.team-mon.fainted-mon{opacity:.38;filter:grayscale(1)}
+.team-mon img{width:46px;height:46px;object-fit:contain}
+.team-mon-name{font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:space-between;gap:4px}
+.team-mon-type{font-size:10px;color:#64748b;margin:2px 0 4px}
+.team-hpbar{height:7px;background:#e5e7eb;border-radius:999px;overflow:hidden}
+.team-hpfill{height:100%;background:#22c55e;border-radius:999px}
+.team-hptext{font-size:9px;color:#475569;margin-top:3px}
+.active-tag{font-size:9px;padding:2px 5px;border-radius:999px;background:#16a34a;color:#fff;white-space:nowrap}
+.fainted-tag{font-size:9px;padding:2px 5px;border-radius:999px;background:#64748b;color:#fff;white-space:nowrap}
+@media(max-width:520px){
+  .team-panels{grid-template-columns:1fr}
+  .team-mon{grid-template-columns:44px 1fr}
+}
 
 </style></head>
 <body><div id="turnBanner" class="turn-banner"></div><div id="superText" class="super-text">효과가 굉장했다!</div><div class="app">
@@ -243,7 +286,11 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
   <div id="log" class="log"></div>
  </div>
 
- <div class="card"><b>팀 상태</b><div id="teams" class="teams" style="margin-top:8px"></div><button class="wide" onclick="location.reload()">처음부터</button></div>
+ <div class="card">
+  <b>팀 상태</b>
+  <div id="teams" class="team-panels"></div>
+  <button class="wide" onclick="location.reload()">처음부터</button>
+ </div>
 </section>
 </div>
 
@@ -417,7 +464,26 @@ function render(){
  $("#turnText").textContent=(turn===0?"🔵 블루팀":(gameMode==="solo"?"🤖 컴퓨터":"🔴 레드팀"))+" 차례"; updateTurnUX();
  let me=cur(turn);$("#skill1").innerHTML=`${me.s1[0]} · ${me.s1[1]}<small>${me.s1[3]}</small>`;$("#skill2").innerHTML=`${me.s2[0]} · ${me.s2[1]}<small>${me.s2[3]}</small>`;
  $$(".die").forEach((d,i)=>{d.textContent=diceNow()[i]??"?";d.classList.toggle("keep",keptNow()[i])});
- $("#teams").innerHTML=teams.map((tm,x)=>tm.map((p,i)=>`<span class="chip ${p.cur<=0?"dead":""}">${x?(gameMode==="solo"?"CPU":"레드"):"블루"} ${i===active[x]?"▶":""}${p.n} ${p.cur}</span>`).join("")).join("");
+ $("#teams").innerHTML=teams.map((tm,x)=>{
+   const teamName=x===0?"🔵 블루팀":(gameMode==="solo"?"🤖 컴퓨터":"🔴 레드팀");
+   return `<div class="team-panel ${x===0?"blue-team":"red-team"}">
+     <div class="team-title">${teamName}</div>
+     ${tm.map((p,i)=>{
+       const pct=Math.max(0,p.cur/p.hp*100);
+       const activeNow=i===active[x]&&p.cur>0;
+       const fainted=p.cur<=0;
+       return `<div class="team-mon ${activeNow?"active-mon":""} ${fainted?"fainted-mon":""}">
+         <img src="${img(p.id)}" alt="${p.n}">
+         <div>
+           <div class="team-mon-name"><span>${p.n}</span>${activeNow?'<span class="active-tag">출전 중</span>':(fainted?'<span class="fainted-tag">기절</span>':'')}</div>
+           <div class="team-mon-type">${p.t} 타입</div>
+           <div class="team-hpbar"><div class="team-hpfill" style="width:${pct}%"></div></div>
+           <div class="team-hptext">HP ${p.cur} / ${p.hp}</div>
+         </div>
+       </div>`;
+     }).join("")}
+   </div>`;
+ }).join("");
  const ai=isAiTurn();
  $("#roll").disabled=rolledNow()||over||ai;
  const s1ok=rolledNow()&&valid(me.s1), s2ok=rolledNow()&&valid(me.s2);
@@ -427,19 +493,19 @@ function render(){
  $("#switch").disabled=over||ai;$("#pass").disabled=over||ai;
 }
 
-function lockInDice(diceEls, onDone){
+function lockInDice(diceEls,onDone){
   const activeIndexes=[0,1,2].filter(i=>!keptNow()[i]);
-  if(!activeIndexes.length){ if(onDone)onDone(); return; }
-  activeIndexes.forEach((idx,order)=>{
-    setTimeout(()=>{
-      const d=diceEls[idx];
-      d.classList.remove("rolling");
-      d.classList.add("locked");
-      if(navigator.vibrate) navigator.vibrate(35);
-      setTimeout(()=>d.classList.remove("locked"),520);
-      if(order===activeIndexes.length-1 && onDone)setTimeout(onDone,120);
-    }, order*180);
+  if(!activeIndexes.length){if(onDone)onDone();return;}
+  activeIndexes.forEach(idx=>{
+    const d=diceEls[idx];
+    d.classList.remove("rolling");
+    d.classList.add("locked");
   });
+  if(navigator.vibrate)navigator.vibrate(45);
+  setTimeout(()=>{
+    activeIndexes.forEach(idx=>diceEls[idx].classList.remove("locked"));
+    if(onDone)onDone();
+  },360);
 }
 
 $("#roll").onclick=()=>{
@@ -450,7 +516,7 @@ $("#roll").onclick=()=>{
   const timer=setInterval(()=>{
     diceEls.forEach((d,i)=>{if(!keptNow()[i])d.textContent=Math.floor(Math.random()*6)+1});
     ticks++;
-    if(ticks>=11){
+    if(ticks>=6){
       clearInterval(timer);
       turnDice[turn]=diceNow().map((v,i)=>keptNow()[i]?v:Math.floor(Math.random()*6)+1);
       turnRolled[turn]=true;
@@ -461,7 +527,7 @@ $("#roll").onclick=()=>{
         render();
       });
     }
-  },75);
+  },70);
 };
 $$(".die").forEach(d=>d.onclick=()=>{if(!rolledNow())return;let i=+d.dataset.i;turnKept[turn][i]=!turnKept[turn][i];render()});
 function valid(skill){
