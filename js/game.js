@@ -1,4 +1,5 @@
 // Pokémon Dice Battle - game logic / AI / audio
+// v2.4.2: dice WAVs play only during actual dice animation
 // Assets: ../images and ../sounds (paths in browser are relative to index.html)
 
 const P=[
@@ -106,8 +107,8 @@ $("#soundToggle").onclick=()=>{
   $("#soundToggle").textContent=soundEnabled?"🔊":"🔇";
   if(soundEnabled){ensureAudio();tone(660,.06,"sine",.05)}
 };
-document.addEventListener("touchstart",()=>ensureAudio(),{once:true,passive:true});
-document.addEventListener("click",()=>ensureAudio(),{once:true});
+unlockFileAudio();},{once:true,passive:true});
+unlockFileAudio();},{once:true});
 
 
 function chooseMode(mode){
