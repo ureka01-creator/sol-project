@@ -1046,3 +1046,82 @@ body.main-home .home-footer.menu-reveal{
   body.main-home .home-hero{flex-basis:335px}
   body.main-home .home-menu{min-height:244px}
 }
+
+/* V3.0.7 - stable refresh/title layout, TAP below artwork */
+body.main-home .home-screen{
+  justify-content:flex-start!important;
+}
+body.main-home .home-hero{
+  flex:0 0 390px!important;
+  min-height:390px!important;
+  max-height:390px!important;
+  transform:none!important;
+  animation:none!important;
+}
+.home-control-area{
+  position:relative;
+  min-height:274px;
+  margin-top:14px;
+  flex:0 0 274px;
+}
+.home-control-area .home-menu{
+  position:absolute;
+  inset:0;
+  margin:0!important;
+  min-height:274px!important;
+}
+.hero-tap-start{
+  position:absolute!important;
+  z-index:20;
+  left:50%!important;
+  top:28px!important;
+  bottom:auto!important;
+  transform:translateX(-50%)!important;
+  width:calc(100% - 44px)!important;
+  min-width:0!important;
+  max-width:360px;
+  min-height:64px;
+  padding:12px 18px 11px!important;
+  border:0;
+  border-radius:20px!important;
+  background:rgba(255,255,255,.92)!important;
+  box-shadow:0 9px 24px rgba(15,60,100,.11)!important;
+  animation:none!important;
+  transition:none!important;
+}
+.hero-tap-start b{
+  font-size:16px!important;
+}
+.hero-tap-start small{
+  margin-top:4px!important;
+}
+.home-menu.menu-reveal,
+.home-footer.menu-reveal{
+  animation:none!important;
+  transform:none!important;
+}
+.home-mon,
+.home-logo,
+.home-ball,
+.home-hero{
+  transition:none!important;
+}
+@media(max-height:850px){
+  body.main-home .home-hero{
+    flex-basis:370px!important;
+    min-height:370px!important;
+    max-height:370px!important;
+  }
+  .home-control-area{min-height:258px;flex-basis:258px}
+  .home-control-area .home-menu{min-height:258px!important}
+}
+@media(max-height:760px){
+  body.main-home .home-hero{
+    flex-basis:335px!important;
+    min-height:335px!important;
+    max-height:335px!important;
+  }
+  .home-control-area{min-height:236px;flex-basis:236px}
+  .home-control-area .home-menu{min-height:236px!important}
+  .hero-tap-start{top:20px!important}
+}
