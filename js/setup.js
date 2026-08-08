@@ -132,8 +132,10 @@ function pickRender(){
 
  $$(".pick").forEach(b=>b.onclick=()=>{
    const i=+b.dataset.p;
-   if(selected.includes(i))selected=selected.filter(x=>x!==i);
+   const before=selected.length;
+    if(selected.includes(i))selected=selected.filter(x=>x!==i);
    else if(selected.length<3)selected.push(i);
+    if(selected.length!==before)playCombatAudio(selectAudio,.72,.055,180);
    pickRender();
  });
  $("#confirmPick").disabled=selected.length!==3;

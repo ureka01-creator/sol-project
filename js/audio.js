@@ -7,16 +7,18 @@ const attackHitAudio=new Audio("sounds/attack-hit.mp3?v=276");
 const criticalHitAudio=new Audio("sounds/critical-hit.mp3?v=276");
 const faintAudio=new Audio("sounds/faint.mp3?v=276");
 const gameOverAudio=new Audio("sounds/game-over.mp3?v=276");
-const switchAudio=new Audio("sounds/switch.mp3?v=276");
+const switchAudio=new Audio("sounds/switch.wav?v=294");
+const selectAudio=new Audio("sounds/select.wav?v=295");
 const victoryAudio=new Audio("sounds/victory.mp3?v=291");
-[attackHitAudio,criticalHitAudio,faintAudio,gameOverAudio,switchAudio,victoryAudio].forEach(a=>a.preload="auto");
+[attackHitAudio,criticalHitAudio,faintAudio,gameOverAudio,switchAudio,selectAudio,victoryAudio].forEach(a=>a.preload="auto");
 
 const combatAudioUrls=new Map([
   [attackHitAudio,"sounds/attack-hit.mp3?v=281"],
   [criticalHitAudio,"sounds/critical-hit.mp3?v=281"],
   [faintAudio,"sounds/faint.mp3?v=281"],
   [gameOverAudio,"sounds/game-over.mp3?v=281"],
-  [switchAudio,"sounds/switch.mp3?v=281"],
+  [switchAudio,"sounds/switch.wav?v=294"],
+  [selectAudio,"sounds/select.wav?v=295"],
   [victoryAudio,"sounds/victory.mp3?v=291"]
 ]);
 const combatAudioBuffers=new Map();
