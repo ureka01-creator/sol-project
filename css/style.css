@@ -291,3 +291,32 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
   filter:none!important;
 }
 .die.locked::after{display:none!important}
+
+
+/* V2.5.2 - seamless roll -> lock handoff */
+@keyframes diceRollSeamless{
+  0%   { transform:translateZ(0) scale(1) rotate(0deg); }
+  18%  { transform:translateZ(0) scale(1.22) rotate(-18deg); }
+  38%  { transform:translateZ(0) scale(1.34) rotate(20deg); }
+  58%  { transform:translateZ(0) scale(1.25) rotate(-15deg); }
+  78%  { transform:translateZ(0) scale(1.16) rotate(10deg); }
+  100% { transform:translateZ(0) scale(1) rotate(0deg); }
+}
+.die.rolling{
+  animation:diceRollSeamless .64s linear!important;
+  transform-origin:center center;
+  will-change:transform;
+}
+@keyframes diceConfirmPop{
+  0%   { transform:translateZ(0) scale(1); }
+  32%  { transform:translateZ(0) scale(1.52); }
+  66%  { transform:translateZ(0) scale(1.28); }
+  100% { transform:translateZ(0) scale(1); }
+}
+.die.locked{
+  animation:diceConfirmPop .48s cubic-bezier(.2,.8,.2,1)!important;
+  background:#fde047!important;
+  border-color:#eab308!important;
+  box-shadow:none!important;
+  filter:none!important;
+}
