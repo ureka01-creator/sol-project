@@ -373,6 +373,32 @@ function render(){
  $("#switch").disabled=over||ai;$("#pass").disabled=over||ai;
 }
 
+
+function renderDiceControlsOnly(){
+  const me=cur(turn);
+  const ai=isAiTurn();
+
+  $$(".die").forEach((d,i)=>{
+    d.textContent=diceNow()[i]??"?";
+    d.classList.toggle("keep",keptNow()[i]);
+  });
+
+  const s1ok=rolledNow()&&valid(me.s1);
+  const s2ok=rolledNow()&&valid(me.s2);
+
+  $("#roll").disabled=rolledNow()||over||ai;
+  $("#skill1").disabled=!s1ok||over||ai;
+  $("#skill2").disabled=!s2ok||over||ai;
+
+  $("#skill1").classList.toggle("unavailable",!s1ok);
+  $("#skill2").classList.toggle("unavailable",!s2ok);
+  $("#skill1").classList.toggle("available",s1ok);
+  $("#skill2").classList.toggle("available",s2ok);
+
+  $("#switch").disabled=over||ai;
+  $("#pass").disabled=over||ai;
+}
+
 function lockInDice(diceEls,onDone){
   const activeIndexes=[0,1,2].filter(i=>!keptNow()[i]);
   if(!activeIndexes.length){if(onDone)onDone();return;}
@@ -438,7 +464,9 @@ function animateDiceRoll(forTurn,onDone){
         diceWrap.classList.remove("burst","cpu-rolling");
 
         requestAnimationFrame(()=>{
-          render();
+          // Dice roll changes only dice/control state.
+          // Avoid rebuilding Pokémon cards/team panels here.
+          renderDiceControlsOnly();
           if(onDone)onDone();
         });
       },500);
