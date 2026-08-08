@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>포켓몬 주사위 배틀</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    background: linear-gradient(180deg, #dff4ff 0%, #f9fbff 55%, #eef2f7 100%);
+    color: #172033;
+    min-height: 100vh;
+  }
+  .app {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 16px 14px 40px;
+  }
+  h1 {
+    font-size: 28px;
+    margin: 8px 0 2px;
+    text-align: center;
+  }
+  .sub {
+    text-align: center;
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+  .arena {
+    display: grid;
+    grid-template-columns: 1fr 70px 1fr;
+    gap: 10px;
+    align-items: center;
+  }
+  .pokemon {
+    background: rgba(255,255,255,.92);
+    border-radius: 20px;
+    padding: 14px;
+    box-shadow: 0 10px 30px rgba(15,23,42,.08);
+    min-height: 215px;
+  }
+  .pokemon.enemy { text-align: right; }
+  .poke-emoji {
+    font-size: 66px;
+    line-height: 1;
+    margin: 8px 0;
+  }
+  .name {
+    font-weight: 800;
+    font-size: 20px;
+  }
+  .type {
+    font-size: 12px;
+    color: #64748b;
+  }
+  .hpbar {
+    width: 100%;
+    height: 14px;
+    border-radius: 999px;
+    background: #e5e7eb;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .hpfill {
+    height: 100%;
+    background: #22c55e;
+    transition: width .35s ease;
+  }
+  .hptext {
+    font-size: 13px;
+    margin-top: 5px;
+    color: #475569;
+  }
+  .vs {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 900;
+    color: #94a3b8;
+  }
+  .panel {
+    background: rgba(255,255,255,.94);
+    border-radius: 20px;
+    margin-top: 14px;
+    padding: 14px;
+    box-shadow: 0 10px 30px rgba(15,23,42,.08);
+  }
+  .dice-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 10px 0 12px;
+  }
+  .die {
+    width: 70px;
+    height: 70px;
+    border-radius: 16px;
+    background: #fff;
+    border: 2px solid #dbe4ef;
+    display: grid;
+    place-items: center;
+    font-size: 34px;
+    font-weight: 900;
+    box-shadow: 0 6px 14px rgba(15,23,42,.08);
+  }
+  .actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  button {
+    appearance: none;
+    border: 0;
+    border-radius: 14px;
+    padding: 13px 12px;
+    font-weight: 800;
+    font-size: 15px;
+    background: #172033;
+    color: white;
+    cursor: pointer;
+  }
+  button.secondary { background: #475569; }
+  button.green { background: #16a34a; }
+  button.orange { background: #ea580c; }
+  button:disabled {
+    opacity: .42;
+    cursor: not-allowed;
+  }
+  .log {
+    margin-top: 10px;
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 12px;
+    border-radius: 14px;
+    min-height: 110px;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-line;
+  }
+  .team {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    background: #f1f5f9;
+    border-radius: 999px;
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+  .chip.fainted {
+    opacity: .35;
+    text-decoration: line-through;
+  }
+  .rule {
+    font-size: 13px;
+    color: #475569;
+    line-height: 1.5;
+    margin-top: 8px;
+  }
+  @media (max-width: 560px) {
+    .arena { grid-template-columns: 1fr 42px 1fr; }
+    .pokemon { padding: 10px; min-height: 190px; }
+    .poke-emoji { font-size: 54px; }
+    .die { width: 62px; height: 62px; }
+    h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>⚡ 포켓몬 주사위 배틀</h1>
+  <div class="sub">아빠 vs 한솔 · 3마리 팀전</div>
+
+  <div class="arena">
+    <div class="pokemon">
+      <div class="name" id="playerName"></div>
+      <div class="type" id="playerType"></div>
+      <div class="poke-emoji" id="playerEmoji"></div>
+      <div class="hpbar"><div class="hpfill" id="playerHpFill"></div></div>
+      <div class="hptext" id="playerHpText"></div>
+    </div>
+
+    <div class="vs">VS</div>
+
+    <div class="pokemon enemy">
+      <div class="name" id="enemyName"></div>
+      <div class="type" id="enemyType"></div>
+      <div class="poke-emoji" id="enemyEmoji"></div>
+      <div class="hpbar"><div class="hpfill" id="enemyHpFill"></div></div>
+      <div class="hptext" id="enemyHpText"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <strong>내 팀</strong>
+    <div class="team" id="playerTeam"></div>
+    <strong style="display:block;margin-top:10px;">상대 팀</strong>
+    <div class="team" id="enemyTeam"></div>
+  </div>
+
+  <div class="panel">
+    <strong>🎲 이번 턴 주사위</strong>
+    <div class="dice-row">
+      <div class="die" id="d1">?</div>
+      <div class="die" id="d2">?</div>
+      <div class="die" id="d3">?</div>
+    </div>
+
+    <div class="actions">
+      <button id="rollBtn" onclick="rollDice()">주사위 굴리기</button>
+      <button class="secondary" id="attackBtn" onclick="basicAttack()" disabled>기본 공격</button>
+      <button class="orange" id="skillBtn" onclick="specialAttack()" disabled>필살기</button>
+      <button class="green" id="healBtn" onclick="heal()" disabled>회복</button>
+    </div>
+
+    <div class="rule">
+      기본 공격: 주사위 합 ÷ 2 만큼 피해<br>
+      필살기: 5 또는 6이 2개 이상이면 강력한 공격<br>
+      회복: 짝수가 2개 이상이면 HP 회복
+    </div>
+
+    <div class="log" id="log">게임 시작! 주사위를 굴려봐.</div>
+  </div>
+
+  <div class="panel">
+    <button style="width:100%" onclick="resetGame()">🔄 처음부터 다시</button>
+  </div>
+</div>
+
+<script>
+const pokemonPool = [
+  { name: "피카츄", emoji: "⚡🐭", type: "전기", maxHp: 48, power: 1.0 },
+  { name: "리자몽", emoji: "🔥🐲", type: "불꽃", maxHp: 58, power: 1.15 },
+  { name: "꼬부기", emoji: "💧🐢", type: "물", maxHp: 54, power: 0.95 },
+  { name: "이상해씨", emoji: "🌿🐸", type: "풀", maxHp: 56, power: 0.9 },
+  { name: "팬텀", emoji: "👻😈", type: "고스트", maxHp: 50, power: 1.1 },
+  { name: "잠만보", emoji: "💤🐻", type: "노말", maxHp: 68, power: 0.82 }
+];
+
+let playerTeam, enemyTeam, playerIndex, enemyIndex, dice, rolled, gameOver;
+
+function makeTeam(indices) {
+  return indices.map(i => ({ ...pokemonPool[i], hp: pokemonPool[i].maxHp }));
+}
+
+function resetGame() {
+  playerTeam = makeTeam([0,1,2]);
+  enemyTeam = makeTeam([3,4,5]);
+  playerIndex = 0;
+  enemyIndex = 0;
+  dice = [0,0,0];
+  rolled = false;
+  gameOver = false;
+  setDice(["?","?","?"]);
+  log("게임 시작! 주사위를 굴려봐.");
+  setButtons(false);
+  render();
+}
+
+function currentPlayer(){ return playerTeam[playerIndex]; }
+function currentEnemy(){ return enemyTeam[enemyIndex]; }
+
+function rollDice() {
+  if (gameOver || rolled) return;
+  dice = [1,2,3].map(() => Math.floor(Math.random()*6)+1);
+  setDice(dice);
+  rolled = true;
+  setButtons(true);
+  log(`🎲 ${dice.join(", ")} 이 나왔어!\n어떤 행동을 할까?`);
+}
+
+function basicAttack() {
+  if (!rolled || gameOver) return;
+  const p = currentPlayer();
+  const dmg = Math.max(4, Math.round((dice.reduce((a,b)=>a+b,0)/2) * p.power));
+  hitEnemy(dmg, `${p.name}의 기본 공격!`);
+}
+
+function specialAttack() {
+  if (!rolled || gameOver) return;
+  const high = dice.filter(d => d >= 5).length;
+  if (high < 2) {
+    log("❌ 필살기는 5 또는 6이 2개 이상 있어야 해!");
+    return;
+  }
+  const p = currentPlayer();
+  const dmg = Math.round((18 + dice.reduce((a,b)=>a+b,0)) * p.power);
+  hitEnemy(dmg, `💥 ${p.name}의 필살기!!`);
+}
+
+function heal() {
+  if (!rolled || gameOver) return;
+  const evens = dice.filter(d => d % 2 === 0).length;
+  if (evens < 2) {
+    log("❌ 회복은 짝수 주사위가 2개 이상 있어야 해!");
+    return;
+  }
+  const p = currentPlayer();
+  const amount = 14 + evens * 2;
+  const before = p.hp;
+  p.hp = Math.min(p.maxHp, p.hp + amount);
+  const healed = p.hp - before;
+  log(`💚 ${p.name}이(가) HP ${healed} 회복!`);
+  endPlayerTurn();
+}
+
+function hitEnemy(dmg, text) {
+  const e = currentEnemy();
+  e.hp = Math.max(0, e.hp - dmg);
+  log(`${text}\n${e.name}에게 ${dmg} 피해!`);
+  render();
+
+  if (e.hp <= 0) {
+    setTimeout(() => {
+      log(`✨ ${e.name}을(를) 쓰러뜨렸다!`);
+      if (!switchEnemy()) {
+        gameOver = true;
+        log("🏆 승리! 상대 포켓몬을 전부 쓰러뜨렸어!");
+        setButtons(false);
+        document.getElementById("rollBtn").disabled = true;
+        render();
+      } else {
+        endPlayerTurn();
+      }
+    }, 450);
+  } else {
+    endPlayerTurn();
+  }
+}
+
+function endPlayerTurn() {
+  rolled = false;
+  setButtons(false);
+  render();
+  setTimeout(enemyTurn, 650);
+}
+
+function enemyTurn() {
+  if (gameOver) return;
+  const e = currentEnemy();
+  const edice = [1,2,3].map(() => Math.floor(Math.random()*6)+1);
+  const high = edice.filter(d => d >= 5).length;
+  const evens = edice.filter(d => d % 2 === 0).length;
+
+  let text = `🤖 상대 주사위: ${edice.join(", ")}\n`;
+  if (e.hp <= e.maxHp * 0.35 && evens >= 2) {
+    const amount = 14 + evens*2;
+    const before = e.hp;
+    e.hp = Math.min(e.maxHp, e.hp + amount);
+    text += `💚 ${e.name}이(가) ${e.hp-before} 회복!`;
+  } else {
+    let dmg;
+    if (high >= 2) {
+      dmg = Math.round((18 + edice.reduce((a,b)=>a+b,0)) * e.power);
+      text += `💥 ${e.name}의 필살기! ${dmg} 피해!`;
+    } else {
+      dmg = Math.max(4, Math.round((edice.reduce((a,b)=>a+b,0)/2) * e.power));
+      text += `${e.name}의 공격! ${dmg} 피해!`;
+    }
+    currentPlayer().hp = Math.max(0, currentPlayer().hp - dmg);
+  }
+
+  log(text);
+  render();
+
+  if (currentPlayer().hp <= 0) {
+    setTimeout(() => {
+      log(`😵 ${currentPlayer().name}이(가) 쓰러졌다!`);
+      if (!switchPlayer()) {
+        gameOver = true;
+        log("💀 패배... 다음 판에 다시 도전!");
+        setButtons(false);
+        document.getElementById("rollBtn").disabled = true;
+        render();
+      } else {
+        document.getElementById("rollBtn").disabled = false;
+        log(`👉 ${currentPlayer().name} 출전! 주사위를 굴려봐.`);
+        render();
+      }
+    }, 450);
+  } else {
+    document.getElementById("rollBtn").disabled = false;
+    log(text + "\n\n👉 이제 네 차례야!");
+  }
+}
+
+function switchEnemy() {
+  for (let i = enemyIndex+1; i < enemyTeam.length; i++) {
+    if (enemyTeam[i].hp > 0) {
+      enemyIndex = i;
+      log(`🤖 상대가 ${currentEnemy().name}을(를) 내보냈어!`);
+      render();
+      return true;
+    }
+  }
+  return false;
+}
+
+function switchPlayer() {
+  for (let i = playerIndex+1; i < playerTeam.length; i++) {
+    if (playerTeam[i].hp > 0) {
+      playerIndex = i;
+      render();
+      return true;
+    }
+  }
+  return false;
+}
+
+function setButtons(canAct) {
+  document.getElementById("attackBtn").disabled = !canAct;
+  document.getElementById("skillBtn").disabled = !canAct;
+  document.getElementById("healBtn").disabled = !canAct;
+  document.getElementById("rollBtn").disabled = gameOver || rolled;
+}
+
+function setDice(values) {
+  ["d1","d2","d3"].forEach((id,i) => document.getElementById(id).textContent = values[i]);
+}
+
+function render() {
+  const p = currentPlayer();
+  const e = currentEnemy();
+
+  document.getElementById("playerName").textContent = p.name;
+  document.getElementById("playerType").textContent = `${p.type} 타입`;
+  document.getElementById("playerEmoji").textContent = p.emoji;
+  document.getElementById("playerHpText").textContent = `HP ${p.hp} / ${p.maxHp}`;
+  document.getElementById("playerHpFill").style.width = `${p.hp/p.maxHp*100}%`;
+
+  document.getElementById("enemyName").textContent = e.name;
+  document.getElementById("enemyType").textContent = `${e.type} 타입`;
+  document.getElementById("enemyEmoji").textContent = e.emoji;
+  document.getElementById("enemyHpText").textContent = `HP ${e.hp} / ${e.maxHp}`;
+  document.getElementById("enemyHpFill").style.width = `${e.hp/e.maxHp*100}%`;
+
+  document.getElementById("playerTeam").innerHTML = playerTeam.map((x,i) =>
+    `<span class="chip ${x.hp<=0?'fainted':''}">${i===playerIndex?'▶ ':''}${x.name} ${x.hp}/${x.maxHp}</span>`
+  ).join("");
+
+  document.getElementById("enemyTeam").innerHTML = enemyTeam.map((x,i) =>
+    `<span class="chip ${x.hp<=0?'fainted':''}">${i===enemyIndex?'▶ ':''}${x.name} ${x.hp}/${x.maxHp}</span>`
+  ).join("");
+}
+
+function log(t) {
+  document.getElementById("log").textContent = t;
+}
+
+resetGame();
+</script>
+</body>
+</html>
