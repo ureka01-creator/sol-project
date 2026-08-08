@@ -29,7 +29,7 @@ function rolledNow(){return turnRolled[turn]}
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 
 
-const diceRollAudio=new Audio("sounds/dice-roll-real-v3.mp3?v=250");
+const diceRollAudio=new Audio("sounds/dice-roll-real-v3.mp3?v=282");
 const diceLockAudio=new Audio("sounds/dice-lock-impact.wav");
 diceRollAudio.preload="auto"; diceLockAudio.preload="auto";
 
@@ -224,53 +224,34 @@ async function warmUpGameAudio(){
 
 function playDiceRollInstant(){
   if(!soundEnabled)return;
-  duckBgm(.045,700);
-
-  const fallback=()=>{
-    try{
-      diceRollAudio.pause();
-      diceRollAudio.currentTime=0;
-      diceRollAudio.volume=.82;
-      const p=diceRollAudio.play();
-      if(p&&p.catch)p.catch(()=>{});
-    }catch(e){}
-  };
-
-  const ctx=ensureAudio();
-  if(!ctx){
-    fallback();
-    return;
-  }
-
-  const playBuffer=()=>{
-    if(!diceRollBuffer){
-      fallback();
-      return;
+  duckBgm(.035,760);
+  try{
+    diceRollAudio.pause();
+    diceRollAudio.currentTime=0;
+    diceRollAudio.volume=1.0;
+    const p=diceRollAudio.play();
+    if(p&&p.catch){
+      p.catch(()=>{
+        // WebAudio fallback only if direct media playback fails.
+        try{
+          const ctx=ensureAudio();
+          if(ctx && diceRollBuffer){
+            const src=ctx.createBufferSource();
+            const gain=ctx.createGain();
+            src.buffer=diceRollBuffer;
+            gain.gain.value=1.0;
+            src.connect(gain);
+            gain.connect(ctx.destination);
+            if(ctx.state==="suspended"){
+              ctx.resume().then(()=>src.start(0)).catch(()=>{});
+            }else{
+              src.start(0);
+            }
+          }
+        }catch(e){}
+      });
     }
-    try{
-      const src=ctx.createBufferSource();
-      const gain=ctx.createGain();
-      src.buffer=diceRollBuffer;
-      gain.gain.value=.82;
-      src.connect(gain);
-      gain.connect(ctx.destination);
-      src.start(0);
-    }catch(e){
-      fallback();
-    }
-  };
-
-  // iOS Safari can silently drop BufferSource.start() while resume is pending.
-  if(ctx.state==="suspended"){
-    const p=ctx.resume();
-    if(p&&p.then){
-      p.then(playBuffer).catch(fallback);
-    }else{
-      setTimeout(playBuffer,0);
-    }
-  }else{
-    playBuffer();
-  }
+  }catch(e){}
 }
 
 // Loading/decoding does not produce sound.
