@@ -45,6 +45,43 @@ function playFileSfx(audio,vol=0.8){
 
 
 let audioCtx=null;
+
+let diceRollBuffer=null;
+
+async function preloadDiceRollBuffer(){
+  try{
+    const response=await fetch("sounds/dice-roll-real-v2.mp3?v=248",{cache:"force-cache"});
+    const arr=await response.arrayBuffer();
+    const ctx=ensureAudio();
+    if(!ctx)return;
+    diceRollBuffer=await ctx.decodeAudioData(arr.slice(0));
+  }catch(e){
+    diceRollBuffer=null;
+  }
+}
+
+function playDiceRollInstant(){
+  if(!soundEnabled)return;
+  const ctx=ensureAudio();
+  if(!ctx)return;
+
+  if(diceRollBuffer){
+    const src=ctx.createBufferSource();
+    const gain=ctx.createGain();
+    src.buffer=diceRollBuffer;
+    gain.gain.value=.82;
+    src.connect(gain);
+    gain.connect(ctx.destination);
+    src.start(0);
+  }else{
+    // Fallback while buffer is still loading.
+    playDiceRollInstant();
+  }
+}
+
+// Loading/decoding does not produce sound.
+window.addEventListener("load",()=>preloadDiceRollBuffer(),{once:true});
+
 let soundEnabled=true;
 
 function ensureAudio(){
@@ -326,7 +363,7 @@ function lockInDice(diceEls,onDone){
 
 
 function animateDiceRoll(forTurn,onDone){
-  playFileSfx(diceRollAudio,.72);
+  playDiceRollInstant();
   const diceEls=$$(".die");
   const diceWrap=$(".dice");
   if(forTurn===1&&gameMode==="solo")diceWrap.classList.add("cpu-rolling");
