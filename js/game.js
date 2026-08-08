@@ -381,6 +381,10 @@ function renderDiceControlsOnly(){
   $$(".die").forEach((d,i)=>{
     d.textContent=diceNow()[i]??"?";
     d.classList.toggle("keep",keptNow()[i]);
+
+    // Yellow only while this turn has a confirmed roll.
+    // When a new turn resets the dice to ?, clear the yellow state.
+    d.classList.toggle("confirmed",rolledNow() && diceNow()[i] != null);
   });
 
   const s1ok=rolledNow()&&valid(me.s1);
