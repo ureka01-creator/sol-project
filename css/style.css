@@ -269,3 +269,25 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
   100%{transform:scale(1);background:#fff;border-color:#dbe3ee;box-shadow:0 6px 14px #0f172a14}
 }
 .die.locked{animation:diceLockImpact .76s cubic-bezier(.18,.9,.2,1)!important}
+
+/* V2.5.1 - iPhone smooth dice confirmation */
+.die{
+  transform:translateZ(0);
+  backface-visibility:hidden;
+  will-change:transform,opacity;
+}
+@keyframes diceLockSmooth{
+  0%   { transform:translateZ(0) scale(1); }
+  24%  { transform:translateZ(0) scale(1.62); }
+  62%  { transform:translateZ(0) scale(1.42); }
+  82%  { transform:translateZ(0) scale(1.10); }
+  100% { transform:translateZ(0) scale(1); }
+}
+.die.locked{
+  animation:diceLockSmooth .62s cubic-bezier(.18,.82,.2,1)!important;
+  background:#fde047!important;
+  border-color:#eab308!important;
+  box-shadow:none!important;
+  filter:none!important;
+}
+.die.locked::after{display:none!important}
