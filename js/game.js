@@ -41,16 +41,77 @@ const gameOverAudio=new Audio("sounds/game-over.mp3?v=276");
 const switchAudio=new Audio("sounds/switch.mp3?v=276");
 [attackHitAudio,criticalHitAudio,faintAudio,gameOverAudio,switchAudio].forEach(a=>a.preload="auto");
 
+const combatAudioUrls=new Map([
+  [attackHitAudio,"sounds/attack-hit.mp3?v=281"],
+  [criticalHitAudio,"sounds/critical-hit.mp3?v=281"],
+  [faintAudio,"sounds/faint.mp3?v=281"],
+  [gameOverAudio,"sounds/game-over.mp3?v=281"],
+  [switchAudio,"sounds/switch.mp3?v=281"]
+]);
+const combatAudioBuffers=new Map();
+
+async function preloadCombatAudioBuffers(){
+  const ctx=ensureAudio();
+  if(!ctx)return;
+  await Promise.all([...combatAudioUrls.entries()].map(async([audio,url])=>{
+    if(combatAudioBuffers.has(audio))return;
+    try{
+      const res=await fetch(url,{cache:"force-cache"});
+      const arr=await res.arrayBuffer();
+      const buf=await ctx.decodeAudioData(arr.slice(0));
+      combatAudioBuffers.set(audio,buf);
+    }catch(e){}
+  }));
+}
+
+
 function playCombatAudio(audio,volume=.72,duck=.04,hold=420){
   if(!soundEnabled)return;
   duckBgm(duck,hold);
-  try{
-    audio.pause();
-    audio.currentTime=0;
-    audio.volume=volume;
-    const p=audio.play();
-    if(p&&p.catch)p.catch(()=>{});
-  }catch(e){}
+
+  const fallback=()=>{
+    try{
+      audio.pause();
+      audio.currentTime=0;
+      audio.volume=volume;
+      const p=audio.play();
+      if(p&&p.catch)p.catch(()=>{});
+    }catch(e){}
+  };
+
+  const ctx=ensureAudio();
+  if(!ctx){
+    fallback();
+    return;
+  }
+
+  const playBuffer=()=>{
+    const buf=combatAudioBuffers.get(audio);
+    if(!buf){
+      fallback();
+      preloadCombatAudioBuffers();
+      return;
+    }
+    try{
+      const src=ctx.createBufferSource();
+      const gain=ctx.createGain();
+      src.buffer=buf;
+      gain.gain.value=volume;
+      src.connect(gain);
+      gain.connect(ctx.destination);
+      src.start(0);
+    }catch(e){
+      fallback();
+    }
+  };
+
+  if(ctx.state==="suspended"){
+    const p=ctx.resume();
+    if(p&&p.then)p.then(playBuffer).catch(fallback);
+    else setTimeout(playBuffer,0);
+  }else{
+    playBuffer();
+  }
 }
 
 const battleBgm=new Audio("sounds/battle-bgm.mp3?v=274");
@@ -154,7 +215,7 @@ async function warmUpGameAudio(){
       // Fetch + decode only. Never call Audio.play() here,
       // because iOS may leak a tiny audible start even at volume 0.
       await preloadDiceRollBuffer();
-      [attackHitAudio,criticalHitAudio,faintAudio,gameOverAudio,switchAudio].forEach(a=>a.load());
+      await preloadCombatAudioBuffers();
     }catch(e){}
   })();
   return audioWarmPromise;
@@ -162,22 +223,53 @@ async function warmUpGameAudio(){
 
 
 function playDiceRollInstant(){
-  duckBgm(.045,700);
   if(!soundEnabled)return;
-  const ctx=ensureAudio();
-  if(!ctx)return;
+  duckBgm(.045,700);
 
-  if(diceRollBuffer){
-    const src=ctx.createBufferSource();
-    const gain=ctx.createGain();
-    src.buffer=diceRollBuffer;
-    gain.gain.value=.82;
-    src.connect(gain);
-    gain.connect(ctx.destination);
-    src.start(0);
+  const fallback=()=>{
+    try{
+      diceRollAudio.pause();
+      diceRollAudio.currentTime=0;
+      diceRollAudio.volume=.82;
+      const p=diceRollAudio.play();
+      if(p&&p.catch)p.catch(()=>{});
+    }catch(e){}
+  };
+
+  const ctx=ensureAudio();
+  if(!ctx){
+    fallback();
+    return;
+  }
+
+  const playBuffer=()=>{
+    if(!diceRollBuffer){
+      fallback();
+      return;
+    }
+    try{
+      const src=ctx.createBufferSource();
+      const gain=ctx.createGain();
+      src.buffer=diceRollBuffer;
+      gain.gain.value=.82;
+      src.connect(gain);
+      gain.connect(ctx.destination);
+      src.start(0);
+    }catch(e){
+      fallback();
+    }
+  };
+
+  // iOS Safari can silently drop BufferSource.start() while resume is pending.
+  if(ctx.state==="suspended"){
+    const p=ctx.resume();
+    if(p&&p.then){
+      p.then(playBuffer).catch(fallback);
+    }else{
+      setTimeout(playBuffer,0);
+    }
   }else{
-    // First roll fallback while the decoded buffer is still preparing.
-    playFileSfx(diceRollAudio,.82);
+    playBuffer();
   }
 }
 
@@ -439,6 +531,7 @@ function start(){
 
  $("#selectScreen").classList.add("hidden");
  $("#gameScreen").classList.remove("hidden");
+ preloadCombatAudioBuffers();
  startBattleBgm();
 
  const firstLabel=teamName(0);
@@ -661,6 +754,7 @@ function updateKeepHint(){
 }
 
 function animateDiceRoll(forTurn,onDone){
+  if(!diceRollBuffer) preloadDiceRollBuffer();
   playDiceRollInstant();
 
   const diceEls=$$(".die");
