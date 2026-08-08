@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#111827">
-<title>포켓몬 주사위 배틀 V2.0</title>
+<title>포켓몬 주사위 배틀 V2.1</title>
 <style>
 :root{--bg:#f3f6fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#e5e7eb;--blue:#2563eb;--red:#ef4444;--green:#16a34a}
 *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;background:linear-gradient(#dff3ff,#f8fafc 45%,#eef2f7);color:var(--ink);min-height:100vh}
@@ -24,7 +24,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .log{background:#0f172a;color:#e5e7eb;border-radius:14px;padding:11px;min-height:80px;white-space:pre-line;font-size:13px;line-height:1.45;margin-top:10px}
 .turn{text-align:center;font-size:18px;font-weight:900;margin-bottom:8px}.notice{font-size:12px;color:#64748b;line-height:1.45}
 
-/* V2.0 UX */
+/* V2.1 UX */
 .turn-banner{
   position:fixed;left:50%;top:42%;transform:translate(-50%,-50%) scale(.85);
   z-index:9999;padding:18px 28px;border-radius:22px;color:#fff;font-weight:1000;
@@ -80,7 +80,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .close-btn{background:#334155;padding:10px 14px}
 
 
-/* V2.0 battle feel */
+/* V2.1 battle feel */
 @keyframes pokeHitBig{
   0%{transform:translate(0,0) scale(1)}
   12%{transform:translate(-18px,-3px) rotate(-4deg) scale(1.05)}
@@ -130,7 +130,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .switch-choice .hpmini{font-size:12px;font-weight:800}
 
 
-/* V2.0 */
+/* V2.1 */
 .difficulty-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .diff-btn{background:#f8fafc;color:#172033;border:2px solid #e5e7eb;min-height:105px}
 .diff-btn b{display:block;font-size:17px;margin-top:6px}.diff-btn small{display:block;color:#64748b;margin-top:3px}
@@ -182,7 +182,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 @keyframes lockCheck{0%{opacity:0;transform:scale(.2)}60%{opacity:1;transform:scale(1.25)}100%{transform:scale(1)}}
 
 
-/* V2.0 */
+/* V2.1 */
 @keyframes diceRollFast{
   0%{transform:scale(1) rotate(0)}
   30%{transform:scale(1.48) rotate(-22deg)}
@@ -225,7 +225,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 }
 
 
-/* V2.0 dice polish */
+/* V2.1 dice polish */
 @keyframes diceLockYellow{
   0%{transform:scale(1.08);background:#fff;border-color:#dbe3ee}
   35%{transform:scale(1.85);background:#fef9c3;border-color:#facc15;box-shadow:0 0 0 10px #facc1540,0 22px 45px #0004}
@@ -376,6 +376,15 @@ function diceNow(){return turnDice[turn]}
 function keptNow(){return turnKept[turn]}
 function rolledNow(){return turnRolled[turn]}
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+
+
+const diceRollAudio=new Audio("sounds/dice-roll.wav");
+const diceLockAudio=new Audio("sounds/dice-lock.wav");
+diceRollAudio.preload="auto"; diceLockAudio.preload="auto";
+function playFileSfx(audio,vol=0.8){
+  if(!soundEnabled)return;
+  try{audio.pause();audio.currentTime=0;audio.volume=vol;audio.play().catch(()=>{});}catch(e){}
+}
 
 let audioCtx=null;
 let soundEnabled=true;
@@ -657,7 +666,7 @@ function lockInDice(diceEls,onDone){
     d.classList.remove("rolling");
     d.classList.add("locked");
   });
-  if(navigator.vibrate)navigator.vibrate(45); sfx("diceLock");
+  if(navigator.vibrate)navigator.vibrate(45); playFileSfx(diceLockAudio,.95);
   setTimeout(()=>{
     activeIndexes.forEach(idx=>diceEls[idx].classList.remove("locked"));
     if(onDone)onDone();
@@ -666,6 +675,7 @@ function lockInDice(diceEls,onDone){
 
 
 function animateDiceRoll(forTurn,onDone){
+  playFileSfx(diceRollAudio,.72);
   const diceEls=$$(".die");
   const diceWrap=$(".dice");
   if(forTurn===1&&gameMode==="solo")diceWrap.classList.add("cpu-rolling");
@@ -675,7 +685,7 @@ function animateDiceRoll(forTurn,onDone){
   const timer=setInterval(()=>{
     diceEls.forEach((d,i)=>{
       if(!turnKept[forTurn][i])d.textContent=Math.floor(Math.random()*6)+1;
-    if(ticks%2===0)sfx("diceTick");
+
     });
     ticks++;
     if(ticks>=6){
@@ -727,6 +737,9 @@ function use(which){if(!rolledNow())return;let me=cur(turn),sk=me[which];if(!val
 $("#skill1").onclick=()=>use("s1");$("#skill2").onclick=()=>use("s2");
 
 function showVictory(winner){
+  const blueAlive=teams[0]&&teams[0].some(p=>p.cur>0);
+  const redAlive=teams[1]&&teams[1].some(p=>p.cur>0);
+  const actualWinner=blueAlive&&!redAlive?0:(!blueAlive&&redAlive?1:winner);
  $("#victoryTeam").textContent=winner+" 승리!";
  sfx("victory");$("#victoryOverlay").classList.remove("hidden");
  if(navigator.vibrate) navigator.vibrate([120,70,180]);
