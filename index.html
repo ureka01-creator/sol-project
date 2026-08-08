@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#111827">
-<title>포켓몬 주사위 배틀 V1.7</title>
+<title>포켓몬 주사위 배틀 V1.8</title>
 <style>
 :root{--bg:#f3f6fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#e5e7eb;--blue:#2563eb;--red:#ef4444;--green:#16a34a}
 *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;background:linear-gradient(#dff3ff,#f8fafc 45%,#eef2f7);color:var(--ink);min-height:100vh}
@@ -24,7 +24,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .log{background:#0f172a;color:#e5e7eb;border-radius:14px;padding:11px;min-height:80px;white-space:pre-line;font-size:13px;line-height:1.45;margin-top:10px}
 .turn{text-align:center;font-size:18px;font-weight:900;margin-bottom:8px}.notice{font-size:12px;color:#64748b;line-height:1.45}
 
-/* V1.7 UX */
+/* V1.8 UX */
 .turn-banner{
   position:fixed;left:50%;top:42%;transform:translate(-50%,-50%) scale(.85);
   z-index:9999;padding:18px 28px;border-radius:22px;color:#fff;font-weight:1000;
@@ -80,7 +80,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .close-btn{background:#334155;padding:10px 14px}
 
 
-/* V1.7 battle feel */
+/* V1.8 battle feel */
 @keyframes pokeHitBig{
   0%{transform:translate(0,0) scale(1)}
   12%{transform:translate(-18px,-3px) rotate(-4deg) scale(1.05)}
@@ -130,7 +130,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .switch-choice .hpmini{font-size:12px;font-weight:800}
 
 
-/* V1.7 */
+/* V1.8 */
 .difficulty-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .diff-btn{background:#f8fafc;color:#172033;border:2px solid #e5e7eb;min-height:105px}
 .diff-btn b{display:block;font-size:17px;margin-top:6px}.diff-btn small{display:block;color:#64748b;margin-top:3px}
@@ -182,7 +182,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 @keyframes lockCheck{0%{opacity:0;transform:scale(.2)}60%{opacity:1;transform:scale(1.25)}100%{transform:scale(1)}}
 
 
-/* V1.7 */
+/* V1.8 */
 @keyframes diceRollFast{
   0%{transform:scale(1) rotate(0)}
   30%{transform:scale(1.48) rotate(-22deg)}
@@ -222,6 +222,28 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 @media(max-width:520px){
   .team-panels{grid-template-columns:1fr}
   .team-mon{grid-template-columns:44px 1fr}
+}
+
+
+/* V1.8 dice polish */
+@keyframes diceLockYellow{
+  0%{transform:scale(1.08);background:#fff;border-color:#dbe3ee}
+  35%{transform:scale(1.85);background:#fef9c3;border-color:#facc15;box-shadow:0 0 0 10px #facc1540,0 22px 45px #0004}
+  65%{transform:scale(1.15);background:#fefce8;border-color:#eab308}
+  100%{transform:scale(1);background:#fff;border-color:#dbe3ee;box-shadow:0 6px 14px #0f172a14}
+}
+.die.locked{
+  animation:diceLockYellow .46s cubic-bezier(.2,.9,.2,1)!important;
+  border-color:#facc15!important;
+  background:#fef9c3!important;
+}
+.die.locked::after{
+  content:"";display:none!important;
+}
+.dice.cpu-rolling::before{
+  content:"🤖 컴퓨터 주사위!";
+  position:absolute;left:50%;top:-24px;transform:translateX(-50%);
+  font-size:12px;font-weight:900;color:#475569;white-space:nowrap
 }
 
 </style></head>
@@ -508,26 +530,45 @@ function lockInDice(diceEls,onDone){
   },360);
 }
 
-$("#roll").onclick=()=>{
-  if(rolledNow()||over)return;
-  const diceEls=$$(".die"); $(".dice").classList.add("burst");
-  diceEls.forEach((d,i)=>{if(!keptNow()[i])d.classList.add("rolling")});
+
+function animateDiceRoll(forTurn,onDone){
+  const diceEls=$$(".die");
+  const diceWrap=$(".dice");
+  if(forTurn===1&&gameMode==="solo")diceWrap.classList.add("cpu-rolling");
+  diceWrap.classList.add("burst");
+  diceEls.forEach((d,i)=>{if(!turnKept[forTurn][i])d.classList.add("rolling")});
   let ticks=0;
   const timer=setInterval(()=>{
-    diceEls.forEach((d,i)=>{if(!keptNow()[i])d.textContent=Math.floor(Math.random()*6)+1});
+    diceEls.forEach((d,i)=>{
+      if(!turnKept[forTurn][i])d.textContent=Math.floor(Math.random()*6)+1;
+    });
     ticks++;
     if(ticks>=6){
       clearInterval(timer);
-      turnDice[turn]=diceNow().map((v,i)=>keptNow()[i]?v:Math.floor(Math.random()*6)+1);
-      turnRolled[turn]=true;
-      diceEls.forEach((d,i)=>d.textContent=turnDice[turn][i]);
-      lockInDice(diceEls,()=>{
-        $(".dice").classList.remove("burst");
-        log("🎲 "+diceNow().join(" · ")+" 확정! 기술을 골라.");
-        render();
+      turnDice[forTurn]=turnDice[forTurn].map((v,i)=>turnKept[forTurn][i]?v:Math.floor(Math.random()*6)+1);
+      turnRolled[forTurn]=true;
+      diceEls.forEach((d,i)=>d.textContent=turnDice[forTurn][i]);
+      const activeIndexes=[0,1,2].filter(i=>!turnKept[forTurn][i]);
+      activeIndexes.forEach(i=>{
+        diceEls[i].classList.remove("rolling");
+        diceEls[i].classList.add("locked");
       });
+      if(navigator.vibrate)navigator.vibrate(45);
+      setTimeout(()=>{
+        activeIndexes.forEach(i=>diceEls[i].classList.remove("locked"));
+        diceWrap.classList.remove("burst","cpu-rolling");
+        render();
+        if(onDone)onDone();
+      },480);
     }
   },70);
+}
+
+$("#roll").onclick=()=>{
+  if(rolledNow()||over)return;
+  animateDiceRoll(turn,()=>{
+    log("🎲 "+diceNow().join(" · ")+" 확정! 기술을 골라.");
+  });
 };
 $$(".die").forEach(d=>d.onclick=()=>{if(!rolledNow())return;let i=+d.dataset.i;turnKept[turn][i]=!turnKept[turn][i];render()});
 function valid(skill){
@@ -564,10 +605,11 @@ function next(){
 }
 $("#pass").onclick=()=>{if(rolledNow())log("주사위를 보관하고 턴을 넘겼어.");turnRolled[turn]=false;next()};
 
-function aiRoll(){
- turnDice[1]=turnDice[1].map((v,i)=>turnKept[1][i]?v:Math.floor(Math.random()*6)+1);
- turnRolled[1]=true;
- render();
+function aiRoll(onDone){
+  animateDiceRoll(1,()=>{
+    log("🤖 컴퓨터 주사위: "+turnDice[1].join(" · ")+" 확정!");
+    if(onDone)onDone();
+  });
 }
 function aiChooseKeep(){
  const vals=turnDice[1];
@@ -622,21 +664,22 @@ function aiTakeTurn(){
    aiBusy=false; aiSwitch(); return;
  }
  log("🤖 컴퓨터가 주사위를 굴린다!");
- aiRoll();
- setTimeout(()=>{
-   let move=aiBestMove();
-   if(aiDifficulty===0&&Math.random()<.22)move=null;
-   if(move){
-     aiBusy=false;
-     use(move);
-   }else{
-     aiChooseKeep();
-     log("🤖 기술 조건이 안 돼서 주사위를 보관하고 턴을 넘긴다.");
-     render();
-     aiBusy=false;
-     setTimeout(next,700);
-   }
- },900);
+ aiRoll(()=>{
+   setTimeout(()=>{
+     let move=aiBestMove();
+     if(aiDifficulty===0&&Math.random()<.22)move=null;
+     if(move){
+       aiBusy=false;
+       use(move);
+     }else{
+       aiChooseKeep();
+       log("🤖 기술 조건이 안 돼서 주사위를 보관하고 턴을 넘긴다.");
+       render();
+       aiBusy=false;
+       setTimeout(next,550);
+     }
+   },350);
+ });
 }
 
 function openSwitchModal(){
