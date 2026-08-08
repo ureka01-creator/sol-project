@@ -29,7 +29,7 @@ function rolledNow(){return turnRolled[turn]}
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 
 
-const diceRollAudio=new Audio("sounds/dice-roll-real-v2.mp3?v=247");
+const diceRollAudio=new Audio("sounds/dice-roll-real-v3.mp3?v=250");
 const diceLockAudio=new Audio("sounds/dice-lock-impact.wav");
 diceRollAudio.preload="auto"; diceLockAudio.preload="auto";
 function playFileSfx(audio,vol=0.8){
@@ -47,16 +47,26 @@ function playFileSfx(audio,vol=0.8){
 let audioCtx=null;
 
 let diceRollBuffer=null;
+let diceLockBuffer=null;
 
 async function preloadDiceRollBuffer(){
   try{
-    const response=await fetch("sounds/dice-roll-real-v2.mp3?v=248",{cache:"force-cache"});
-    const arr=await response.arrayBuffer();
     const ctx=ensureAudio();
     if(!ctx)return;
-    diceRollBuffer=await ctx.decodeAudioData(arr.slice(0));
+    const [rollRes,lockRes]=await Promise.all([
+      fetch("sounds/dice-roll-real-v3.mp3?v=250",{cache:"force-cache"}),
+      fetch("sounds/dice-lock-impact.wav?v=250",{cache:"force-cache"})
+    ]);
+    const [rollArr,lockArr]=await Promise.all([rollRes.arrayBuffer(),lockRes.arrayBuffer()]);
+    const decoded=await Promise.all([
+      ctx.decodeAudioData(rollArr.slice(0)),
+      ctx.decodeAudioData(lockArr.slice(0))
+    ]);
+    diceRollBuffer=decoded[0];
+    diceLockBuffer=decoded[1];
   }catch(e){
     diceRollBuffer=null;
+    diceLockBuffer=null;
   }
 }
 
@@ -80,6 +90,23 @@ function playDiceRollInstant(){
 }
 
 // Loading/decoding does not produce sound.
+function playDiceLockInstant(){
+  if(!soundEnabled)return;
+  const ctx=ensureAudio();
+  if(!ctx)return;
+  if(diceLockBuffer){
+    const src=ctx.createBufferSource();
+    const gain=ctx.createGain();
+    src.buffer=diceLockBuffer;
+    gain.gain.value=1.0;
+    src.connect(gain);
+    gain.connect(ctx.destination);
+    src.start(0);
+  }else{
+    playFileSfx(diceLockAudio,1.0);
+  }
+}
+
 window.addEventListener("load",()=>preloadDiceRollBuffer(),{once:true});
 
 let soundEnabled=true;
@@ -380,14 +407,14 @@ function animateDiceRoll(forTurn,onDone){
       clearInterval(timer);
       turnDice[forTurn]=turnDice[forTurn].map((v,i)=>turnKept[forTurn][i]?v:Math.floor(Math.random()*6)+1);
       turnRolled[forTurn]=true;
-      diceEls.forEach((d,i)=>d.textContent=turnDice[forTurn][i]);
       const activeIndexes=[0,1,2].filter(i=>!turnKept[forTurn][i]);
+      diceEls.forEach((d,i)=>d.textContent=turnDice[forTurn][i]);
       activeIndexes.forEach(i=>{
         diceEls[i].classList.remove("rolling");
         diceEls[i].classList.add("locked");
       });
       if(navigator.vibrate)navigator.vibrate(45);
-      playFileSfx(diceLockAudio,1.0);
+      playDiceLockInstant();
       setTimeout(()=>{
         activeIndexes.forEach(i=>diceEls[i].classList.remove("locked"));
         diceWrap.classList.remove("burst","cpu-rolling");
