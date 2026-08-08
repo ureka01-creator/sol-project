@@ -48,5 +48,9 @@ if(tapStart){
   warmUpGameAudio();
   startMenuBgm();
   tapStart.classList.add("hidden");
+  $$(".pre-start-hidden").forEach(el=>{
+   el.classList.remove("pre-start-hidden");
+   el.classList.add("menu-reveal");
+  });
  },{once:true,passive:true});
 }
