@@ -348,3 +348,11 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
   box-shadow:none!important;
   filter:none!important;
 }
+
+
+/* V2.5.5 - keep confirmed dice yellow until the next roll */
+.die.confirmed{
+  background:#fde047!important;
+  border-color:#eab308!important;
+  box-shadow:none!important;
+}
