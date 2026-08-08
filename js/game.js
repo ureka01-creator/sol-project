@@ -428,7 +428,7 @@ function animateDiceRoll(forTurn,onDone){
   // Start one continuous roll -> confirm animation.
   activeIndexes.forEach(i=>{
     const d=diceEls[i];
-    d.classList.remove("locked","rolling");
+    d.classList.remove("locked","rolling","confirmed");
     void d.offsetWidth;
     d.classList.add("rolling");
   });
@@ -460,7 +460,10 @@ function animateDiceRoll(forTurn,onDone){
       // Do not swap animation classes at confirmation.
       // Wait for the single animation to complete.
       setTimeout(()=>{
-        activeIndexes.forEach(i=>diceEls[i].classList.remove("rolling"));
+        activeIndexes.forEach(i=>{
+          diceEls[i].classList.remove("rolling");
+          diceEls[i].classList.add("confirmed");
+        });
         diceWrap.classList.remove("burst","cpu-rolling");
 
         requestAnimationFrame(()=>{
@@ -505,9 +508,26 @@ function showVictory(winner){
   const blueAlive=teams[0]&&teams[0].some(p=>p.cur>0);
   const redAlive=teams[1]&&teams[1].some(p=>p.cur>0);
   const actualWinner=blueAlive&&!redAlive?0:(!blueAlive&&redAlive?1:winner);
- $("#victoryTeam").textContent=winner+" 승리!";
- sfx("victory");$("#victoryOverlay").classList.remove("hidden");
- if(navigator.vibrate) navigator.vibrate([120,70,180]);
+
+  const title=$("#victoryOverlay .victory-title");
+  const team=$("#victoryTeam");
+
+  if(gameMode==="solo"){
+    if(actualWinner===0){
+      title.textContent="VICTORY!";
+      team.textContent="블루팀 승리!";
+    }else{
+      title.textContent="DEFEAT";
+      team.textContent="컴퓨터 승리!";
+    }
+  }else{
+    title.textContent=actualWinner===0?"BLUE TEAM WINS!":"RED TEAM WINS!";
+    team.textContent=actualWinner===0?"블루팀 승리!":"레드팀 승리!";
+  }
+
+  sfx("victory");
+  $("#victoryOverlay").classList.remove("hidden");
+  if(navigator.vibrate) navigator.vibrate([120,70,180]);
 }
 
 function faint(){let x=1-turn,idx=teams[x].findIndex(p=>p.cur>0);if(idx<0){over=true;const winner=(turn===0?"블루팀":(gameMode==="solo"?"컴퓨터":"레드팀"));log("🏆 "+winner+" 승리!!");render();setTimeout(()=>showVictory(winner),500);return}active[x]=idx;sfx("faint");log(`😵 쓰러졌다! ${cur(x).n} 출전!`);render();setTimeout(next,500)}
