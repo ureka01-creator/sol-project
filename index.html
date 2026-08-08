@@ -71,8 +71,15 @@ const P=[
  {id:94,n:"팬텀",t:"고스트",hp:60,s1:["핥기",15,1,"홀수 1개"],s2:["섀도볼",32,2,"같은 눈 2개"]},
  {id:143,n:"잠만보",t:"노말",hp:100,s1:["몸통박치기",14,1,"아무 주사위 1개"],s2:["기가임팩트",35,3,"주사위 3개"]}
 ];
-const LOCAL_IMAGES={25:"pikachu.png",6:"charizard.png",7:"squirtle.png",1:"bulbasaur.png",94:"gengar.png",143:"snorlax.png"};
-const img=id=>`images/${LOCAL_IMAGES[id]}`;
+const LOCAL_IMAGES={
+  25:"pikachu.png",
+  6:"charizard.png",
+  7:"squirtle.png",
+  1:"bulbasaur.png",
+  94:"gengar.png",
+  143:"snorlax.png"
+};
+const img=id=>LOCAL_IMAGES[id];
 let selecting=0, picks=[[],[]], selected=[], teams=[],active=[0,0],turn=0,dice=[null,null,null],kept=[false,false,false],rolled=false,over=false;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 function pickRender(){
