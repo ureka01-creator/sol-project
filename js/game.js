@@ -767,12 +767,14 @@ function use(which){if(!rolledNow())return;let me=cur(turn),sk=me[which];if(!val
  if((me.t==="불꽃"&&enemy.t==="풀")||(me.t==="풀"&&enemy.t==="물")||(me.t==="물"&&enemy.t==="불꽃"))mult=1.5;
  dmg=Math.round(dmg*mult);
  if(gameMode==="solo"&&turn===aiTeam)dmg=Math.round(dmg*aiDamageMultiplier());
- enemy.cur=Math.max(0,enemy.cur-dmg);sfx("attack",me.t);setTimeout(()=>sfx("hit"),90);log(`💥 ${me.n}의 ${sk[0]}! ${dmg} 피해!${mult>1?" 효과가 굉장했다!":""}`);if(mult>1){
+ enemy.cur=Math.max(0,enemy.cur-dmg);sfx("attack",me.t);setTimeout(()=>sfx("hit"),90);log(`💥 ${me.n}의 ${sk[0]}! ${dmg} 피해!${mult>1?" 효과가 굉장했다!":""}`);// Start the hit sound a fraction earlier than the visual impact.
+  // Mobile audio output has a small latency, so this makes the perceived hit line up.
+  if(mult>1){
     playCombatAudio(criticalHitAudio,.78,.025,650);
   }else{
     playCombatAudio(attackHitAudio,.72,.04,430);
   }
-  playHitEffect(1-turn,dmg,me.t,mult>1);turnDice[turn]=[null,null,null];turnKept[turn]=[false,false,false];turnRolled[turn]=false;render();if(enemy.cur<=0)setTimeout(faint,350);else setTimeout(next,450)}
+  setTimeout(()=>playHitEffect(1-turn,dmg,me.t,mult>1),55);turnDice[turn]=[null,null,null];turnKept[turn]=[false,false,false];turnRolled[turn]=false;render();if(enemy.cur<=0)setTimeout(faint,350);else setTimeout(next,450)}
 $("#skill1").onclick=()=>use("s1");$("#skill2").onclick=()=>use("s2");
 
 function showVictory(winner){
@@ -815,7 +817,7 @@ function faint(){
  active[x]=idx;
  playCombatAudio(faintAudio,.72,.025,1100);
  log(`😵 쓰러졌다! ${cur(x).n} 출전!`);
- setTimeout(()=>playCombatAudio(switchAudio,.68,.045,520),420);
+ setTimeout(()=>playCombatAudio(switchAudio,.68,.045,520),120);
  render();
  setTimeout(next,500);
 }
