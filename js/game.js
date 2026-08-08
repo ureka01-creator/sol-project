@@ -75,21 +75,13 @@ async function warmUpGameAudio(){
   if(audioWarmPromise)return audioWarmPromise;
   audioWarmPromise=(async()=>{
     try{
-      ensureAudio();
-      if(audioCtx && audioCtx.state==="suspended") await audioCtx.resume();
-      await preloadDiceRollBuffer();
-      if(diceRollAudio){
-        const oldVol=diceRollAudio.volume;
-        diceRollAudio.volume=0;
-        try{
-          diceRollAudio.currentTime=0;
-          const p=diceRollAudio.play();
-          if(p && p.then) await p;
-          diceRollAudio.pause();
-          diceRollAudio.currentTime=0;
-        }catch(e){}
-        diceRollAudio.volume=oldVol;
+      const ctx=ensureAudio();
+      if(ctx && ctx.state==="suspended"){
+        await ctx.resume();
       }
+      // Fetch + decode only. Never call Audio.play() here,
+      // because iOS may leak a tiny audible start even at volume 0.
+      await preloadDiceRollBuffer();
     }catch(e){}
   })();
   return audioWarmPromise;
