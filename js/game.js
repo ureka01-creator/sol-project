@@ -235,7 +235,7 @@ function chooseAiTeam(){
      if(typeAdv(p.t,enemy.t))score+=aiDifficulty===3?8:4;
      if(typeAdv(enemy.t,p.t))score-=aiDifficulty===3?3:1.5;
    });
-   if(playerTeam.some(x=>x.id===p.id))score-=.5;
+   if(playerMons.some(x=>x.id===p.id))score-=.5;
    return [i,score+Math.random()*(aiDifficulty===3?.05:.7)];
  }).sort((a,b)=>b[1]-a[1]);
  return scored.slice(0,3).map(x=>x[0]);
@@ -424,7 +424,7 @@ function updatePokemonSelectionTeamColors(){
 }
 
 function render(){
- let a=cur(playerTeam),b=cur(aiTeam); $("#p1name").textContent=teamName(0)+" · "+a.n;$("#p2name").textContent=teamName(1)+" · "+b.n;$("#p1type").textContent=a.t+" 타입";$("#p2type").textContent=b.t+" 타입";$("#p1img").src=img(a.id);$("#p2img").src=img(b.id);
+ let a=cur(0),b=cur(1); $("#p1name").textContent=teamName(0)+" · "+a.n;$("#p2name").textContent=teamName(1)+" · "+b.n;$("#p1type").textContent=a.t+" 타입";$("#p2type").textContent=b.t+" 타입";$("#p1img").src=img(a.id);$("#p2img").src=img(b.id);
  [["p1",a],["p2",b]].forEach(([x,p])=>{$("#"+x+"hp").style.width=(p.cur/p.hp*100)+"%";$("#"+x+"hptext").textContent=`HP ${p.cur} / ${p.hp}`});
  $("#turnText").textContent=`${teamIcon(turn)} ${teamName(turn)} 차례`; updateTurnUX();
  let me=cur(turn);$("#skill1").innerHTML=`${me.s1[0]} · ${me.s1[1]}<small>${me.s1[3]}</small>`;$("#skill2").innerHTML=`${me.s2[0]} · ${me.s2[1]}<small>${me.s2[3]}</small>`;
@@ -663,7 +663,7 @@ $("#skill1").onclick=()=>use("s1");$("#skill2").onclick=()=>use("s2");
 
 function showVictory(winner){
   const blueAlive=teams[0]&&teams[0].some(p=>p.cur>0);
-  const redAlive=teams[aiTeam]&&teams[aiTeam].some(p=>p.cur>0);
+  const redAlive=teams[1]&&teams[1].some(p=>p.cur>0);
   const actualWinner=blueAlive&&!redAlive?0:(!blueAlive&&redAlive?1:(winner==="블루팀"?0:winner==="레드팀"?1:winner));
 
   const title=$("#victoryOverlay .victory-title");
