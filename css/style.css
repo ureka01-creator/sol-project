@@ -519,3 +519,94 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .die.confirmed.keep.keep-red::after{
   background:#ef4444!important;
 }
+
+
+/* V2.6.6 - 2P Pokémon selection follows team colors */
+.pick-card.selected-blue,
+.pokemon-pick.selected-blue,
+.select-card.selected-blue,
+[data-pokemon-index].selected-blue{
+  position:relative;
+  border:4px solid #2563eb!important;
+  box-shadow:0 0 0 4px #bfdbfe!important;
+  background:#eff6ff!important;
+}
+
+.pick-card.selected-red,
+.pokemon-pick.selected-red,
+.select-card.selected-red,
+[data-pokemon-index].selected-red{
+  position:relative;
+  border:4px solid #ef4444!important;
+  box-shadow:0 0 0 4px #fecaca!important;
+  background:#fef2f2!important;
+}
+
+.selected-blue::after{
+  content:"블루팀 ✓";
+  position:absolute;
+  top:8px;
+  right:8px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:#2563eb;
+  color:white;
+  font-size:11px;
+  font-weight:900;
+  z-index:5;
+}
+
+.selected-red::after{
+  content:"레드팀 ✓";
+  position:absolute;
+  top:8px;
+  right:8px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:#ef4444;
+  color:white;
+  font-size:11px;
+  font-weight:900;
+  z-index:5;
+}
+
+/* If both teams can select the same Pokémon, show a split indicator. */
+.selected-both{
+  border-color:#7c3aed!important;
+  box-shadow:0 0 0 4px #ddd6fe!important;
+  background:linear-gradient(135deg,#eff6ff 0 50%,#fef2f2 50% 100%)!important;
+}
+.selected-both::after{
+  content:"🔵 블루 · 🔴 레드";
+  background:#7c3aed!important;
+}
+
+
+/* V2.6.7 solo team selection */
+.solo-team-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0 16px}
+.solo-team-btn{min-height:120px;background:#fff;color:#172033;border:3px solid #e5e7eb;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;font-size:20px}
+.solo-team-btn.blue-choice{border-color:#93c5fd;background:#eff6ff}
+.solo-team-btn.red-choice{border-color:#fca5a5;background:#fef2f2}
+.team-orb{width:48px;height:48px;border-radius:50%;display:block;box-shadow:inset -8px -10px 14px #0002,0 7px 15px #0002}
+.blue-orb{background:linear-gradient(145deg,#60a5fa,#0759c7)}
+.red-orb{background:linear-gradient(145deg,#fb7185,#b91c1c)}
+
+/* Crisp difficulty icons */
+.ball-img{width:92px!important;height:92px!important;filter:drop-shadow(0 8px 10px #0003)!important}
+.diff-btn{min-height:130px!important;padding:10px!important}
+.diff-btn small{font-size:16px!important;font-weight:900!important;color:#334155!important;margin-top:6px!important}
+
+/* Current Pokémon selection follows team color */
+.pick.selected-team-blue{
+ border:4px solid #2563eb!important;
+ box-shadow:0 0 0 4px #bfdbfe!important;
+ background:#eff6ff!important;
+}
+.pick.selected-team-red{
+ border:4px solid #ef4444!important;
+ box-shadow:0 0 0 4px #fecaca!important;
+ background:#fef2f2!important;
+}
+.pick-title-blue{color:#1d4ed8!important}
+.pick-title-red{color:#b91c1c!important}
+.wide.red{background:#dc2626!important;color:#fff!important}
