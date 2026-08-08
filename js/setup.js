@@ -70,9 +70,7 @@ function chooseAiTeam(){
 }
 
 function aiHpMultiplier(){ return 1; }
-function aiDamageMultiplier(){
-  return [0.95,1.00,1.06,1.14][aiDifficulty];
-}
+function aiDamageMultiplier(){ return 1; }
 function effectiveDamage(p, skill, defender){
   let mult=typeAdv(p.t,defender.t)?1.5:1;
   return Math.round(skill[1]*mult*(gameMode==="solo"&&turn===aiTeam?aiDamageMultiplier():1));

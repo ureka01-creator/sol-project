@@ -46,7 +46,8 @@ function showVictory(winner){
   if(gameMode==="solo" && actualWinner!==playerTeam){
     setTimeout(()=>playCombatAudio(gameOverAudio,.76,.0,1800),520);
   }else{
-    setTimeout(()=>sfx("victory"),260);
+    // Let the final faint land first, then play the dedicated victory theme.
+    setTimeout(()=>playCombatAudio(victoryAudio,.82,.0,2400),420);
   }
   $("#victoryOverlay").classList.remove("hidden");
   if(navigator.vibrate) navigator.vibrate([120,70,180]);
