@@ -752,10 +752,10 @@ function valid(skill){
  let vals=diceNow().filter(v=>v!=null),n=skill[0];
  if(n==="전광석화"||n==="할퀴기"||n==="물대포"||n==="덩굴채찍"||n==="몸통박치기")return vals.length>=1;
  
- if(n==="10만볼트")return vals.length>=2&&[...vals].sort((a,b)=>b-a)[0]+[...vals].sort((a,b)=>b-a)[1]>=10;
+ if(n==="10만볼트")return vals.length>=1&&vals.reduce((sum,v)=>sum+v,0)>=10;
  if(n==="불꽃세례")return vals.filter(v=>v>=4).length>=2;
  if(n==="아쿠아테일")return vals.filter(v=>v%2===0).length>=2;
- if(n==="씨폭탄")return vals.length>=2&&[...vals].sort((a,b)=>b-a)[0]+[...vals].sort((a,b)=>b-a)[1]>=8;
+ if(n==="씨폭탄")return vals.length>=1&&vals.reduce((sum,v)=>sum+v,0)>=8;
  if(n==="핥기")return vals.some(v=>v%2===1);
  if(n==="나이트헤드")return new Set(vals).size<vals.length;
  if(n==="기가임팩트")return vals.length===3;
