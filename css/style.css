@@ -1213,3 +1213,25 @@ body.main-home .hero-tap-start{
   }
   body.main-home .hero-tap-start{top:44px!important}
 }
+
+/* V3.0.9 - iOS Safari reload jump fix
+   Safari can temporarily change env(safe-area-inset-top) while reloading.
+   Main title screen must not depend on that dynamic value. */
+html, body{
+  margin:0;
+  padding:0;
+}
+body.main-home .app{
+  padding-top:8px!important;
+  padding-bottom:20px!important;
+}
+body.main-home .home-screen{
+  padding-top:115px!important;
+  margin-top:0!important;
+  top:auto!important;
+}
+body.main-home .home-hero,
+body.main-home .home-control-area{
+  position:relative;
+  top:0!important;
+}
