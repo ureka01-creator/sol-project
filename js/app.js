@@ -13,8 +13,13 @@ function openSwitchModal(){
 }
 function closeSwitchModal(){ $("#switchModal").classList.add("hidden"); }
 function chooseSwitch(i){
-  active[turn]=i; closeSwitchModal();
-  sfx("switch");log("🔄 "+cur(turn).n+"으로 교체!");
+  active[turn]=i;
+  closeSwitchModal();
+
+  // Actual Pokémon switch sound. Do not use the generic menu/select SFX here.
+  playCombatAudio(switchAudio,.78,.035,700);
+  log("🔄 "+cur(turn).n+"으로 교체!");
+
   turnRolled[turn]=false;
   render();
   setTimeout(next,450);
