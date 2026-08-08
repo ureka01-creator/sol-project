@@ -41,15 +41,7 @@ function playFileSfx(audio,vol=0.8){
     if(p&&p.catch)p.catch(()=>{});
   }catch(e){}
 }
-function unlockFileAudio(){
-  [diceRollAudio,diceLockAudio].forEach(a=>{
-    try{
-      a.muted=true;
-      const p=a.play();
-      if(p&&p.then)p.then(()=>{a.pause();a.currentTime=0;a.muted=false;}).catch(()=>{a.muted=false;});
-    }catch(e){}
-  });
-}
+
 
 let audioCtx=null;
 let soundEnabled=true;
@@ -114,8 +106,8 @@ $("#soundToggle").onclick=()=>{
   $("#soundToggle").textContent=soundEnabled?"🔊":"🔇";
   if(soundEnabled){ensureAudio();tone(660,.06,"sine",.05)}
 };
-document.addEventListener("touchstart",()=>{ensureAudio();unlockFileAudio();},{once:true,passive:true});
-document.addEventListener("click",()=>{ensureAudio();unlockFileAudio();},{once:true});
+document.addEventListener("touchstart",()=>ensureAudio(),{once:true,passive:true});
+document.addEventListener("click",()=>ensureAudio(),{once:true});
 
 
 function chooseMode(mode){
