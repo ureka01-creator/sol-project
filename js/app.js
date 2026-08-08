@@ -1,0 +1,26 @@
+function openSwitchModal(){
+  const alive=teams[turn].map((p,i)=>p.cur>0&&i!==active[turn]?i:-1).filter(i=>i>=0);
+  if(!alive.length){log("교체할 포켓몬이 없어!");return;}
+  $("#switchList").innerHTML=alive.map(i=>{
+    const p=teams[turn][i];
+    return `<button class="switch-choice" onclick="chooseSwitch(${i})">
+      <img src="${img(p.id)}" alt="${p.n}">
+      <div><b>${p.n}</b><div class="meta">${p.t} 타입</div></div>
+      <div class="hpmini">HP ${p.cur}/${p.hp}</div>
+    </button>`;
+  }).join("");
+  $("#switchModal").classList.remove("hidden");
+}
+function closeSwitchModal(){ $("#switchModal").classList.add("hidden"); }
+function chooseSwitch(i){
+  active[turn]=i; closeSwitchModal();
+  sfx("switch");log("🔄 "+cur(turn).n+"으로 교체!");
+  turnRolled[turn]=false;
+  render();
+  setTimeout(next,450);
+}
+$("#switch").onclick=openSwitchModal;
+
+
+
+document.addEventListener("pointerdown",warmUpGameAudio,{once:true,passive:true});
