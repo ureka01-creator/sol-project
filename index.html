@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#111827">
-<title>포켓몬 주사위 배틀 V1.2</title>
+<title>포켓몬 주사위 배틀 V1.4</title>
 <style>
 :root{--bg:#f3f6fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#e5e7eb;--blue:#2563eb;--red:#ef4444;--green:#16a34a}
 *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;background:linear-gradient(#dff3ff,#f8fafc 45%,#eef2f7);color:var(--ink);min-height:100vh}
@@ -24,7 +24,7 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .log{background:#0f172a;color:#e5e7eb;border-radius:14px;padding:11px;min-height:80px;white-space:pre-line;font-size:13px;line-height:1.45;margin-top:10px}
 .turn{text-align:center;font-size:18px;font-weight:900;margin-bottom:8px}.notice{font-size:12px;color:#64748b;line-height:1.45}
 
-/* V1.2 UX */
+/* V1.4 UX */
 .turn-banner{
   position:fixed;left:50%;top:42%;transform:translate(-50%,-50%) scale(.85);
   z-index:9999;padding:18px 28px;border-radius:22px;color:#fff;font-weight:1000;
@@ -79,16 +79,74 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
 .modal-head h2{margin:0}
 .close-btn{background:#334155;padding:10px 14px}
 
+
+/* V1.4 battle feel */
+@keyframes pokeHitBig{
+  0%{transform:translate(0,0) scale(1)}
+  12%{transform:translate(-18px,-3px) rotate(-4deg) scale(1.05)}
+  24%{transform:translate(20px,3px) rotate(4deg) scale(.96)}
+  38%{transform:translate(-15px,0) rotate(-3deg) scale(1.04)}
+  52%{transform:translate(13px,2px) rotate(2deg) scale(.98)}
+  68%{transform:translate(-8px,0) rotate(-1deg)}
+  84%{transform:translate(5px,0)}
+  100%{transform:translate(0,0) scale(1)}
+}
+.poke-hit-big{animation:pokeHitBig .62s cubic-bezier(.2,.8,.2,1)}
+@keyframes cardImpact{
+  0%,100%{transform:translate(0,0)}
+  20%{transform:translate(-8px,2px)}
+  40%{transform:translate(7px,-2px)}
+  60%{transform:translate(-5px,1px)}
+  80%{transform:translate(3px,0)}
+}
+.card-impact{animation:cardImpact .48s ease}
+.hit-flash.on{animation:flashStrong .48s ease}
+@keyframes flashStrong{0%{opacity:0}18%{opacity:1;background:#ff1f1f99}55%{opacity:.55}100%{opacity:0}}
+.damage-pop{font-size:42px!important;color:#ef4444!important;text-shadow:0 3px 0 #fff,0 6px 20px #0007!important}
+.fx{font-size:42px!important}
+
+@keyframes diceRoll{
+  0%{transform:scale(1) rotate(0)}
+  20%{transform:scale(1.28) rotate(-12deg)}
+  45%{transform:scale(1.42) rotate(15deg)}
+  70%{transform:scale(1.22) rotate(-8deg)}
+  100%{transform:scale(1) rotate(0)}
+}
+.die.rolling{animation:diceRoll .65s cubic-bezier(.2,.8,.2,1);box-shadow:0 12px 30px #2563eb44;border-color:#2563eb}
+
+.switch-modal{
+ position:fixed;inset:0;background:#0f172acc;z-index:9500;
+ display:flex;align-items:center;justify-content:center;padding:18px
+}
+.switch-box{width:min(520px,100%);background:white;border-radius:22px;padding:16px;box-shadow:0 25px 70px #0007}
+.switch-box h2{margin:0 0 10px}
+.switch-list{display:grid;gap:9px}
+.switch-choice{
+ display:grid;grid-template-columns:68px 1fr auto;gap:10px;align-items:center;
+ width:100%;background:#f8fafc;color:#172033;border:2px solid #e5e7eb;text-align:left
+}
+.switch-choice img{width:64px;height:64px;object-fit:contain}
+.switch-choice .meta{font-size:12px;color:#64748b;margin-top:3px}
+.switch-choice .hpmini{font-size:12px;font-weight:800}
+
 </style></head>
 <body><div id="turnBanner" class="turn-banner"></div><div id="superText" class="super-text">효과가 굉장했다!</div><div class="app">
-<h1>⚡ 포켓몬 주사위 배틀</h1><div class="sub">🔵 블루팀 vs 🔴 레드팀 · 2인용</div>
+<h1>⚡ 포켓몬 주사위 배틀</h1><div id="subtitle" class="sub">게임 모드를 선택해</div>
 <div class="top-actions">
   <button class="gray" onclick="openDex()">📘 포켓몬 도감</button>
   <button onclick="location.reload()">🔄 새 게임</button>
 </div>
 
 
-<section id="selectScreen" class="card">
+
+<section id="modeScreen" class="card">
+ <h2 style="margin-top:0">🎮 플레이 모드</h2>
+ <div class="actions">
+  <button class="skill blue" onclick="chooseMode('solo')">🤖 혼자 플레이<small>블루팀 vs 컴퓨터</small></button>
+  <button class="skill orange" onclick="chooseMode('two')">👥 2인 플레이<small>블루팀 vs 레드팀</small></button>
+ </div>
+</section>
+<section id="selectScreen" class="card hidden">
  <h2 style="margin-top:0">① 포켓몬을 골라!</h2>
  <div id="pickTitle" class="turn">블루팀 · 3마리 선택</div>
  <div id="pickGrid" class="grid"></div>
@@ -133,6 +191,15 @@ button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;b
  </div>
 </div>
 
+
+<div id="switchModal" class="switch-modal hidden">
+ <div class="switch-box">
+  <h2>🔄 교체할 포켓몬 선택</h2>
+  <div id="switchList" class="switch-list"></div>
+  <button class="wide gray" onclick="closeSwitchModal()">취소</button>
+ </div>
+</div>
+
 <script>
 const P=[
  {id:25,n:"피카츄",t:"전기",hp:60,s1:["전광석화",10,1,"아무 주사위 1개"],s2:["10만볼트",30,2,"합계 10 이상"]},
@@ -151,27 +218,52 @@ const LOCAL_IMAGES={
   143:"snorlax.png"
 };
 const img=id=>LOCAL_IMAGES[id];
-let selecting=0, picks=[[],[]], selected=[], teams=[],active=[0,0],turn=0,dice=[null,null,null],kept=[false,false,false],rolled=false,over=false;
+let selecting=0, picks=[[],[]], selected=[], teams=[],active=[0,0],turn=0,over=false,gameMode=null,aiBusy=false;
+let turnDice=[[null,null,null],[null,null,null]];
+let turnKept=[[false,false,false],[false,false,false]];
+let turnRolled=[false,false];
+function diceNow(){return turnDice[turn]}
+function keptNow(){return turnKept[turn]}
+function rolledNow(){return turnRolled[turn]}
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+
+function chooseMode(mode){
+ gameMode=mode;
+ $("#modeScreen").classList.add("hidden");
+ $("#selectScreen").classList.remove("hidden");
+ $("#subtitle").textContent=mode==="solo"?"🔵 블루팀 vs 🤖 컴퓨터":"🔵 블루팀 vs 🔴 레드팀 · 2인용";
+ selecting=0; selected=[]; picks=[[],[]]; pickRender();
+}
+function randomAiTeam(){
+ const ids=P.map((_,i)=>i);
+ for(let i=ids.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]]}
+ return ids.slice(0,3);
+}
+function isAiTurn(){return gameMode==="solo"&&turn===1&&!over}
+
 function pickRender(){
- $("#pickTitle").textContent=(selecting===0?"블루팀":"레드팀")+" 팀 · 3마리 선택";
+ $("#pickTitle").textContent=gameMode==="solo"?"블루팀 · 3마리 선택":(selecting===0?"블루팀":"레드팀")+" 팀 · 3마리 선택";
  $("#pickGrid").innerHTML=P.map((p,i)=>`<button class="pick ${selected.includes(i)?"selected":""}" data-p="${i}"><img src="${img(p.id)}"><b>${p.n}</b><span>${p.t} · HP ${p.hp}</span></button>`).join("");
  $$(".pick").forEach(b=>b.onclick=()=>{let i=+b.dataset.p;if(selected.includes(i))selected=selected.filter(x=>x!==i);else if(selected.length<3)selected.push(i);pickRender()});
  $("#confirmPick").disabled=selected.length!==3;
 }
-$("#confirmPick").onclick=()=>{picks[selecting]=[...selected];selected=[];if(selecting===0){selecting=1;pickRender()}else start()};
-function start(){teams=picks.map(a=>a.map(i=>({...P[i],cur:P[i].hp})));$("#selectScreen").classList.add("hidden");$("#gameScreen").classList.remove("hidden");log("배틀 시작! 블루팀부터 주사위를 굴려.");render();showTurnBanner()}
+$("#confirmPick").onclick=()=>{
+ picks[selecting]=[...selected];selected=[];
+ if(gameMode==="solo"){picks[1]=randomAiTeam();start();return;}
+ if(selecting===0){selecting=1;pickRender()}else start()
+};
+function start(){teams=picks.map(a=>a.map(i=>({...P[i],cur:P[i].hp})));$("#selectScreen").classList.add("hidden");$("#gameScreen").classList.remove("hidden");log(gameMode==="solo"?"배틀 시작! 블루팀부터 시작!":"배틀 시작! 블루팀부터 주사위를 굴려.");render();showTurnBanner()}
 function log(t){const el=$("#log"); if(el) el.textContent=t;}
 
 function showTurnBanner(){
  const el=$("#turnBanner");
- el.textContent=turn===0?"🔵 BLUE TEAM TURN":"🔴 RED TEAM TURN";
+ el.textContent=turn===0?"🔵 BLUE TEAM TURN":(gameMode==="solo"?"🤖 COMPUTER TURN":"🔴 RED TEAM TURN");
  el.className="turn-banner "+(turn===0?"blue":"red")+" show";
  setTimeout(()=>el.classList.remove("show"),800);
 }
 function updateTurnUX(){
  const strip=$("#turnStrip");
- if(strip){strip.textContent=turn===0?"🔵 블루팀의 차례":"🔴 레드팀의 차례";strip.className="turn-strip "+(turn===0?"blue":"red")}
+ if(strip){strip.textContent=turn===0?"🔵 블루팀의 차례":(gameMode==="solo"?"🤖 컴퓨터의 차례":"🔴 레드팀의 차례");strip.className="turn-strip "+(turn===0?"blue":"red")}
  const f0=$("#fighter0"),f1=$("#fighter1");
  if(f0&&f1){
    f0.className="fighter "+(turn===0?"active-blue":"inactive");
@@ -184,7 +276,9 @@ function typeFx(type){
 function playHitEffect(target, dmg, type, superHit=false){
  const f=$("#fighter"+target);
  if(!f)return;
- f.classList.remove("hit-shake"); void f.offsetWidth; f.classList.add("hit-shake");
+ const pokeImg=f.querySelector("img");
+ f.classList.remove("card-impact"); void f.offsetWidth; f.classList.add("card-impact");
+ if(pokeImg){pokeImg.classList.remove("poke-hit-big");void pokeImg.offsetWidth;pokeImg.classList.add("poke-hit-big");}
  const flash=f.querySelector(".hit-flash"); flash.classList.remove("on"); void flash.offsetWidth; flash.classList.add("on");
  const pop=document.createElement("div"); pop.className="damage-pop"; pop.textContent="-"+dmg; f.appendChild(pop); setTimeout(()=>pop.remove(),900);
  const layer=f.querySelector(".effect-layer");
@@ -211,18 +305,36 @@ function closeDex(){ $("#dexModal").classList.add("hidden"); }
 
 function cur(x){return teams[x][active[x]]}
 function render(){
- let a=cur(0),b=cur(1); $("#p1name").textContent="블루팀 · "+a.n;$("#p2name").textContent="레드팀 · "+b.n;$("#p1type").textContent=a.t+" 타입";$("#p2type").textContent=b.t+" 타입";$("#p1img").src=img(a.id);$("#p2img").src=img(b.id);
+ let a=cur(0),b=cur(1); $("#p1name").textContent="블루팀 · "+a.n;$("#p2name").textContent=(gameMode==="solo"?"컴퓨터":"레드팀")+" · "+b.n;$("#p1type").textContent=a.t+" 타입";$("#p2type").textContent=b.t+" 타입";$("#p1img").src=img(a.id);$("#p2img").src=img(b.id);
  [["p1",a],["p2",b]].forEach(([x,p])=>{$("#"+x+"hp").style.width=(p.cur/p.hp*100)+"%";$("#"+x+"hptext").textContent=`HP ${p.cur} / ${p.hp}`});
- $("#turnText").textContent=(turn===0?"🔵 블루팀":"🔴 레드팀")+" 차례"; updateTurnUX();
+ $("#turnText").textContent=(turn===0?"🔵 블루팀":(gameMode==="solo"?"🤖 컴퓨터":"🔴 레드팀"))+" 차례"; updateTurnUX();
  let me=cur(turn);$("#skill1").innerHTML=`${me.s1[0]} · ${me.s1[1]}<small>${me.s1[3]}</small>`;$("#skill2").innerHTML=`${me.s2[0]} · ${me.s2[1]}<small>${me.s2[3]}</small>`;
- $$(".die").forEach((d,i)=>{d.textContent=dice[i]??"?";d.classList.toggle("keep",kept[i])});
- $("#teams").innerHTML=teams.map((tm,x)=>tm.map((p,i)=>`<span class="chip ${p.cur<=0?"dead":""}">${x?"레드":"블루"} ${i===active[x]?"▶":""}${p.n} ${p.cur}</span>`).join("")).join("");
- $("#roll").disabled=rolled||over;$("#skill1").disabled=!rolled||over;$("#skill2").disabled=!rolled||over;$("#switch").disabled=over;$("#pass").disabled=over;
+ $$(".die").forEach((d,i)=>{d.textContent=diceNow()[i]??"?";d.classList.toggle("keep",keptNow()[i])});
+ $("#teams").innerHTML=teams.map((tm,x)=>tm.map((p,i)=>`<span class="chip ${p.cur<=0?"dead":""}">${x?(gameMode==="solo"?"CPU":"레드"):"블루"} ${i===active[x]?"▶":""}${p.n} ${p.cur}</span>`).join("")).join("");
+ const ai=isAiTurn();
+ $("#roll").disabled=rolledNow()||over||ai;$("#skill1").disabled=!rolledNow()||over||ai;$("#skill2").disabled=!rolledNow()||over||ai;$("#switch").disabled=over||ai;$("#pass").disabled=over||ai;
 }
-$("#roll").onclick=()=>{dice=dice.map((v,i)=>kept[i]?v:Math.floor(Math.random()*6)+1);rolled=true;log("🎲 "+dice.join(" · ")+"! 기술을 고르거나 주사위를 눌러 보관해.");render()};
-$$(".die").forEach(d=>d.onclick=()=>{if(!rolled)return;let i=+d.dataset.i;kept[i]=!kept[i];render()});
+$("#roll").onclick=()=>{
+  if(rolledNow()||over)return;
+  const diceEls=$$(".die");
+  diceEls.forEach((d,i)=>{if(!keptNow()[i])d.classList.add("rolling")});
+  let ticks=0;
+  const timer=setInterval(()=>{
+    diceEls.forEach((d,i)=>{if(!keptNow()[i])d.textContent=Math.floor(Math.random()*6)+1});
+    ticks++;
+    if(ticks>=8){
+      clearInterval(timer);
+      turnDice[turn]=diceNow().map((v,i)=>keptNow()[i]?v:Math.floor(Math.random()*6)+1);
+      turnRolled[turn]=true;
+      diceEls.forEach(d=>d.classList.remove("rolling"));
+      log("🎲 "+diceNow().join(" · ")+"! 기술을 고르거나 주사위를 눌러 보관해.");
+      render();
+    }
+  },70);
+};
+$$(".die").forEach(d=>d.onclick=()=>{if(!rolledNow())return;let i=+d.dataset.i;turnKept[turn][i]=!turnKept[turn][i];render()});
 function valid(skill){
- let vals=dice.filter(v=>v!=null),n=skill[0];
+ let vals=diceNow().filter(v=>v!=null),n=skill[0];
  if(n==="전광석화"||n==="물대포"||n==="덩굴채찍"||n==="몸통박치기")return vals.length>=1;
  if(n==="베어가르기")return vals.some(v=>v>=4);
  if(n==="10만볼트")return vals.length>=2&&[...vals].sort((a,b)=>b-a)[0]+[...vals].sort((a,b)=>b-a)[1]>=10;
@@ -234,13 +346,93 @@ function valid(skill){
  if(n==="기가임팩트")return vals.length===3;
  return true
 }
-function use(which){if(!rolled)return;let me=cur(turn),sk=me[which];if(!valid(sk)){log("❌ "+sk[0]+" 조건이 안 돼! ("+sk[3]+")");return}let enemy=cur(1-turn),dmg=sk[1],mult=1;
+function use(which){if(!rolledNow())return;let me=cur(turn),sk=me[which];if(!valid(sk)){log("❌ "+sk[0]+" 조건이 안 돼! ("+sk[3]+")");return}let enemy=cur(1-turn),dmg=sk[1],mult=1;
  if((me.t==="불꽃"&&enemy.t==="풀")||(me.t==="풀"&&enemy.t==="물")||(me.t==="물"&&enemy.t==="불꽃"))mult=1.5;
- dmg=Math.round(dmg*mult);enemy.cur=Math.max(0,enemy.cur-dmg);log(`💥 ${me.n}의 ${sk[0]}! ${dmg} 피해!${mult>1?" 효과가 굉장했다!":""}`);playHitEffect(1-turn,dmg,me.t,mult>1);dice=[null,null,null];kept=[false,false,false];rolled=false;render();if(enemy.cur<=0)setTimeout(faint,350);else setTimeout(next,450)}
+ dmg=Math.round(dmg*mult);enemy.cur=Math.max(0,enemy.cur-dmg);log(`💥 ${me.n}의 ${sk[0]}! ${dmg} 피해!${mult>1?" 효과가 굉장했다!":""}`);playHitEffect(1-turn,dmg,me.t,mult>1);turnDice[turn]=[null,null,null];turnKept[turn]=[false,false,false];turnRolled[turn]=false;render();if(enemy.cur<=0)setTimeout(faint,350);else setTimeout(next,450)}
 $("#skill1").onclick=()=>use("s1");$("#skill2").onclick=()=>use("s2");
-function faint(){let x=1-turn,idx=teams[x].findIndex(p=>p.cur>0);if(idx<0){over=true;log("🏆 "+(turn===0?"블루팀":"레드팀")+" 승리!!");render();return}active[x]=idx;log(`😵 쓰러졌다! ${cur(x).n} 출전!`);render();setTimeout(next,500)}
-function next(){turn=1-turn;rolled=false;log((turn===0?"🔵 블루팀":"🔴 레드팀")+" 차례! 보관한 주사위는 그대로야.");render();showTurnBanner()}
-$("#pass").onclick=()=>{if(rolled)log("주사위를 보관하고 턴을 넘겼어.");next()};
-$("#switch").onclick=()=>{let alive=teams[turn].map((p,i)=>p.cur>0&&i!==active[turn]?i:-1).filter(i=>i>=0);if(!alive.length){log("교체할 포켓몬이 없어!");return}let pos=alive.indexOf(active[turn]);active[turn]=alive[(pos+1)%alive.length];log("🔄 "+cur(turn).n+"으로 교체!");render();setTimeout(next,400)};
-pickRender();
+function faint(){let x=1-turn,idx=teams[x].findIndex(p=>p.cur>0);if(idx<0){over=true;log("🏆 "+(turn===0?"블루팀":(gameMode==="solo"?"컴퓨터":"레드팀"))+" 승리!!");render();return}active[x]=idx;log(`😵 쓰러졌다! ${cur(x).n} 출전!`);render();setTimeout(next,500)}
+function next(){
+  turn=1-turn;
+  turnRolled[turn]=false;
+  log((turn===0?"🔵 블루팀":(gameMode==="solo"?"🤖 컴퓨터":"🔴 레드팀"))+" 차례! 이 팀이 보관한 주사위는 그대로야.");
+  render();showTurnBanner();
+  if(isAiTurn()) setTimeout(aiTakeTurn,900);
+}
+$("#pass").onclick=()=>{if(rolledNow())log("주사위를 보관하고 턴을 넘겼어.");turnRolled[turn]=false;next()};
+
+function aiRoll(){
+ turnDice[1]=turnDice[1].map((v,i)=>turnKept[1][i]?v:Math.floor(Math.random()*6)+1);
+ turnRolled[1]=true;
+ render();
+}
+function aiChooseKeep(){
+ // Keep useful high dice. Simple AI, intentionally understandable for a child.
+ turnKept[1]=turnDice[1].map(v=>v>=4);
+}
+function aiBestMove(){
+ const me=cur(1);
+ if(valid(me.s2))return "s2";
+ if(valid(me.s1))return "s1";
+ return null;
+}
+function aiShouldSwitch(){
+ const me=cur(1), enemy=cur(0);
+ if(me.cur>me.hp*.35)return false;
+ const alive=teams[1].map((p,i)=>p.cur>0&&i!==active[1]?i:-1).filter(i=>i>=0);
+ if(!alive.length)return false;
+ return Math.random()<0.35;
+}
+function aiSwitch(){
+ const alive=teams[1].map((p,i)=>p.cur>0&&i!==active[1]?i:-1).filter(i=>i>=0);
+ if(!alive.length)return false;
+ alive.sort((a,b)=>teams[1][b].cur-teams[1][a].cur);
+ active[1]=alive[0];
+ log("🤖 컴퓨터가 "+cur(1).n+"으로 교체!");
+ render(); setTimeout(next,650); return true;
+}
+function aiTakeTurn(){
+ if(!isAiTurn()||aiBusy)return;
+ aiBusy=true;
+ if(aiShouldSwitch()){
+   aiBusy=false; aiSwitch(); return;
+ }
+ log("🤖 컴퓨터가 주사위를 굴린다!");
+ aiRoll();
+ setTimeout(()=>{
+   const move=aiBestMove();
+   if(move){
+     aiBusy=false;
+     use(move);
+   }else{
+     aiChooseKeep();
+     log("🤖 기술 조건이 안 돼서 주사위를 보관하고 턴을 넘긴다.");
+     render();
+     aiBusy=false;
+     setTimeout(next,700);
+   }
+ },900);
+}
+
+function openSwitchModal(){
+  const alive=teams[turn].map((p,i)=>p.cur>0&&i!==active[turn]?i:-1).filter(i=>i>=0);
+  if(!alive.length){log("교체할 포켓몬이 없어!");return;}
+  $("#switchList").innerHTML=alive.map(i=>{
+    const p=teams[turn][i];
+    return `<button class="switch-choice" onclick="chooseSwitch(${i})">
+      <img src="${img(p.id)}" alt="${p.n}">
+      <div><b>${p.n}</b><div class="meta">${p.t} 타입</div></div>
+      <div class="hpmini">HP ${p.cur}/${p.hp}</div>
+    </button>`;
+  }).join("");
+  $("#switchModal").classList.remove("hidden");
+}
+function closeSwitchModal(){ $("#switchModal").classList.add("hidden"); }
+function chooseSwitch(i){
+  active[turn]=i; closeSwitchModal();
+  log("🔄 "+cur(turn).n+"으로 교체!");
+  turnRolled[turn]=false;
+  render();
+  setTimeout(next,450);
+}
+$("#switch").onclick=openSwitchModal;
 </script></body></html>
