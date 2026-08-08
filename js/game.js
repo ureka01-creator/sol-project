@@ -688,9 +688,11 @@ document.addEventListener("click",(e)=>{
 
   const hint=$("#keepHint");
   if(hint){
-    const count=kept.filter(Boolean).length;
-    hint.textContent=count>0
-      ? `📌 ${count}개 보관 중 · 다시 누르면 해제`
+    const selected=kept
+      .map((on,i)=>on ? diceNow()[i] : null)
+      .filter(v=>v!=null);
+    hint.textContent=selected.length>0
+      ? `📌 보관: ${selected.join(" · ")}  · 다시 누르면 해제`
       : "🎯 보관할 주사위를 눌러 선택해";
   }
 });
