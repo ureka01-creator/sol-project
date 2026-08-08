@@ -506,7 +506,26 @@ $("#roll").onclick=()=>{
     log("🎲 "+diceNow().join(" · ")+" 확정! 🎯 기술을 골라.");
   });
 };
-$$(".die").forEach(d=>d.onclick=()=>{if(!rolledNow())return;let i=+d.dataset.i;turnKept[turn][i]=!turnKept[turn][i];render()});
+$$(".die").forEach(d=>d.onclick=()=>{
+  if(!rolledNow() || over || isAiTurn())return;
+
+  const i=+d.dataset.i;
+  turnKept[turn][i]=!turnKept[turn][i];
+
+  // Update only dice/control UI so selection is immediate and smooth.
+  renderDiceControlsOnly();
+
+  const hint=$("#keepHint");
+  if(hint){
+    const selected=turnKept[turn]
+      .map((on,idx)=>on ? turnDice[turn][idx] : null)
+      .filter(v=>v!=null);
+
+    hint.textContent=selected.length
+      ? `📌 보관: ${selected.join(" · ")} · 다시 누르면 해제`
+      : "🎯 보관할 주사위를 눌러 선택해";
+  }
+});
 function valid(skill){
  let vals=diceNow().filter(v=>v!=null),n=skill[0];
  if(n==="전광석화"||n==="할퀴기"||n==="물대포"||n==="덩굴채찍"||n==="몸통박치기")return vals.length>=1;
@@ -675,24 +694,3 @@ function chooseSwitch(i){
 }
 $("#switch").onclick=openSwitchModal;
 
-document.addEventListener("click",(e)=>{
-  const die=e.target.closest(".die");
-  if(!die)return;
-  const diceEls=$$(".die");
-  const idx=diceEls.indexOf(die);
-  if(idx<0 || !rolledNow() || over || isAiTurn())return;
-
-  const kept=keptNow();
-  kept[idx]=!kept[idx];
-  die.classList.toggle("keep",kept[idx]);
-
-  const hint=$("#keepHint");
-  if(hint){
-    const selected=kept
-      .map((on,i)=>on ? diceNow()[i] : null)
-      .filter(v=>v!=null);
-    hint.textContent=selected.length>0
-      ? `📌 보관: ${selected.join(" · ")}  · 다시 누르면 해제`
-      : "🎯 보관할 주사위를 눌러 선택해";
-  }
-});
