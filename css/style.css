@@ -1001,3 +1001,48 @@ body.main-home #soundToggle{
  from{opacity:0;transform:translateY(12px)}
  to{opacity:1;transform:translateY(0)}
 }
+
+/* V3.0.6 - keep title artwork fixed before/after TAP */
+body.main-home .home-screen{
+  justify-content:flex-start!important;
+  min-height:calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 28px)!important;
+  padding-top:150px!important;
+  box-sizing:border-box;
+}
+body.main-home .home-hero{
+  flex:0 0 390px;
+  margin:0!important;
+}
+body.main-home .home-menu{
+  min-height:274px;
+  margin-top:14px;
+}
+body.main-home .home-footer{
+  min-height:18px;
+}
+body.main-home .home-menu.pre-start-hidden{
+  display:grid!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+body.main-home .home-footer.pre-start-hidden{
+  display:block!important;
+  visibility:hidden!important;
+}
+body.main-home .home-menu.menu-reveal,
+body.main-home .home-footer.menu-reveal{
+  visibility:visible!important;
+  pointer-events:auto!important;
+}
+.hero-tap-start{
+  bottom:24px!important;
+}
+@media(max-height:850px){
+  body.main-home .home-screen{padding-top:115px!important}
+  body.main-home .home-hero{flex-basis:370px}
+}
+@media(max-height:760px){
+  body.main-home .home-screen{padding-top:70px!important}
+  body.main-home .home-hero{flex-basis:335px}
+  body.main-home .home-menu{min-height:244px}
+}
