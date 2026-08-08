@@ -107,8 +107,6 @@ $("#soundToggle").onclick=()=>{
   $("#soundToggle").textContent=soundEnabled?"🔊":"🔇";
   if(soundEnabled){ensureAudio();tone(660,.06,"sine",.05)}
 };
-unlockFileAudio();},{once:true,passive:true});
-unlockFileAudio();},{once:true});
 
 
 function chooseMode(mode){
