@@ -1,0 +1,271 @@
+/* Pokémon Dice Battle - UI, animations, battle effects */
+:root{--bg:#f3f6fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#e5e7eb;--blue:#2563eb;--red:#ef4444;--green:#16a34a}
+*{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;background:linear-gradient(#dff3ff,#f8fafc 45%,#eef2f7);color:var(--ink);min-height:100vh}
+.app{max-width:760px;margin:auto;padding:calc(10px + env(safe-area-inset-top)) 12px calc(30px + env(safe-area-inset-bottom))}
+h1{font-size:25px;text-align:center;margin:6px}.sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:12px}
+.card{background:#fff;border-radius:20px;padding:14px;margin:12px 0;box-shadow:0 8px 25px #0f172a14}
+.hidden{display:none!important}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.pick{border:2px solid transparent;background:#f8fafc;color:var(--ink);padding:10px;border-radius:16px;text-align:center}
+.pick.selected{border-color:#2563eb;background:#eff6ff}.pick img{height:110px;max-width:100%;object-fit:contain;display:block;margin:auto}.pick b{display:block;font-size:17px}
+button{border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:800;background:#172033;color:#fff}.wide{width:100%;margin-top:10px}.blue{background:#2563eb}.green{background:#16a34a}.orange{background:#ea580c}.gray{background:#64748b}button:disabled{opacity:.35}
+.arena{display:grid;grid-template-columns:1fr 42px 1fr;gap:8px;align-items:center}.fighter{background:#fff;border-radius:18px;padding:10px;text-align:center;min-height:230px}.fighter img{width:100%;height:135px;object-fit:contain}.vs{text-align:center;font-weight:900;color:#94a3b8}
+.name{font-size:19px;font-weight:900}.type{font-size:12px;color:#64748b}.hpbar{height:13px;background:#e5e7eb;border-radius:20px;overflow:hidden;margin:6px 0}.hp{height:100%;background:#22c55e;transition:.3s}.hptext{font-size:12px}
+.dice{display:flex;justify-content:center;gap:9px;margin:10px}.die{width:64px;height:64px;border:2px solid #dbe3ee;border-radius:15px;display:grid;place-items:center;font-size:30px;font-weight:900;background:#fff}.die.keep{border-color:#2563eb;background:#eff6ff}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.skill{min-height:58px}.skill small{display:block;font-weight:500;opacity:.85;margin-top:3px}
+.teams{display:flex;gap:6px;flex-wrap:wrap}.chip{font-size:11px;background:#f1f5f9;padding:6px 8px;border-radius:999px}.dead{opacity:.35;text-decoration:line-through}
+.log{background:#0f172a;color:#e5e7eb;border-radius:14px;padding:11px;min-height:80px;white-space:pre-line;font-size:13px;line-height:1.45;margin-top:10px}
+.turn{text-align:center;font-size:18px;font-weight:900;margin-bottom:8px}.notice{font-size:12px;color:#64748b;line-height:1.45}
+
+/* V2.3.1 UX */
+.turn-banner{
+  position:fixed;left:50%;top:42%;transform:translate(-50%,-50%) scale(.85);
+  z-index:9999;padding:18px 28px;border-radius:22px;color:#fff;font-weight:1000;
+  font-size:28px;letter-spacing:.5px;opacity:0;pointer-events:none;
+  box-shadow:0 18px 50px #0005;transition:.18s
+}
+.turn-banner.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.turn-banner.blue{background:#2563eb}.turn-banner.red{background:#ef4444}
+
+.fighter.active-blue{outline:4px solid #2563eb;box-shadow:0 0 0 7px #2563eb22,0 12px 35px #2563eb33}
+.fighter.active-red{outline:4px solid #ef4444;box-shadow:0 0 0 7px #ef444422,0 12px 35px #ef444433}
+.fighter.inactive{filter:saturate(.82) brightness(.93)}
+.turn-strip{border-radius:14px;padding:10px 12px;text-align:center;font-weight:1000;font-size:17px;margin:10px 0;color:#fff}
+.turn-strip.blue{background:#2563eb}.turn-strip.red{background:#ef4444}
+
+@keyframes hitShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px) rotate(-1deg)}40%{transform:translateX(9px) rotate(1deg)}60%{transform:translateX(-7px)}80%{transform:translateX(5px)}}
+.hit-shake{animation:hitShake .42s ease}
+.hit-flash{position:absolute;inset:0;border-radius:18px;background:#ef444455;opacity:0;pointer-events:none}
+.hit-flash.on{animation:flash .36s ease}
+@keyframes flash{0%{opacity:0}30%{opacity:.9}100%{opacity:0}}
+.fighter{position:relative;overflow:hidden}
+.damage-pop{
+ position:absolute;left:50%;top:42%;transform:translate(-50%,0);
+ font-size:31px;font-weight:1000;color:#dc2626;text-shadow:0 2px 0 #fff,0 3px 12px #0004;
+ pointer-events:none;z-index:10;animation:damageUp .85s ease forwards
+}
+@keyframes damageUp{0%{opacity:0;transform:translate(-50%,10px) scale(.7)}20%{opacity:1;transform:translate(-50%,-3px) scale(1.15)}100%{opacity:0;transform:translate(-50%,-55px) scale(.95)}}
+.effect-layer{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:8}
+.fx{position:absolute;font-size:32px;animation:flyFx .55s ease forwards}
+@keyframes flyFx{0%{opacity:0;transform:translate(-25px,20px) scale(.5) rotate(-15deg)}20%{opacity:1}100%{opacity:0;transform:translate(35px,-25px) scale(1.25) rotate(15deg)}}
+.super-text{
+ position:fixed;left:50%;top:31%;transform:translate(-50%,-50%) scale(.8);z-index:9998;
+ font-weight:1000;font-size:25px;color:#f59e0b;text-shadow:0 2px 0 #fff,0 4px 20px #0005;
+ opacity:0;pointer-events:none
+}
+.super-text.show{animation:superPop .95s ease}
+@keyframes superPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-65%) scale(1)}}
+
+.top-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.dex-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dex-card{background:#f8fafc;border:1px solid #e5e7eb;border-radius:16px;padding:10px}
+.dex-card img{width:100%;height:105px;object-fit:contain}
+.dex-card h3{margin:4px 0 2px;font-size:17px}
+.dex-card .move{font-size:12px;line-height:1.4;background:#fff;border-radius:10px;padding:7px;margin-top:6px}
+.dex-card .stat{font-size:12px;color:#64748b}
+.modal{
+ position:fixed;inset:0;background:#0f172acc;z-index:9000;padding:calc(18px + env(safe-area-inset-top)) 12px calc(18px + env(safe-area-inset-bottom));
+ overflow:auto
+}
+.modal-inner{max-width:760px;margin:auto;background:#fff;border-radius:22px;padding:14px}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;background:#fff;padding:5px 0 10px;z-index:2}
+.modal-head h2{margin:0}
+.close-btn{background:#334155;padding:10px 14px}
+
+
+/* V2.3.1 battle feel */
+@keyframes pokeHitBig{
+  0%{transform:translate(0,0) scale(1)}
+  12%{transform:translate(-18px,-3px) rotate(-4deg) scale(1.05)}
+  24%{transform:translate(20px,3px) rotate(4deg) scale(.96)}
+  38%{transform:translate(-15px,0) rotate(-3deg) scale(1.04)}
+  52%{transform:translate(13px,2px) rotate(2deg) scale(.98)}
+  68%{transform:translate(-8px,0) rotate(-1deg)}
+  84%{transform:translate(5px,0)}
+  100%{transform:translate(0,0) scale(1)}
+}
+.poke-hit-big{animation:pokeHitBig .62s cubic-bezier(.2,.8,.2,1)}
+@keyframes cardImpact{
+  0%,100%{transform:translate(0,0)}
+  20%{transform:translate(-8px,2px)}
+  40%{transform:translate(7px,-2px)}
+  60%{transform:translate(-5px,1px)}
+  80%{transform:translate(3px,0)}
+}
+.card-impact{animation:cardImpact .48s ease}
+.hit-flash.on{animation:flashStrong .48s ease}
+@keyframes flashStrong{0%{opacity:0}18%{opacity:1;background:#ff1f1f99}55%{opacity:.55}100%{opacity:0}}
+.damage-pop{font-size:42px!important;color:#ef4444!important;text-shadow:0 3px 0 #fff,0 6px 20px #0007!important}
+.fx{font-size:42px!important}
+
+@keyframes diceRoll{
+  0%{transform:scale(1) rotate(0)}
+  20%{transform:scale(1.28) rotate(-12deg)}
+  45%{transform:scale(1.42) rotate(15deg)}
+  70%{transform:scale(1.22) rotate(-8deg)}
+  100%{transform:scale(1) rotate(0)}
+}
+.die.rolling{animation:diceRoll .65s cubic-bezier(.2,.8,.2,1);box-shadow:0 12px 30px #2563eb44;border-color:#2563eb}
+
+.switch-modal{
+ position:fixed;inset:0;background:#0f172acc;z-index:9500;
+ display:flex;align-items:center;justify-content:center;padding:18px
+}
+.switch-box{width:min(520px,100%);background:white;border-radius:22px;padding:16px;box-shadow:0 25px 70px #0007}
+.switch-box h2{margin:0 0 10px}
+.switch-list{display:grid;gap:9px}
+.switch-choice{
+ display:grid;grid-template-columns:68px 1fr auto;gap:10px;align-items:center;
+ width:100%;background:#f8fafc;color:#172033;border:2px solid #e5e7eb;text-align:left
+}
+.switch-choice img{width:64px;height:64px;object-fit:contain}
+.switch-choice .meta{font-size:12px;color:#64748b;margin-top:3px}
+.switch-choice .hpmini{font-size:12px;font-weight:800}
+
+
+/* V2.3.1 */
+.difficulty-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.diff-btn{background:#f8fafc;color:#172033;border:2px solid #e5e7eb;min-height:105px}
+.diff-btn b{display:block;font-size:17px;margin-top:6px}.diff-btn small{display:block;color:#64748b;margin-top:3px}
+
+.difficulty-badge{font-weight:900;margin-left:5px}
+
+.skill.unavailable{filter:grayscale(.75);opacity:.28!important;transform:none!important}
+.skill.available{box-shadow:0 0 0 3px #ffffff55 inset}
+
+@keyframes diceRollXL{
+  0%{transform:scale(1) rotate(0)}
+  18%{transform:scale(1.7) rotate(-25deg)}
+  38%{transform:scale(1.95) rotate(30deg)}
+  58%{transform:scale(1.72) rotate(-22deg)}
+  78%{transform:scale(1.48) rotate(14deg)}
+  100%{transform:scale(1) rotate(0)}
+}
+.die.rolling{animation:diceRollXL .9s cubic-bezier(.15,.8,.2,1)!important;z-index:20;box-shadow:0 22px 45px #2563eb66!important}
+.dice{position:relative;min-height:82px;align-items:center}
+@keyframes diceAreaPulse{0%{transform:scale(1)}45%{transform:scale(1.06)}100%{transform:scale(1)}}
+.dice.burst{animation:diceAreaPulse .9s ease}
+
+.victory-overlay{position:fixed;inset:0;z-index:12000;background:#0f172ae8;display:flex;align-items:center;justify-content:center;padding:20px}
+.victory-card{width:min(560px,100%);text-align:center;border-radius:30px;padding:34px 20px;background:linear-gradient(180deg,#fff,#f8fafc);box-shadow:0 30px 90px #0009;animation:victoryIn .55s cubic-bezier(.15,.9,.2,1)}
+.victory-trophy{font-size:76px;animation:trophyBounce 1s ease infinite alternate}
+.victory-title{font-size:42px;font-weight:1000;margin:8px 0}
+.victory-team{font-size:25px;font-weight:900;margin-bottom:16px}
+@keyframes victoryIn{0%{opacity:0;transform:scale(.55) rotate(-3deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes trophyBounce{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-10px) rotate(4deg)}}
+
+
+.ball-img{
+  width:68px;height:68px;object-fit:contain;display:block;margin:0 auto 4px;
+  image-rendering:auto;filter:drop-shadow(0 6px 9px #0003)
+}
+@keyframes diceLock{
+  0%{transform:scale(1);box-shadow:0 0 0 #0000}
+  35%{transform:scale(1.55);box-shadow:0 0 0 8px #facc1544,0 18px 35px #0003}
+  62%{transform:scale(.9)}
+  100%{transform:scale(1);box-shadow:0 0 0 3px #22c55e55,0 6px 18px #0002}
+}
+.die.locked{animation:diceLock .38s cubic-bezier(.2,.9,.2,1);border-color:#22c55e;background:#f0fdf4}
+.die.locked::after{
+  content:"✓";position:absolute;right:-8px;top:-11px;width:24px;height:24px;border-radius:50%;
+  background:#16a34a;color:#fff;font-size:15px;display:grid;place-items:center;border:2px solid #fff;
+  animation:lockCheck .38s ease
+}
+.die{position:relative}
+@keyframes lockCheck{0%{opacity:0;transform:scale(.2)}60%{opacity:1;transform:scale(1.25)}100%{transform:scale(1)}}
+
+
+/* V2.3.1 */
+@keyframes diceRollFast{
+  0%{transform:scale(1) rotate(0)}
+  30%{transform:scale(1.48) rotate(-22deg)}
+  60%{transform:scale(1.58) rotate(24deg)}
+  100%{transform:scale(1.1) rotate(-8deg)}
+}
+.die.rolling{
+  animation:diceRollFast .46s linear!important;
+  z-index:20;
+  box-shadow:0 16px 34px #2563eb55!important;
+}
+@keyframes diceLockTogether{
+  0%{transform:scale(1.1)}
+  38%{transform:scale(1.48);box-shadow:0 0 0 8px #facc154c,0 18px 35px #0003}
+  68%{transform:scale(.92)}
+  100%{transform:scale(1);box-shadow:0 0 0 3px #22c55e55,0 7px 18px #0002}
+}
+.die.locked{animation:diceLockTogether .32s cubic-bezier(.18,.9,.2,1)!important;border-color:#22c55e;background:#f0fdf4}
+.die.locked::after{content:"✓";position:absolute;right:-8px;top:-11px;width:24px;height:24px;border-radius:50%;background:#16a34a;color:#fff;font-size:15px;display:grid;place-items:center;border:2px solid #fff}
+
+.team-panels{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.team-panel{border-radius:16px;padding:10px;background:#f8fafc;border:2px solid #e5e7eb}
+.team-panel.blue-team{border-color:#93c5fd;background:#eff6ff}
+.team-panel.red-team{border-color:#fca5a5;background:#fff1f2}
+.team-title{font-size:14px;font-weight:1000;margin-bottom:8px}
+.team-mon{display:grid;grid-template-columns:48px 1fr;gap:8px;align-items:center;padding:7px;background:#fff;border-radius:12px;margin-top:7px;border:2px solid transparent;position:relative}
+.team-mon.active-mon{border-color:#22c55e;box-shadow:0 0 0 3px #22c55e18}
+.team-mon.fainted-mon{opacity:.38;filter:grayscale(1)}
+.team-mon img{width:46px;height:46px;object-fit:contain}
+.team-mon-name{font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:space-between;gap:4px}
+.team-mon-type{font-size:10px;color:#64748b;margin:2px 0 4px}
+.team-hpbar{height:7px;background:#e5e7eb;border-radius:999px;overflow:hidden}
+.team-hpfill{height:100%;background:#22c55e;border-radius:999px}
+.team-hptext{font-size:9px;color:#475569;margin-top:3px}
+.active-tag{font-size:9px;padding:2px 5px;border-radius:999px;background:#16a34a;color:#fff;white-space:nowrap}
+.fainted-tag{font-size:9px;padding:2px 5px;border-radius:999px;background:#64748b;color:#fff;white-space:nowrap}
+@media(max-width:520px){
+  .team-panels{grid-template-columns:1fr}
+  .team-mon{grid-template-columns:44px 1fr}
+}
+
+
+/* V2.3.1 dice polish */
+@keyframes diceLockYellow{
+  0%{transform:scale(1.08);background:#fff;border-color:#dbe3ee}
+  35%{transform:scale(1.85);background:#fef9c3;border-color:#facc15;box-shadow:0 0 0 10px #facc1540,0 22px 45px #0004}
+  65%{transform:scale(1.15);background:#fefce8;border-color:#eab308}
+  100%{transform:scale(1);background:#fff;border-color:#dbe3ee;box-shadow:0 6px 14px #0f172a14}
+}
+.die.locked{
+  animation:diceLockYellow .46s cubic-bezier(.2,.9,.2,1)!important;
+  border-color:#facc15!important;
+  background:#fef9c3!important;
+}
+.die.locked::after{
+  content:"";display:none!important;
+}
+.dice.cpu-rolling::before{
+  content:"🤖 컴퓨터 주사위!";
+  position:absolute;left:50%;top:-24px;transform:translateX(-50%);
+  font-size:12px;font-weight:900;color:#475569;white-space:nowrap
+}
+
+
+.sound-toggle{
+ position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:11000;
+ width:48px;height:48px;border-radius:50%;padding:0;font-size:22px;background:#111827dd;
+ box-shadow:0 8px 22px #0004
+}
+
+
+/* V2.3.1 arcade dice finish */
+@keyframes diceLockArcade{
+  0%{transform:scale(1.05);filter:brightness(1)}
+  28%{transform:scale(2.05);background:#fde047;border-color:#eab308;
+      box-shadow:0 0 0 12px #facc154f,0 0 35px #facc1588,0 24px 48px #0004;filter:brightness(1.12)}
+  58%{transform:scale(1.72);background:#fef08a;border-color:#facc15}
+  100%{transform:scale(1);background:#fff;border-color:#dbe3ee;
+       box-shadow:0 6px 14px #0f172a14;filter:brightness(1)}
+}
+.die.locked{animation:diceLockArcade .43s cubic-bezier(.18,.9,.2,1)!important}
+
+
+/* V2.3.1 longer dice confirmation */
+@keyframes diceLockImpact{
+  0%{transform:scale(1.05);background:#fff;border-color:#dbe3ee}
+  22%{transform:scale(2.08);background:#fde047;border-color:#eab308;
+      box-shadow:0 0 0 12px #facc154d,0 0 42px #facc1590,0 24px 48px #0004}
+  58%{transform:scale(1.82);background:#fef08a;border-color:#facc15;
+      box-shadow:0 0 0 8px #facc1538,0 0 30px #facc1566}
+  82%{transform:scale(1.34);background:#fef9c3;border-color:#eab308}
+  100%{transform:scale(1);background:#fff;border-color:#dbe3ee;box-shadow:0 6px 14px #0f172a14}
+}
+.die.locked{animation:diceLockImpact .76s cubic-bezier(.18,.9,.2,1)!important}
