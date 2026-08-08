@@ -343,7 +343,7 @@ function render(){
  [["p1",a],["p2",b]].forEach(([x,p])=>{$("#"+x+"hp").style.width=(p.cur/p.hp*100)+"%";$("#"+x+"hptext").textContent=`HP ${p.cur} / ${p.hp}`});
  $("#turnText").textContent=(turn===0?"🔵 블루팀":(gameMode==="solo"?"🤖 컴퓨터":"🔴 레드팀"))+" 차례"; updateTurnUX();
  let me=cur(turn);$("#skill1").innerHTML=`${me.s1[0]} · ${me.s1[1]}<small>${me.s1[3]}</small>`;$("#skill2").innerHTML=`${me.s2[0]} · ${me.s2[1]}<small>${me.s2[3]}</small>`;
- $$(".die").forEach((d,i)=>{d.textContent=diceNow()[i]??"?";d.classList.toggle("keep",keptNow()[i])});
+ $$(".die").forEach((d,i)=>{d.textContent=(!rolledNow() && !keptNow()[i]) ? "?" : (diceNow()[i]??"?");d.classList.toggle("keep",keptNow()[i])});
  $("#teams").innerHTML=teams.map((tm,x)=>{
    const teamName=x===0?"🔵 블루팀":(gameMode==="solo"?"🤖 컴퓨터":"🔴 레드팀");
    return `<div class="team-panel ${x===0?"blue-team":"red-team"}">
@@ -395,7 +395,7 @@ function renderDiceControlsOnly(){
   const ai=isAiTurn();
 
   $$(".die").forEach((d,i)=>{
-    d.textContent=diceNow()[i]??"?";
+    d.textContent=(!rolledNow() && !keptNow()[i]) ? "?" : (diceNow()[i]??"?");
     d.classList.toggle("keep",keptNow()[i]);
 
     // Yellow only while this turn has a confirmed roll.
