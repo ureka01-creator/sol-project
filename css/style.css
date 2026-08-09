@@ -1418,3 +1418,167 @@ body.main-home .home-screen{
     height:100dvh!important;
   }
 }
+
+/* =========================================================
+   V3.1.2 — clean title/menu rebuild
+   ========================================================= */
+body.main-home{
+  margin:0!important;
+  padding:0!important;
+  height:100svh!important;
+  overflow:hidden!important;
+  background:#7fd2ef!important;
+}
+body.main-home .app{
+  width:100%!important;
+  max-width:none!important;
+  height:100svh!important;
+  padding:0!important;
+  margin:0!important;
+  overflow:hidden!important;
+}
+body.main-home .home-screen{
+  position:relative!important;
+  width:100%!important;
+  height:100svh!important;
+  min-height:100svh!important;
+  padding:0!important;
+  margin:0!important;
+  display:block!important;
+  overflow:hidden!important;
+  background:url("../images/title-background.jpg?v=312") center center/cover no-repeat!important;
+}
+body.main-home .home-hero{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+body.main-home .home-hero::before,
+body.main-home .home-hero::after,
+body.main-home .home-glow,
+body.main-home .home-mon,
+body.main-home .home-ball{
+  display:none!important;
+}
+body.main-home .home-logo{
+  position:absolute!important;
+  left:50%!important;
+  top:17.5%!important;
+  transform:translateX(-50%)!important;
+  width:88%!important;
+  text-align:center!important;
+  z-index:4!important;
+}
+body.main-home .home-kicker{
+  display:inline-block!important;
+  padding:4px 13px!important;
+  font-size:13px!important;
+}
+body.main-home .home-title{
+  margin-top:12px!important;
+  font-size:37px!important;
+  line-height:1!important;
+}
+body.main-home .home-title span{
+  font-size:43px!important;
+}
+body.main-home .home-tagline{
+  margin-top:9px!important;
+  font-size:10px!important;
+}
+body.main-home .home-control-area{
+  position:absolute!important;
+  left:16px!important;
+  right:16px!important;
+  bottom:calc(30px + env(safe-area-inset-bottom))!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  z-index:10!important;
+}
+body.main-home .hero-tap-start{
+  position:relative!important;
+  display:block!important;
+  left:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  transform:none!important;
+  width:min(360px,100%)!important;
+  min-height:62px!important;
+  margin:0 auto!important;
+  padding:11px 16px!important;
+  border-radius:18px!important;
+  background:rgba(255,255,255,.90)!important;
+  color:#173b79!important;
+  box-shadow:0 8px 20px rgba(15,60,100,.12)!important;
+  animation:none!important;
+}
+body.main-home .hero-tap-start.hidden{display:none!important}
+body.main-home .home-menu.pre-start-hidden{
+  display:none!important;
+}
+body.main-home .home-menu.menu-reveal{
+  display:grid!important;
+  position:relative!important;
+  inset:auto!important;
+  grid-template-columns:1fr!important;
+  gap:10px!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  animation:none!important;
+  transform:none!important;
+}
+body.main-home .home-play{
+  min-height:72px!important;
+  height:72px!important;
+  padding:9px 14px!important;
+  grid-template-columns:46px 1fr 20px!important;
+  gap:11px!important;
+  border-radius:20px!important;
+}
+body.main-home .home-play-icon{
+  width:46px!important;
+  height:46px!important;
+  border-radius:14px!important;
+  font-size:17px!important;
+}
+body.main-home .home-play b{
+  font-size:19px!important;
+}
+body.main-home .home-play small{
+  margin-top:3px!important;
+  font-size:10px!important;
+}
+body.main-home .home-arrow{
+  font-size:30px!important;
+}
+body.main-home .home-dex{
+  min-height:48px!important;
+  height:48px!important;
+  border-radius:16px!important;
+}
+body.main-home .home-footer{
+  display:none!important;
+}
+@supports(height:100dvh){
+  body.main-home,
+  body.main-home .app,
+  body.main-home .home-screen{
+    height:100dvh!important;
+    min-height:100dvh!important;
+  }
+}
