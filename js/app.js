@@ -53,10 +53,9 @@ if(tapStart){
     e.preventDefault();
     warmUpGameAudio();
     startMenuBgm();
-    tapStart.style.display="none";
+    tapStart.classList.add("hidden");
     if(homeMenu){
       homeMenu.classList.remove("hidden");
-      homeMenu.style.display="grid";
     }
   });
 }
