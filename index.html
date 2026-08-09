@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#111827">
 <title>포켓몬 주사위 배틀 V2.3.1</title>
-<link rel="stylesheet" href="css/style.css?v=340">
+<link rel="stylesheet" href="css/style.css?v=341">
 </head>
 <body class="main-home">
 <button id="soundToggle" class="sound-toggle" aria-label="효과음 켜기/끄기">🔊</button><div id="turnBanner" class="turn-banner"></div><div id="superText" class="super-text">효과가 굉장했다!</div><div class="app">
@@ -14,6 +14,7 @@
 <div class="top-actions">
   <button class="gray setup-top-action" onclick="openDex()">📘 포켓몬 도감</button>
   <button class="setup-top-action" onclick="location.reload()">🔄 새 게임</button>
+  <button id="battleDexBtn" class="battle-dex-btn" onclick="openDex()">📘 포켓몬 도감</button>
   <button id="blueTeamStatusBtn" class="battle-team-tab blue-team-tab" onclick="openTeamStatus(0)">🔵 블루팀</button>
   <button id="redTeamStatusBtn" class="battle-team-tab red-team-tab" onclick="openTeamStatus(1)">🔴 레드팀</button>
 </div>
@@ -108,14 +109,19 @@
   <div class="fighter" id="fighter1"><div class="hit-flash"></div><div class="effect-layer"></div><div id="p2name" class="name"></div><div id="p2type" class="type"></div><img id="p2img"><div class="hpbar"><div id="p2hp" class="hp"></div></div><div id="p2hptext" class="hptext"></div></div>
  </div>
 
- <div class="card">
+ <div class="battle-page-tabs">
+  <button id="dicePageTab" class="battle-page-tab active" onclick="setBattlePage('dice')">🎲 주사위</button>
+  <button id="skillPageTab" class="battle-page-tab" onclick="setBattlePage('skills')">⚡ 기술</button>
+ </div>
+
+ <div id="dicePage" class="card battle-page active">
   <b>🎲 주사위 3개</b><div class="notice">주사위를 누르면 보관/해제할 수 있어. 보관한 주사위는 다음 턴에도 남아.</div>
   <div class="dice"><div class="die" data-i="0">?</div><div class="die" data-i="1">?</div><div class="die" data-i="2">?</div></div>
   <div id="keepHint" class="keep-hint hidden">🎯 보관할 주사위를 눌러 선택해</div>
-<button id="roll" class="wide blue">주사위 굴리기</button>
+  <button id="roll" class="wide blue">주사위 굴리기</button>
  </div>
 
- <div class="card">
+ <div id="skillPage" class="card battle-page hidden">
   <div class="actions">
    <button id="skill1" class="skill gray"></button>
    <button id="skill2" class="skill orange"></button>
@@ -168,8 +174,8 @@
 <script src="js/state.js?v=290"></script>
 <script src="js/audio.js?v=321"></script>
 <script src="js/setup.js?v=328"></script>
-<script src="js/ui.js?v=340"></script>
-<script src="js/dice.js?v=337"></script>
+<script src="js/ui.js?v=341"></script>
+<script src="js/dice.js?v=341"></script>
 <script src="js/battle.js?v=291"></script>
 <script src="js/ai.js?v=338"></script>
 <script src="js/app.js?v=316"></script></body></html>
