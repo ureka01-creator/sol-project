@@ -16,14 +16,17 @@ function playDiceConfirmOverlay(dieEl){
     const startTop=r.top;
     const peakLeft=r.left-(peakW-startW)/2;
     const peakTop=r.top-(peakH-startH)/2;
+    const startFont=parseFloat(getComputedStyle(dieEl).fontSize)||30;
+    const peakFont=startFont*peakScale;
 
     Object.assign(pop.style,{
       left:startLeft+"px",
       top:startTop+"px",
       width:startW+"px",
       height:startH+"px",
-      fontSize:getComputedStyle(dieEl).fontSize,
-      transition:"left 150ms ease-out, top 150ms ease-out, width 150ms ease-out, height 150ms ease-out"
+      fontSize:startFont+"px",
+      lineHeight:"1",
+      transition:"left 150ms ease-out, top 150ms ease-out, width 150ms ease-out, height 150ms ease-out, font-size 150ms ease-out"
     });
 
     document.body.appendChild(pop);
@@ -35,13 +38,15 @@ function playDiceConfirmOverlay(dieEl){
         pop.style.top=peakTop+"px";
         pop.style.width=peakW+"px";
         pop.style.height=peakH+"px";
+        pop.style.fontSize=peakFont+"px";
 
         setTimeout(()=>{
-          pop.style.transition="left 210ms cubic-bezier(.2,.8,.2,1), top 210ms cubic-bezier(.2,.8,.2,1), width 210ms cubic-bezier(.2,.8,.2,1), height 210ms cubic-bezier(.2,.8,.2,1)";
+          pop.style.transition="left 210ms cubic-bezier(.2,.8,.2,1), top 210ms cubic-bezier(.2,.8,.2,1), width 210ms cubic-bezier(.2,.8,.2,1), height 210ms cubic-bezier(.2,.8,.2,1), font-size 210ms cubic-bezier(.2,.8,.2,1)";
           pop.style.left=startLeft+"px";
           pop.style.top=startTop+"px";
           pop.style.width=startW+"px";
           pop.style.height=startH+"px";
+          pop.style.fontSize=startFont+"px";
         },155);
       });
     });
