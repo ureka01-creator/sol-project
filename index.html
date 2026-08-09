@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#111827">
 <title>포켓몬 주사위 배틀 V2.3.1</title>
-<link rel="stylesheet" href="css/style.css?v=323">
+<link rel="stylesheet" href="css/style.css?v=324">
 </head>
 <body class="main-home">
 <button id="soundToggle" class="sound-toggle" aria-label="효과음 켜기/끄기">🔊</button><div id="turnBanner" class="turn-banner"></div><div id="superText" class="super-text">효과가 굉장했다!</div><div class="app">
@@ -64,8 +64,11 @@
 </section>
 
 
-<section id="soloTeamScreen" class="card hidden">
- <h2 style="margin-top:0">내 팀을 선택해</h2>
+<section id="soloTeamScreen" class="card hidden solo-team-screen">
+ <div class="solo-team-heading">
+   <div class="solo-team-heading-main">내 팀을 선택해</div>
+   <div class="solo-team-heading-sub">CHOOSE YOUR TEAM</div>
+  </div>
  <div class="solo-team-grid">
   <button class="solo-team-btn blue-choice trainer-choice" onclick="chooseSoloTeam(0)">
    <span class="trainer-art-wrap"><img class="trainer-art" src="images/trainer-blue-team.jpg?v=293" alt="블루팀 트레이너"></span>
