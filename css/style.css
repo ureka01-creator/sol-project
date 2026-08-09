@@ -3833,3 +3833,73 @@ body:has(#gameScreen:not(.hidden)) .battle-dex-btn{
     margin-right:auto;
   }
 }
+
+
+/* =========================================================
+   V3.4.2 — battle quit + longer scrollable battle log
+   ========================================================= */
+
+.battle-quit-btn{
+  width:100%;
+  min-height:54px;
+  margin:14px 0 30px;
+  border-radius:20px!important;
+  border:1px solid rgba(239,68,68,.18)!important;
+  background:rgba(255,255,255,.48)!important;
+  color:#b4232c!important;
+  font-size:16px!important;
+  font-weight:850!important;
+  box-shadow:0 8px 20px rgba(27,62,88,.07)!important;
+}
+
+.battle-quit-btn:active{
+  background:rgba(254,242,242,.88)!important;
+}
+
+/* Battle history: show much more and scroll inside the panel. */
+#skillPage #log{
+  display:block!important;
+  height:240px!important;
+  min-height:240px!important;
+  max-height:240px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+  padding:16px!important;
+  line-height:1.55!important;
+  scroll-behavior:smooth;
+}
+
+/* Keep newest log visible while still allowing manual history scrolling. */
+#skillPage{
+  min-height:0!important;
+}
+
+@media(max-width:430px){
+  #skillPage #log{
+    height:220px!important;
+    min-height:220px!important;
+    max-height:220px!important;
+  }
+
+  .battle-quit-btn{
+    margin-bottom:24px!important;
+  }
+}
+
+@media(min-width:700px){
+  #skillPage #log{
+    height:300px!important;
+    min-height:300px!important;
+    max-height:300px!important;
+  }
+
+  .battle-quit-btn{
+    max-width:720px;
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
+    margin-bottom:34px;
+  }
+}
