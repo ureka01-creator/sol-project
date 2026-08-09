@@ -73,17 +73,40 @@ function playHitEffect(target, dmg, type, superHit=false){
    const s=$("#superText"); s.classList.remove("show"); void s.offsetWidth; s.classList.add("show");
  }
 }
+let dexReturnScreen=null;
+let dexReturnWasHome=false;
+
 function openDex(){
- $("#dexGrid").innerHTML=P.map(p=>`
-  <div class="dex-card">
-   <img src="${img(p.id)}" alt="${p.n}">
-   <h3>${p.n}</h3><div class="stat">${p.t} 타입 · HP ${p.hp}</div>
-   <div class="move"><b>${p.s1[0]}</b> · 피해 ${p.s1[1]}<br>${p.s1[3]}</div>
-   <div class="move"><b>${p.s2[0]}</b> · 피해 ${p.s2[1]}<br>${p.s2[3]}</div>
-  </div>`).join("");
- $("#dexModal").classList.remove("hidden");
+  const screenIds=["modeScreen","difficultyScreen","soloTeamScreen","selectScreen","gameScreen"];
+  dexReturnScreen=screenIds.find(id=>{
+    const el=$("#"+id);
+    return el && !el.classList.contains("hidden");
+  }) || null;
+  dexReturnWasHome=document.body.classList.contains("main-home");
+
+  $("#dexGrid").innerHTML=P.map(p=>`
+   <div class="dex-card">
+    <img src="${img(p.id)}" alt="${p.n}">
+    <h3>${p.n}</h3><div class="stat">${p.t} 타입 · HP ${p.hp}</div>
+    <div class="move"><b>${p.s1[0]}</b> · 피해 ${p.s1[1]}<br>${p.s1[3]}</div>
+    <div class="move"><b>${p.s2[0]}</b> · 피해 ${p.s2[1]}<br>${p.s2[3]}</div>
+   </div>`).join("");
+
+  $("#dexModal").classList.remove("hidden");
 }
-function closeDex(){ $("#dexModal").classList.add("hidden"); }
+
+function closeDex(){
+  $("#dexModal").classList.add("hidden");
+
+  if(dexReturnScreen){
+    ["modeScreen","difficultyScreen","soloTeamScreen","selectScreen","gameScreen"].forEach(id=>{
+      const el=$("#"+id);
+      if(el) el.classList.toggle("hidden", id!==dexReturnScreen);
+    });
+  }
+
+  document.body.classList.toggle("main-home", !!dexReturnWasHome);
+}
 
 function cur(x){return teams[x][active[x]]}
 
