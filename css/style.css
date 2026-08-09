@@ -3322,3 +3322,57 @@ body:has(#selectScreen:not(.hidden)) .app > .top-actions > button:first-child{
     font-size:34px!important;
   }
 }
+
+/* =========================================================
+   V3.3.1 — iPad Safari glass-rendering fix
+   Safari on iPad can corrupt backdrop-filter over a large
+   full-screen background. Keep the glass look without live blur.
+   ========================================================= */
+@media(min-width:700px){
+  body.main-home #tapStart.hero-tap-start,
+  body.main-home #homeMenu .home-play,
+  body.main-home #homeMenu .home-dex{
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    filter:none!important;
+    isolation:isolate!important;
+    transform:translateZ(0);
+  }
+
+  body.main-home #tapStart.hero-tap-start{
+    background:rgba(245,250,253,.88)!important;
+    border:1px solid rgba(255,255,255,.78)!important;
+  }
+
+  body.main-home #homeMenu .home-play{
+    background:rgba(244,250,253,.82)!important;
+    border:1px solid rgba(255,255,255,.75)!important;
+  }
+
+  body.main-home #homeMenu .home-play.solo{
+    background:linear-gradient(
+      135deg,
+      rgba(231,244,253,.93),
+      rgba(244,250,253,.84)
+    )!important;
+  }
+
+  body.main-home #homeMenu .home-play.two{
+    background:linear-gradient(
+      135deg,
+      rgba(251,240,238,.92),
+      rgba(246,249,251,.84)
+    )!important;
+  }
+
+  body.main-home #homeMenu .home-dex{
+    background:rgba(246,250,252,.88)!important;
+    border:1px solid rgba(255,255,255,.78)!important;
+  }
+
+  body.main-home #homeMenu .home-play-icon{
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    background:rgba(255,255,255,.48)!important;
+  }
+}
