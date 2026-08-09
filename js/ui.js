@@ -12,6 +12,7 @@ function start(){
  turnKept=[[false,false,false],[false,false,false]];
 
  $("#selectScreen").classList.add("hidden");
+ battleLogHistory.length=0;
  $("#gameScreen").classList.remove("hidden");
  battlePage="dice";
  setBattlePage("dice");
@@ -29,19 +30,29 @@ function start(){
  showTurnBanner();
  if(isAiTurn())setTimeout(aiTakeTurn,900);
 }
+const battleLogHistory=[];
+
+function escapeHtml(s){
+  return s
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function renderBattleLog(){
+  const el=$("#log");
+  if(!el)return;
+  el.innerHTML=battleLogHistory
+    .map(t=>`<div class="battle-log-row">${escapeHtml(String(t))}</div>`)
+    .join("");
+  requestAnimationFrame(()=>{ el.scrollTop=el.scrollHeight; });
+}
+
 function log(t){
- const el=$("#log");
- if(!el)return;
-
- const row=document.createElement("div");
- row.className="battle-log-row";
- row.textContent=t;
- el.appendChild(row);
-
- // Keep the newest event visible when new logs arrive.
- requestAnimationFrame(()=>{
-   el.scrollTop=el.scrollHeight;
- });
+  battleLogHistory.push(String(t));
+  renderBattleLog();
 }
 
 
@@ -185,6 +196,8 @@ function render(){
   updateDiceTeamColor();
 }
 
+
+renderBattleLog();
 
 function renderDiceControlsOnly(){
   const me=cur(turn);

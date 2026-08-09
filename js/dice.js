@@ -123,7 +123,7 @@ $("#roll").onclick=()=>{
   if(rolledNow()||over)return;
   animateDiceRoll(turn,()=>{
     log("🎲 "+diceNow().join(" · ")+" 확정! 🎯 기술을 골라.");
-    if(!isAiTurn()) setTimeout(()=>setBattlePage("skills"),750);
+    if(!isAiTurn()) setTimeout(()=>setBattlePage("skills"),1200);
   });
 };
 $$(".die").forEach(d=>d.onclick=()=>{
