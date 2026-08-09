@@ -2561,3 +2561,59 @@ body.main-home #homeMenu .home-dex:active{
     transform:scale(1.05);
   }
 }
+
+/* =========================================================
+   V3.2.3 — trainer head-safe crop + iPad phone-like layout
+   ========================================================= */
+
+/* Keep the portrait large, but guarantee the top of the artwork is visible. */
+.solo-team-btn.trainer-choice .trainer-art{
+  object-fit:cover!important;
+  object-position:center top!important;
+  transform:none!important;
+}
+
+/* iPhone */
+@media(max-width:699px){
+  .solo-team-btn.trainer-choice .trainer-art{
+    object-position:center top!important;
+  }
+}
+
+/* iPad portrait: use the same visual proportions as the phone UI. */
+@media(min-width:700px) and (orientation:portrait){
+  #soloTeamScreen{
+    width:min(92vw,760px)!important;
+    max-width:760px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+  }
+
+  #soloTeamScreen .solo-team-grid{
+    gap:26px!important;
+  }
+
+  #soloTeamScreen .solo-team-btn.trainer-choice{
+    min-height:410px!important;
+    padding:16px 14px 18px!important;
+    border-radius:28px!important;
+  }
+
+  #soloTeamScreen .trainer-art-wrap{
+    height:325px!important;
+    border-radius:22px!important;
+  }
+
+  #soloTeamScreen .trainer-art{
+    width:100%!important;
+    height:100%!important;
+    object-fit:cover!important;
+    object-position:center top!important;
+    transform:none!important;
+  }
+
+  #soloTeamScreen .solo-team-btn.trainer-choice b{
+    margin-top:12px!important;
+    font-size:28px!important;
+  }
+}
