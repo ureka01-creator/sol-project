@@ -2486,3 +2486,35 @@ body.main-home #homeMenu .home-dex:active{
     max-width:560px!important;
   }
 }
+
+/* =========================================================
+   V3.2.1 — iPad trainer card image fix
+   ========================================================= */
+.solo-team-btn.trainer-choice .trainer-art-wrap{
+  background:rgba(255,255,255,.34)!important;
+}
+.solo-team-btn.trainer-choice .trainer-art{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  object-position:center bottom!important;
+}
+
+@media(min-width:700px){
+  .solo-team-btn.trainer-choice{
+    min-height:300px!important;
+    padding:14px 12px 16px!important;
+  }
+  .solo-team-btn.trainer-choice .trainer-art-wrap{
+    height:230px!important;
+    border-radius:18px!important;
+  }
+  .solo-team-btn.trainer-choice .trainer-art{
+    object-fit:contain!important;
+    object-position:center bottom!important;
+  }
+  .solo-team-btn.trainer-choice b{
+    margin-top:9px!important;
+    font-size:22px!important;
+  }
+}
