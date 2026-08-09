@@ -1582,3 +1582,262 @@ body.main-home .home-footer{
     min-height:100dvh!important;
   }
 }
+
+/* =========================================================
+   V3.1.3 — stable title controls
+   ========================================================= */
+body.main-home .home-control-area{
+  position:fixed!important;
+  left:18px!important;
+  right:18px!important;
+  bottom:calc(34px + env(safe-area-inset-bottom))!important;
+  z-index:50!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  pointer-events:auto!important;
+}
+
+body.main-home .hero-tap-start{
+  display:block!important;
+  position:relative!important;
+  width:min(360px,100%)!important;
+  min-height:62px!important;
+  margin:0 auto!important;
+  padding:11px 16px!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  transform:none!important;
+  z-index:51!important;
+}
+body.main-home .hero-tap-start.hidden{
+  display:none!important;
+}
+
+body.main-home #homeMenu{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:10px!important;
+  width:100%!important;
+  max-width:520px!important;
+  margin:0 auto!important;
+  padding:0!important;
+  height:auto!important;
+  min-height:0!important;
+  inset:auto!important;
+  z-index:52!important;
+  visibility:visible!important;
+  opacity:1!important;
+  transform:none!important;
+  animation:none!important;
+}
+body.main-home #homeMenu.hidden{
+  display:none!important;
+}
+
+body.main-home #homeMenu .home-play{
+  width:100%!important;
+  height:72px!important;
+  min-height:72px!important;
+  margin:0!important;
+}
+body.main-home #homeMenu .home-dex{
+  width:100%!important;
+  height:48px!important;
+  min-height:48px!important;
+  margin:0!important;
+}
+
+/* Prevent old experimental home-menu rules from affecting #homeMenu */
+body.main-home #homeMenu.pre-start-hidden,
+body.main-home #homeMenu.menu-reveal{
+  position:relative!important;
+  inset:auto!important;
+}
+
+/* =========================================================
+   V3.1.4 — title layout: top artwork + bottom controls
+   No fixed/absolute menu positioning.
+   ========================================================= */
+body.main-home{
+  margin:0!important;
+  padding:0!important;
+  min-height:100svh!important;
+  height:auto!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  background:#7fd2ef!important;
+}
+
+body.main-home .app{
+  width:100%!important;
+  max-width:none!important;
+  min-height:100svh!important;
+  height:auto!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:visible!important;
+}
+
+body.main-home .home-screen{
+  width:100%!important;
+  min-height:100svh!important;
+  height:auto!important;
+  margin:0!important;
+  padding:0 0 calc(24px + env(safe-area-inset-bottom))!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:flex-start!important;
+  gap:0!important;
+  overflow:visible!important;
+  background:#7fd2ef!important;
+}
+
+/* Artwork/title occupies a fixed visual section. */
+body.main-home .home-hero{
+  position:relative!important;
+  inset:auto!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  aspect-ratio:602 / 950!important;
+  flex:none!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  overflow:hidden!important;
+  background:url("../images/title-background.jpg?v=314") center 38% / cover no-repeat!important;
+  box-shadow:none!important;
+}
+
+/* Logo stays inside artwork and never moves when menu changes. */
+body.main-home .home-logo{
+  position:absolute!important;
+  left:50%!important;
+  top:18%!important;
+  transform:translateX(-50%)!important;
+  width:88%!important;
+  margin:0!important;
+  z-index:4!important;
+}
+
+/* Controls are always BELOW the artwork. */
+body.main-home .home-control-area{
+  position:relative!important;
+  inset:auto!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  flex:none!important;
+  box-sizing:border-box!important;
+  margin:0!important;
+  padding:18px 18px 0!important;
+  z-index:10!important;
+  background:#7fd2ef!important;
+}
+
+/* Start button lives in normal flow below artwork. */
+body.main-home .hero-tap-start{
+  position:relative!important;
+  inset:auto!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  transform:none!important;
+  display:block!important;
+  width:min(360px,100%)!important;
+  min-height:62px!important;
+  margin:0 auto!important;
+  padding:11px 16px!important;
+  z-index:auto!important;
+}
+body.main-home .hero-tap-start.hidden{
+  display:none!important;
+}
+
+/* Menu replaces start button in exactly the same bottom area. */
+body.main-home #homeMenu{
+  position:relative!important;
+  inset:auto!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  width:100%!important;
+  max-width:520px!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0 auto!important;
+  padding:0!important;
+  grid-template-columns:1fr!important;
+  gap:10px!important;
+  z-index:auto!important;
+  transform:none!important;
+  animation:none!important;
+}
+body.main-home #homeMenu.hidden{
+  display:none!important;
+}
+body.main-home #homeMenu:not(.hidden){
+  display:grid!important;
+}
+
+body.main-home #homeMenu .home-play{
+  width:100%!important;
+  height:72px!important;
+  min-height:72px!important;
+  margin:0!important;
+}
+body.main-home #homeMenu .home-dex{
+  width:100%!important;
+  height:48px!important;
+  min-height:48px!important;
+  margin:0!important;
+}
+
+body.main-home .home-footer{
+  display:none!important;
+}
+
+/* Do not let old viewport-height experiments move anything. */
+@media(max-height:850px), (max-height:760px){
+  body.main-home .home-screen{
+    min-height:100svh!important;
+    height:auto!important;
+    padding:0 0 calc(24px + env(safe-area-inset-bottom))!important;
+  }
+  body.main-home .home-hero{
+    aspect-ratio:602 / 950!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+  }
+  body.main-home .home-control-area{
+    position:relative!important;
+    inset:auto!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:18px 18px 0!important;
+  }
+}
+
+@supports(height:100dvh){
+  body.main-home .app,
+  body.main-home .home-screen{
+    min-height:100dvh!important;
+    height:auto!important;
+  }
+}
