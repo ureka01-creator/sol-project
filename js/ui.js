@@ -13,6 +13,11 @@ function start(){
 
  $("#selectScreen").classList.add("hidden");
  $("#gameScreen").classList.remove("hidden");
+ requestAnimationFrame(()=>{
+   window.scrollTo(0,0);
+   document.documentElement.scrollTop=0;
+   document.body.scrollTop=0;
+ });
  preloadCombatAudioBuffers();
  startBattleBgm();
 
