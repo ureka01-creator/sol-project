@@ -2259,3 +2259,48 @@ body.main-home .home-footer{
     transform:translateX(-50%)!important;
   }
 }
+
+/* =========================================================
+   V3.1.8 — iPad title true viewport centering
+   ========================================================= */
+@media(min-width:700px){
+  body.main-home #modeScreen.home-screen{
+    background-position:54% 50%!important;
+  }
+
+  body.main-home .home-hero{
+    position:absolute!important;
+    inset:0!important;
+    width:100vw!important;
+    height:100%!important;
+    margin:0!important;
+    padding:0!important;
+  }
+
+  /* Center against the actual Safari viewport, not any inherited parent box. */
+  body.main-home .home-hero .home-logo{
+    position:fixed!important;
+    left:50vw!important;
+    right:auto!important;
+    top:max(8%, calc(env(safe-area-inset-top) + 30px))!important;
+    width:min(62vw,520px)!important;
+    margin:0!important;
+    transform:translateX(-50%)!important;
+    text-align:center!important;
+    z-index:5!important;
+  }
+
+  /* Bottom controls already look correct; keep them viewport-centered too. */
+  body.main-home .home-control-area{
+    left:50vw!important;
+    right:auto!important;
+    transform:translateX(-50%)!important;
+  }
+}
+
+/* iPad portrait gets a tiny extra background focal-point correction. */
+@media(min-width:700px) and (orientation:portrait){
+  body.main-home #modeScreen.home-screen{
+    background-position:55% 50%!important;
+  }
+}
