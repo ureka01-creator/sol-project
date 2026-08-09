@@ -6,14 +6,16 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#111827">
 <title>포켓몬 주사위 배틀 V2.3.1</title>
-<link rel="stylesheet" href="css/style.css?v=335">
+<link rel="stylesheet" href="css/style.css?v=339">
 </head>
 <body class="main-home">
 <button id="soundToggle" class="sound-toggle" aria-label="효과음 켜기/끄기">🔊</button><div id="turnBanner" class="turn-banner"></div><div id="superText" class="super-text">효과가 굉장했다!</div><div class="app">
 <h1>⚡ 포켓몬 주사위 배틀</h1><div id="subtitle" class="sub">게임 모드를 선택해</div>
 <div class="top-actions">
-  <button class="gray" onclick="openDex()">📘 포켓몬 도감</button>
-  <button onclick="location.reload()">🔄 새 게임</button>
+  <button class="gray setup-top-action" onclick="openDex()">📘 포켓몬 도감</button>
+  <button class="setup-top-action" onclick="location.reload()">🔄 새 게임</button>
+  <button id="blueTeamStatusBtn" class="battle-team-tab blue-team-tab" onclick="openTeamStatus(0)">🔵 블루팀</button>
+  <button id="redTeamStatusBtn" class="battle-team-tab red-team-tab" onclick="openTeamStatus(1)">🔴 레드팀</button>
 </div>
 
 
@@ -122,13 +124,17 @@
   </div>
   <div id="log" class="log"></div>
  </div>
-
- <div class="card">
-  <b>팀 상태</b>
-  <div id="teams" class="team-panels"></div>
-  <button class="wide" onclick="location.reload()">처음부터</button>
- </div>
 </section>
+</div>
+
+<div id="teamStatusModal" class="modal hidden team-status-modal" onclick="if(event.target===this)closeTeamStatus()">
+ <div class="modal-inner team-status-inner">
+  <div class="modal-head">
+   <h2 id="teamStatusTitle">팀 상태</h2>
+   <button class="close-btn" onclick="closeTeamStatus()">닫기</button>
+  </div>
+  <div id="teams" class="team-panels team-status-single"></div>
+ </div>
 </div>
 
 <div id="dexModal" class="modal hidden">
@@ -162,8 +168,8 @@
 <script src="js/state.js?v=290"></script>
 <script src="js/audio.js?v=321"></script>
 <script src="js/setup.js?v=328"></script>
-<script src="js/ui.js?v=326"></script>
+<script src="js/ui.js?v=339"></script>
 <script src="js/dice.js?v=337"></script>
 <script src="js/battle.js?v=291"></script>
-<script src="js/ai.js?v=297"></script>
+<script src="js/ai.js?v=338"></script>
 <script src="js/app.js?v=316"></script></body></html>
