@@ -43,14 +43,20 @@ document.addEventListener("click",(e)=>{
 
 // V3.0.4 - Pokémon-style title screen. First tap unlocks audio on iOS.
 const tapStart=$("#tapStart");
+const homeMenu=$("#homeMenu");
+let titleReady=false;
+setTimeout(()=>{ titleReady=true; },450);
+
 if(tapStart){
- tapStart.addEventListener("pointerdown",()=>{
-  warmUpGameAudio();
-  startMenuBgm();
-  tapStart.classList.add("hidden");
-  $$(".pre-start-hidden").forEach(el=>{
-   el.classList.remove("pre-start-hidden");
-   el.classList.add("menu-reveal");
+  tapStart.addEventListener("click",(e)=>{
+    if(!titleReady)return;
+    e.preventDefault();
+    warmUpGameAudio();
+    startMenuBgm();
+    tapStart.style.display="none";
+    if(homeMenu){
+      homeMenu.classList.remove("hidden");
+      homeMenu.style.display="grid";
+    }
   });
- },{once:true,passive:true});
 }
