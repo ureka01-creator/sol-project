@@ -1235,3 +1235,47 @@ body.main-home .home-control-area{
   position:relative;
   top:0!important;
 }
+
+/* V3.1.0 — hidden menu occupies zero space before TAP */
+body.main-home{overflow-x:hidden!important}
+body.main-home .home-screen{
+ min-height:0!important;height:auto!important;padding-top:115px!important;
+ padding-bottom:24px!important;justify-content:flex-start!important;gap:0!important;
+}
+body.main-home .home-hero{
+ height:390px!important;min-height:390px!important;max-height:390px!important;
+ flex:none!important;margin:0!important;
+}
+body.main-home .home-control-area{
+ position:relative!important;height:auto!important;min-height:0!important;
+ flex:none!important;margin-top:34px!important;
+}
+body.main-home .hero-tap-start{
+ position:relative!important;display:block!important;left:auto!important;top:auto!important;
+ bottom:auto!important;transform:none!important;width:calc(100% - 44px)!important;
+ max-width:360px!important;min-height:64px!important;margin:0 auto!important;
+ animation:none!important;transition:none!important;
+}
+body.main-home .home-menu.pre-start-hidden,
+body.main-home .home-footer.pre-start-hidden{
+ display:none!important;visibility:hidden!important;height:0!important;min-height:0!important;
+ margin:0!important;padding:0!important;overflow:hidden!important;pointer-events:none!important;
+}
+body.main-home .home-menu{
+ position:relative!important;inset:auto!important;height:auto!important;min-height:0!important;margin:0!important;
+}
+body.main-home .home-menu.menu-reveal{
+ display:grid!important;visibility:visible!important;height:auto!important;min-height:0!important;
+ margin:0!important;padding:0!important;pointer-events:auto!important;animation:none!important;transform:none!important;
+}
+body.main-home .home-footer.menu-reveal{
+ display:block!important;visibility:visible!important;height:auto!important;min-height:0!important;
+ margin-top:16px!important;padding:0!important;animation:none!important;transform:none!important;
+}
+body.main-home .hero-tap-start.hidden{display:none!important}
+@media(max-height:850px), (max-height:760px){
+ body.main-home .home-screen{min-height:0!important;height:auto!important;padding-top:115px!important;padding-bottom:24px!important}
+ body.main-home .home-hero{height:390px!important;min-height:390px!important;max-height:390px!important;flex:none!important}
+ body.main-home .home-control-area{height:auto!important;min-height:0!important;flex:none!important;margin-top:34px!important}
+ body.main-home .home-control-area .home-menu{height:auto!important;min-height:0!important}
+}
