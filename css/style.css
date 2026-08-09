@@ -1841,3 +1841,191 @@ body.main-home .home-footer{
     height:auto!important;
   }
 }
+
+/* =========================================================
+   V3.1.5 — iPhone/iPad title screen normalization
+   ========================================================= */
+
+/* Base title layout */
+body.main-home{
+  margin:0!important;
+  padding:0!important;
+  min-height:100vh!important;
+  background:#7fd2ef!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+}
+body.main-home .app{
+  width:100%!important;
+  max-width:none!important;
+  min-height:100vh!important;
+  padding:0!important;
+  margin:0!important;
+}
+body.main-home .home-screen{
+  width:100%!important;
+  min-height:100vh!important;
+  height:auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  padding:0 0 28px!important;
+  margin:0!important;
+  background:#7fd2ef!important;
+  overflow:visible!important;
+}
+
+/* Artwork: fixed visual ratio, but capped on tablets */
+body.main-home .home-hero{
+  position:relative!important;
+  width:100%!important;
+  max-width:760px!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  aspect-ratio:602/930!important;
+  flex:none!important;
+  margin:0 auto!important;
+  background:url("../images/title-background.jpg?v=315") center 42%/cover no-repeat!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+}
+
+/* Title logo centered in artwork */
+body.main-home .home-logo{
+  position:absolute!important;
+  left:50%!important;
+  top:18%!important;
+  transform:translateX(-50%)!important;
+  width:86%!important;
+  z-index:4!important;
+}
+
+/* Controls are below artwork, in normal flow */
+body.main-home .home-control-area{
+  position:relative!important;
+  inset:auto!important;
+  width:100%!important;
+  max-width:560px!important;
+  margin:0 auto!important;
+  padding:18px 18px 0!important;
+  box-sizing:border-box!important;
+  z-index:10!important;
+  background:#7fd2ef!important;
+}
+
+/* Start button */
+body.main-home .hero-tap-start{
+  position:relative!important;
+  inset:auto!important;
+  display:block!important;
+  width:min(360px,100%)!important;
+  min-height:62px!important;
+  margin:0 auto!important;
+  padding:11px 16px!important;
+  transform:none!important;
+}
+body.main-home .hero-tap-start.hidden{
+  display:none!important;
+}
+
+/* Menu: robust visibility */
+body.main-home #homeMenu{
+  position:relative!important;
+  inset:auto!important;
+  width:100%!important;
+  max-width:520px!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0 auto!important;
+  padding:0!important;
+  grid-template-columns:1fr!important;
+  gap:10px!important;
+  transform:none!important;
+  animation:none!important;
+}
+body.main-home #homeMenu.hidden{
+  display:none!important;
+}
+body.main-home #homeMenu:not(.hidden){
+  display:grid!important;
+  visibility:visible!important;
+  opacity:1!important;
+}
+
+body.main-home #homeMenu .home-play{
+  width:100%!important;
+  height:72px!important;
+  min-height:72px!important;
+  margin:0!important;
+}
+body.main-home #homeMenu .home-dex{
+  width:100%!important;
+  height:48px!important;
+  min-height:48px!important;
+  margin:0!important;
+}
+body.main-home .home-footer{
+  display:none!important;
+}
+
+/* iPad/tablet tuning */
+@media(min-width:700px){
+  body.main-home .home-screen{
+    padding-top:18px!important;
+  }
+  body.main-home .home-hero{
+    width:min(76vw,680px)!important;
+    aspect-ratio:602/900!important;
+    border-radius:22px!important;
+    margin-top:10px!important;
+  }
+  body.main-home .home-control-area{
+    max-width:620px!important;
+    padding-top:20px!important;
+  }
+  body.main-home .hero-tap-start{
+    width:380px!important;
+    min-height:66px!important;
+    font-size:18px!important;
+  }
+  body.main-home #homeMenu{
+    max-width:600px!important;
+  }
+  body.main-home #homeMenu .home-play{
+    height:78px!important;
+    min-height:78px!important;
+  }
+  body.main-home #homeMenu .home-dex{
+    height:52px!important;
+    min-height:52px!important;
+  }
+}
+
+/* Landscape tablets */
+@media(min-width:900px) and (orientation:landscape){
+  body.main-home .home-screen{
+    flex-direction:row!important;
+    justify-content:center!important;
+    align-items:center!important;
+    gap:28px!important;
+    min-height:100vh!important;
+    padding:24px!important;
+    box-sizing:border-box!important;
+  }
+  body.main-home .home-hero{
+    width:min(52vw,660px)!important;
+    max-height:88vh!important;
+    aspect-ratio:602/900!important;
+    margin:0!important;
+  }
+  body.main-home .home-control-area{
+    width:min(38vw,520px)!important;
+    max-width:520px!important;
+    padding:0!important;
+    background:transparent!important;
+  }
+}
