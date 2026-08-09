@@ -2617,3 +2617,84 @@ body.main-home #homeMenu .home-dex:active{
     font-size:28px!important;
   }
 }
+
+/* =========================================================
+   V3.2.4 — cleaner team select screen
+   ========================================================= */
+
+/* Remove the old global header/actions on team-select screen. */
+body:has(#soloTeamScreen:not(.hidden)) .app > h1,
+body:has(#soloTeamScreen:not(.hidden)) .app > .sub,
+body:has(#soloTeamScreen:not(.hidden)) .app > .top-actions{
+  display:none!important;
+}
+
+/* Give the team select screen its own stronger title. */
+#soloTeamScreen{
+  margin-top:28px!important;
+}
+
+.solo-team-heading{
+  text-align:center;
+  margin:4px 0 24px!important;
+}
+
+.solo-team-heading-main{
+  font-size:34px!important;
+  line-height:1!important;
+  font-weight:1000!important;
+  letter-spacing:-2.2px!important;
+  color:#172033!important;
+  text-shadow:0 2px 0 rgba(255,255,255,.95);
+}
+
+.solo-team-heading-sub{
+  margin-top:8px!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  letter-spacing:2.2px!important;
+  color:#64748b!important;
+}
+
+/* Pull the artwork upward so the head/hat sits closer to the top edge. */
+.solo-team-btn.trainer-choice .trainer-art{
+  object-fit:cover!important;
+  object-position:center -12px!important;
+  transform:none!important;
+}
+
+/* Fine-tune phone */
+@media(max-width:699px){
+  #soloTeamScreen{
+    margin-top:20px!important;
+  }
+
+  .solo-team-heading-main{
+    font-size:32px!important;
+  }
+
+  .solo-team-btn.trainer-choice .trainer-art{
+    object-position:center -16px!important;
+  }
+}
+
+/* iPad / tablet */
+@media(min-width:700px){
+  #soloTeamScreen{
+    margin-top:34px!important;
+  }
+
+  .solo-team-heading-main{
+    font-size:42px!important;
+    letter-spacing:-2.8px!important;
+  }
+
+  .solo-team-heading-sub{
+    font-size:11px!important;
+    margin-top:10px!important;
+  }
+
+  #soloTeamScreen .trainer-art{
+    object-position:center -22px!important;
+  }
+}
