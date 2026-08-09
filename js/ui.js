@@ -29,7 +29,20 @@ function start(){
  showTurnBanner();
  if(isAiTurn())setTimeout(aiTakeTurn,900);
 }
-function log(t){const el=$("#log"); if(el) el.textContent=t;}
+function log(t){
+ const el=$("#log");
+ if(!el)return;
+
+ const row=document.createElement("div");
+ row.className="battle-log-row";
+ row.textContent=t;
+ el.appendChild(row);
+
+ // Keep the newest event visible when new logs arrive.
+ requestAnimationFrame(()=>{
+   el.scrollTop=el.scrollHeight;
+ });
+}
 
 
 function teamName(teamIndex){
