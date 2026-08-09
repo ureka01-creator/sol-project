@@ -3602,3 +3602,84 @@ body:not(.main-home) .die.confirmed{
 .dice-confirm-pop.run{
   animation:diceConfirmOverlayV335 .46s ease-out forwards;
 }
+
+
+/* =========================================================
+   V3.3.9 — battle header cleanup + team status tabs
+   ========================================================= */
+.battle-team-tab{display:none!important;}
+
+body:has(#gameScreen:not(.hidden)) .app > h1,
+body:has(#gameScreen:not(.hidden)) .app > #subtitle{
+  display:none!important;
+}
+
+body:has(#gameScreen:not(.hidden)) .top-actions .setup-top-action{
+  display:none!important;
+}
+
+body:has(#gameScreen:not(.hidden)) .top-actions{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:10px!important;
+  margin:10px 0 12px!important;
+}
+
+body:has(#gameScreen:not(.hidden)) .battle-team-tab{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex-direction:column!important;
+  min-height:58px!important;
+  border-radius:20px!important;
+  font-size:18px!important;
+  font-weight:900!important;
+  border:2px solid transparent!important;
+}
+
+body:has(#gameScreen:not(.hidden)) .battle-team-tab small{
+  display:block!important;
+  margin-top:2px!important;
+  font-size:11px!important;
+  line-height:1!important;
+  font-weight:800!important;
+}
+
+body:has(#gameScreen:not(.hidden)) .blue-team-tab{
+  background:rgba(239,246,255,.94)!important;
+  color:#1d4ed8!important;
+}
+
+body:has(#gameScreen:not(.hidden)) .red-team-tab{
+  background:rgba(254,242,242,.94)!important;
+  color:#dc2626!important;
+}
+
+body:has(#gameScreen:not(.hidden)) .blue-team-tab.current-turn{
+  border-color:#3b82f6!important;
+  box-shadow:0 8px 24px rgba(37,99,235,.18)!important;
+}
+
+body:has(#gameScreen:not(.hidden)) .red-team-tab.current-turn{
+  border-color:#ef4444!important;
+  box-shadow:0 8px 24px rgba(239,68,68,.18)!important;
+}
+
+/* old duplicate turn bars */
+body:has(#gameScreen:not(.hidden)) #turnStrip,
+body:has(#gameScreen:not(.hidden)) #turnText{
+  display:none!important;
+}
+
+.team-status-modal{z-index:1200!important;}
+.team-status-inner{max-width:560px!important;}
+.team-status-single{display:block!important;margin-top:8px!important;}
+.team-status-single .team-panel{width:100%!important;}
+
+@media(min-width:700px){
+  body:has(#gameScreen:not(.hidden)) .top-actions{
+    max-width:720px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+  }
+}
