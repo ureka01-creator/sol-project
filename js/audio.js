@@ -215,8 +215,8 @@ async function warmUpGameAudio(){
 function playDiceRollInstant(){
   if(!soundEnabled)return;
 
-  // Dice must sit clearly above the music.
-  duckBgm(.008,900);
+  // Keep battle BGM at its normal level while rolling.
+  // Dice SFX has its own boosted gain, so BGM ducking is unnecessary.
 
   const playHtml=()=>{
     try{
