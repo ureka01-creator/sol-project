@@ -2780,3 +2780,29 @@ body:has(#selectScreen:not(.hidden)) .app > .top-actions > button:first-child{
     margin-right:auto!important;
   }
 }
+
+/* =========================================================
+   V3.2.7 — Pokédex header scrolls away with content
+   ========================================================= */
+#dexModal .modal-inner{
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+
+#dexModal .modal-head{
+  position:relative!important;
+  top:auto!important;
+  left:auto!important;
+  right:auto!important;
+  z-index:auto!important;
+  background:transparent!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+/* Ensure no inherited sticky/fixed behavior survives on the title. */
+#dexModal .modal-head h2,
+#dexModal .close-btn{
+  position:relative!important;
+  top:auto!important;
+}
