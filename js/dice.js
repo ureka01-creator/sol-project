@@ -70,14 +70,14 @@ function animateDiceRoll(forTurn,onDone){
   });
 
   let ticks=0;
-  const tickMs=92;
+  const tickMs=48;
   const timer=setInterval(()=>{
     activeIndexes.forEach(i=>{
       diceEls[i].textContent=Math.floor(Math.random()*6)+1;
     });
 
     ticks++;
-    if(ticks>=7){
+    if(ticks>=13){
       clearInterval(timer);
 
       turnDice[forTurn]=turnDice[forTurn].map(
