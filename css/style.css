@@ -2841,3 +2841,35 @@ body:has(#selectScreen:not(.hidden)) .app > .top-actions > button:first-child{
     }
   }
 }
+
+/* =========================================================
+   V3.2.9 — iPad reload button jump fix
+   Remove dynamic safe-area bottom from title controls.
+   ========================================================= */
+@media(min-width:700px){
+  body.main-home .home-control-area{
+    bottom:28px!important;
+  }
+}
+
+/* Make sure no earlier orientation/support rule can reintroduce
+   env(safe-area-inset-bottom) for the title controls on iPad. */
+@media(min-width:700px) and (orientation:portrait){
+  body.main-home .home-control-area{
+    bottom:28px!important;
+  }
+}
+
+@media(min-width:900px) and (orientation:landscape){
+  body.main-home .home-control-area{
+    bottom:28px!important;
+  }
+}
+
+@supports(height:100dvh){
+  @media(min-width:700px){
+    body.main-home .home-control-area{
+      bottom:28px!important;
+    }
+  }
+}
