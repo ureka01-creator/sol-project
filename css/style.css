@@ -2698,3 +2698,85 @@ body:has(#soloTeamScreen:not(.hidden)) .app > .top-actions{
     object-position:center -22px!important;
   }
 }
+
+/* =========================================================
+   V3.2.5 — clean difficulty / Pokémon select headers
+   ========================================================= */
+
+/* Shared new screen title */
+.screen-main-heading{
+  text-align:center;
+  margin:4px 0 24px!important;
+}
+.screen-main-heading-title{
+  font-size:34px!important;
+  line-height:1!important;
+  font-weight:1000!important;
+  letter-spacing:-2.2px!important;
+  color:#172033!important;
+  text-shadow:0 2px 0 rgba(255,255,255,.95);
+}
+.screen-main-heading-sub{
+  margin-top:8px!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  letter-spacing:2.1px!important;
+  color:#64748b!important;
+}
+
+/* Difficulty:
+   remove old global title/subtitle/top buttons entirely. */
+body:has(#difficultyScreen:not(.hidden)) .app > h1,
+body:has(#difficultyScreen:not(.hidden)) .app > .sub,
+body:has(#difficultyScreen:not(.hidden)) .app > .top-actions{
+  display:none!important;
+}
+#difficultyScreen{
+  margin-top:28px!important;
+}
+
+/* Pokémon select:
+   remove old global title/subtitle,
+   keep only Pokédex and hide New Game. */
+body:has(#selectScreen:not(.hidden)) .app > h1,
+body:has(#selectScreen:not(.hidden)) .app > .sub{
+  display:none!important;
+}
+body:has(#selectScreen:not(.hidden)) .app > .top-actions{
+  display:flex!important;
+  justify-content:center!important;
+  margin-top:18px!important;
+}
+body:has(#selectScreen:not(.hidden)) .app > .top-actions > button{
+  display:none!important;
+}
+body:has(#selectScreen:not(.hidden)) .app > .top-actions > button:first-child{
+  display:block!important;
+  width:min(100%,420px)!important;
+}
+#selectScreen{
+  margin-top:18px!important;
+}
+
+/* Remove the old step-number visual feeling from select screen spacing */
+#selectScreen .turn{
+  margin-top:2px!important;
+}
+
+@media(min-width:700px){
+  .screen-main-heading-title{
+    font-size:42px!important;
+    letter-spacing:-2.8px!important;
+  }
+  .screen-main-heading-sub{
+    font-size:11px!important;
+    margin-top:10px!important;
+  }
+  #difficultyScreen,
+  #selectScreen{
+    width:min(92vw,760px)!important;
+    max-width:760px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+  }
+}
