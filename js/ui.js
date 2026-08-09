@@ -134,26 +134,11 @@ function render(){
  $("#turnText").textContent=`${teamIcon(turn)} ${teamName(turn)} 차례`; updateTurnUX();
  let me=cur(turn);$("#skill1").innerHTML=`${me.s1[0]} · ${me.s1[1]}<small>${me.s1[3]}</small>`;$("#skill2").innerHTML=`${me.s2[0]} · ${me.s2[1]}<small>${me.s2[3]}</small>`;
  $$(".die").forEach((d,i)=>{d.textContent=(!rolledNow() && !keptNow()[i]) ? "?" : (diceNow()[i]??"?");d.classList.toggle("keep",keptNow()[i])});
- $("#teams").innerHTML=teams.map((tm,x)=>{
-   const displayTeamName=`${teamIcon(x)} ${teamName(x)}`;
-   return `<div class="team-panel ${x===0?"blue-team":"red-team"}">
-     <div class="team-title">${displayTeamName}</div>
-     ${tm.map((p,i)=>{
-       const pct=Math.max(0,p.cur/p.hp*100);
-       const activeNow=i===active[x]&&p.cur>0;
-       const fainted=p.cur<=0;
-       return `<div class="team-mon ${activeNow?"active-mon":""} ${fainted?"fainted-mon":""}">
-         <img src="${img(p.id)}" alt="${p.n}">
-         <div>
-           <div class="team-mon-name"><span>${p.n}</span>${activeNow?'<span class="active-tag">출전 중</span>':(fainted?'<span class="fainted-tag">기절</span>':'')}</div>
-           <div class="team-mon-type">${p.t} 타입</div>
-           <div class="team-hpbar"><div class="team-hpfill" style="width:${pct}%"></div></div>
-           <div class="team-hptext">HP ${p.cur} / ${p.hp}</div>
-         </div>
-       </div>`;
-     }).join("")}
-   </div>`;
- }).join("");
+ updateBattleTeamTabs();
+ const teamsEl=$("#teams");
+ if(teamsEl && !$("#teamStatusModal").classList.contains("hidden")){
+   renderTeamStatus(openTeamStatus.teamIndex ?? turn);
+ }
  const ai=isAiTurn();
  $("#roll").disabled=rolledNow()||over||ai;
  const s1ok=rolledNow()&&valid(me.s1), s2ok=rolledNow()&&valid(me.s2);
@@ -258,3 +243,51 @@ function updateKeepHint(){
     : "🎯 보관할 주사위를 눌러 선택해";
 }
 
+
+
+function teamStatusMarkup(x){
+ const tm=teams[x]||[];
+ return `<div class="team-panel ${x===0?"blue-team":"red-team"}">
+   <div class="team-title">${teamIcon(x)} ${teamName(x)} · ${x===turn?"현재 차례":"대기"}</div>
+   ${tm.map((p,i)=>{
+     const pct=Math.max(0,p.cur/p.hp*100);
+     const activeNow=i===active[x]&&p.cur>0;
+     const fainted=p.cur<=0;
+     return `<div class="team-mon ${activeNow?"active-mon":""} ${fainted?"fainted-mon":""}">
+       <img src="${img(p.id)}" alt="${p.n}">
+       <div>
+        <div class="team-mon-name"><span>${p.n}</span>${activeNow?'<span class="active-tag">출전 중</span>':(fainted?'<span class="fainted-tag">기절</span>':'')}</div>
+        <div class="team-mon-type">${p.t} 타입</div>
+        <div class="team-hpbar"><div class="team-hpfill" style="width:${pct}%"></div></div>
+        <div class="team-hptext">HP ${p.cur} / ${p.hp}</div>
+       </div>
+     </div>`;
+   }).join("")}
+ </div>`;
+}
+
+function updateBattleTeamTabs(){
+ const b=$("#blueTeamStatusBtn"), r=$("#redTeamStatusBtn");
+ if(!b||!r)return;
+ b.innerHTML=`🔵 블루팀${turn===0?'<small>현재 차례</small>':''}`;
+ r.innerHTML=`🔴 레드팀${turn===1?'<small>현재 차례</small>':''}`;
+ b.classList.toggle("current-turn",turn===0);
+ r.classList.toggle("current-turn",turn===1);
+}
+
+function renderTeamStatus(x){
+ const el=$("#teams");
+ if(!el)return;
+ $("#teamStatusTitle").textContent=`${teamIcon(x)} ${teamName(x)} 상태`;
+ el.innerHTML=teamStatusMarkup(x);
+}
+
+function openTeamStatus(x){
+ openTeamStatus.teamIndex=x;
+ renderTeamStatus(x);
+ $("#teamStatusModal").classList.remove("hidden");
+}
+
+function closeTeamStatus(){
+ $("#teamStatusModal").classList.add("hidden");
+}
