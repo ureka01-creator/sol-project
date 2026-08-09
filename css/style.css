@@ -2029,3 +2029,194 @@ body.main-home .home-footer{
     background:transparent!important;
   }
 }
+
+/* =========================================================
+   V3.1.6 — full-screen title + reliable bottom controls
+   ========================================================= */
+body.main-home{
+  margin:0!important;
+  padding:0!important;
+  width:100%!important;
+  height:100svh!important;
+  min-height:100svh!important;
+  overflow:hidden!important;
+  background:#7fd2ef!important;
+}
+
+body.main-home .app,
+body.main-home #modeScreen.home-screen{
+  position:relative!important;
+  width:100%!important;
+  max-width:none!important;
+  height:100svh!important;
+  min-height:100svh!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+
+/* Full-screen illustration */
+body.main-home #modeScreen.home-screen{
+  display:block!important;
+  background:
+    url("../images/title-background.jpg?v=316")
+    center center / cover no-repeat!important;
+}
+
+/* Hero is only an overlay layer now; it does not size/crop the background. */
+body.main-home .home-hero{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+  margin:0!important;
+  padding:0!important;
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+
+/* Logo overlay */
+body.main-home .home-logo{
+  position:absolute!important;
+  left:50%!important;
+  top:max(8.5%, calc(env(safe-area-inset-top) + 28px))!important;
+  transform:translateX(-50%)!important;
+  width:min(88%,520px)!important;
+  margin:0!important;
+  z-index:5!important;
+  text-align:center!important;
+}
+
+/* All title controls occupy one bottom area. */
+body.main-home .home-control-area{
+  position:absolute!important;
+  left:50%!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:calc(24px + env(safe-area-inset-bottom))!important;
+  transform:translateX(-50%)!important;
+  width:min(calc(100% - 32px),560px)!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  box-sizing:border-box!important;
+  background:transparent!important;
+  z-index:50!important;
+}
+
+/* TAP only before entering menu */
+body.main-home #tapStart.hero-tap-start{
+  position:relative!important;
+  inset:auto!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  transform:none!important;
+  display:block!important;
+  width:100%!important;
+  min-height:64px!important;
+  margin:0!important;
+  padding:12px 16px!important;
+  border-radius:20px!important;
+  background:rgba(255,255,255,.92)!important;
+  box-shadow:0 8px 22px rgba(20,72,102,.14)!important;
+  animation:none!important;
+}
+body.main-home #tapStart.hero-tap-start.hidden{
+  display:none!important;
+}
+
+/* Menu only after TAP */
+body.main-home #homeMenu{
+  position:relative!important;
+  inset:auto!important;
+  width:100%!important;
+  max-width:none!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  grid-template-columns:1fr!important;
+  gap:10px!important;
+  transform:none!important;
+  animation:none!important;
+  visibility:visible!important;
+  opacity:1!important;
+}
+body.main-home #homeMenu.hidden{
+  display:none!important;
+}
+body.main-home #homeMenu:not(.hidden){
+  display:grid!important;
+}
+
+body.main-home #homeMenu .home-play{
+  width:100%!important;
+  height:72px!important;
+  min-height:72px!important;
+  margin:0!important;
+}
+body.main-home #homeMenu .home-dex{
+  width:100%!important;
+  height:48px!important;
+  min-height:48px!important;
+  margin:0!important;
+}
+body.main-home .home-footer{
+  display:none!important;
+}
+
+/* Tablet portrait: same full-screen background, controls stay near bottom. */
+@media(min-width:700px) and (orientation:portrait){
+  body.main-home .home-logo{
+    width:min(62%,520px)!important;
+    top:max(8%, calc(env(safe-area-inset-top) + 30px))!important;
+  }
+  body.main-home .home-control-area{
+    width:min(62%,600px)!important;
+    bottom:calc(30px + env(safe-area-inset-bottom))!important;
+  }
+  body.main-home #tapStart.hero-tap-start{
+    min-height:68px!important;
+  }
+  body.main-home #homeMenu .home-play{
+    height:78px!important;
+    min-height:78px!important;
+  }
+  body.main-home #homeMenu .home-dex{
+    height:52px!important;
+    min-height:52px!important;
+  }
+}
+
+/* Tablet landscape: keep the illustration full-screen and put menu bottom-center. */
+@media(min-width:900px) and (orientation:landscape){
+  body.main-home #modeScreen.home-screen{
+    display:block!important;
+  }
+  body.main-home .home-logo{
+    width:min(44%,500px)!important;
+    top:max(7%, calc(env(safe-area-inset-top) + 24px))!important;
+  }
+  body.main-home .home-control-area{
+    width:min(50%,600px)!important;
+    bottom:calc(24px + env(safe-area-inset-bottom))!important;
+  }
+}
+
+@supports(height:100dvh){
+  body.main-home,
+  body.main-home .app,
+  body.main-home #modeScreen.home-screen{
+    height:100dvh!important;
+    min-height:100dvh!important;
+  }
+}
