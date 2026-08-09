@@ -2518,3 +2518,46 @@ body.main-home #homeMenu .home-dex:active{
     font-size:22px!important;
   }
 }
+
+/* =========================================================
+   V3.2.2 — trainer portrait fill
+   Fill card while keeping face / upper body visible.
+   ========================================================= */
+.solo-team-btn.trainer-choice .trainer-art-wrap{
+  overflow:hidden!important;
+  background:transparent!important;
+}
+
+.solo-team-btn.trainer-choice .trainer-art{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center 18%!important;
+  transform:scale(1.04);
+}
+
+/* Red artwork needs slightly lower framing than Blue/Leaf. */
+.solo-team-btn.trainer-choice .trainer-red{
+  object-position:center 15%!important;
+}
+
+/* Tablet/iPad: larger portrait crop, not full-body contain. */
+@media(min-width:700px){
+  .solo-team-btn.trainer-choice .trainer-art-wrap{
+    height:230px!important;
+  }
+  .solo-team-btn.trainer-choice .trainer-art{
+    object-fit:cover!important;
+    object-position:center 16%!important;
+    transform:scale(1.06);
+  }
+}
+
+/* Phone: keep face and torso prominent. */
+@media(max-width:430px){
+  .solo-team-btn.trainer-choice .trainer-art{
+    object-fit:cover!important;
+    object-position:center 18%!important;
+    transform:scale(1.05);
+  }
+}
