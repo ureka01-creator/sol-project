@@ -2452,3 +2452,37 @@ body.main-home #homeMenu .home-dex:active{
     min-width:52px!important;
   }
 }
+
+/* =========================================================
+   V3.2.0 — iPad bottom controls true centering
+   Background, logo and Glass styling unchanged.
+   ========================================================= */
+@media(min-width:700px){
+  body.main-home .home-control-area{
+    position:absolute!important;
+    left:0!important;
+    right:0!important;
+    transform:none!important;
+    width:min(600px, calc(100% - 64px))!important;
+    max-width:600px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    bottom:calc(30px + env(safe-area-inset-bottom))!important;
+  }
+
+  body.main-home #tapStart.hero-tap-start,
+  body.main-home #homeMenu{
+    width:100%!important;
+    max-width:none!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+  }
+}
+
+/* Portrait iPad: slightly narrower, visually balanced control width */
+@media(min-width:700px) and (orientation:portrait){
+  body.main-home .home-control-area{
+    width:min(560px, calc(100% - 72px))!important;
+    max-width:560px!important;
+  }
+}
