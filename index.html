@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#111827">
 <title>포켓몬 주사위 배틀 V2.3.1</title>
-<link rel="stylesheet" href="css/style.css?v=324">
+<link rel="stylesheet" href="css/style.css?v=325">
 </head>
 <body class="main-home">
 <button id="soundToggle" class="sound-toggle" aria-label="효과음 켜기/끄기">🔊</button><div id="turnBanner" class="turn-banner"></div><div id="superText" class="super-text">효과가 굉장했다!</div><div class="app">
@@ -52,8 +52,11 @@
  </div>
 </section>
 
-<section id="difficultyScreen" class="card hidden">
- <h2 style="margin-top:0">난이도 선택</h2>
+<section id="difficultyScreen" class="card hidden difficulty-screen">
+ <div class="screen-main-heading">
+   <div class="screen-main-heading-title">난이도를 선택해</div>
+   <div class="screen-main-heading-sub">SELECT DIFFICULTY</div>
+  </div>
  <div class="difficulty-grid">
   <button class="diff-btn" onclick="chooseDifficulty(0)"><img class="ball-img" src="images/poke-ball-hq.png?v=271"><small>쉬움</small></button>
   <button class="diff-btn" onclick="chooseDifficulty(1)"><img class="ball-img" src="images/great-ball-hq.png?v=271"><small>보통</small></button>
@@ -82,8 +85,11 @@
  <button class="wide gray" onclick="backToDifficulty()">뒤로</button>
 </section>
 
-<section id="selectScreen" class="card hidden">
- <h2 style="margin-top:0">① 포켓몬을 골라!</h2>
+<section id="selectScreen" class="card hidden pokemon-select-screen">
+ <div class="screen-main-heading">
+   <div class="screen-main-heading-title">포켓몬을 골라!</div>
+   <div class="screen-main-heading-sub">CHOOSE YOUR POKÉMON</div>
+  </div>
  <div id="pickTitle" class="turn">블루팀 · 3마리 선택</div>
  <div id="pickGrid" class="grid"></div>
  <button id="confirmPick" class="wide blue" disabled>선택 완료</button>
