@@ -2806,3 +2806,38 @@ body:has(#selectScreen:not(.hidden)) .app > .top-actions > button:first-child{
   position:relative!important;
   top:auto!important;
 }
+
+/* =========================================================
+   V3.2.8 — iPad reload stability + Pokémon-pick Back button
+   ========================================================= */
+.pick-back-btn{
+  margin-top:10px!important;
+}
+
+/* iPad Safari: use stable viewport height so reload/toolbars do not move the bottom controls. */
+@media(min-width:700px){
+  body.main-home,
+  body.main-home .app,
+  body.main-home #modeScreen.home-screen{
+    height:100svh!important;
+    min-height:100svh!important;
+    max-height:100svh!important;
+  }
+
+  body.main-home .home-control-area{
+    bottom:calc(30px + env(safe-area-inset-bottom))!important;
+  }
+}
+
+/* Override earlier dynamic-viewport rule. */
+@supports(height:100dvh){
+  @media(min-width:700px){
+    body.main-home,
+    body.main-home .app,
+    body.main-home #modeScreen.home-screen{
+      height:100svh!important;
+      min-height:100svh!important;
+      max-height:100svh!important;
+    }
+  }
+}
