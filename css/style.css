@@ -3903,3 +3903,18 @@ body:has(#gameScreen:not(.hidden)) .battle-dex-btn{
     margin-bottom:34px;
   }
 }
+
+
+/* =========================================================
+   V3.4.3 — persistent battle history
+   ========================================================= */
+#log .battle-log-row{
+  padding:7px 2px;
+  border-bottom:1px solid rgba(255,255,255,.09);
+  white-space:normal;
+  word-break:keep-all;
+}
+
+#log .battle-log-row:last-child{
+  border-bottom:0;
+}
