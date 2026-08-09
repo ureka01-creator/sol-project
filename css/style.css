@@ -3733,3 +3733,103 @@ body:has(#gameScreen:not(.hidden)) #turnText{
 #teamStatusModal .team-mon.active-mon{
   background:rgba(244,255,247,.62)!important;
 }
+
+
+/* =========================================================
+   V3.4.1 — battle Pokédex + Dice/Skill page switch
+   ========================================================= */
+.battle-dex-btn{display:none!important;}
+
+body:has(#gameScreen:not(.hidden)) .top-actions{
+  grid-template-columns:1fr 1fr!important;
+  gap:10px!important;
+}
+
+body:has(#gameScreen:not(.hidden)) .battle-dex-btn{
+  display:flex!important;
+  grid-column:1 / -1!important;
+  min-height:48px!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border-radius:18px!important;
+  background:rgba(255,255,255,.66)!important;
+  color:#16324a!important;
+  border:1px solid rgba(255,255,255,.75)!important;
+  box-shadow:0 8px 22px rgba(20,50,80,.08)!important;
+  font-size:16px!important;
+  font-weight:850!important;
+}
+
+/* Dice / skill segmented control */
+.battle-page-tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin:14px 0 10px;
+  padding:5px;
+  border-radius:20px;
+  background:rgba(255,255,255,.48);
+  border:1px solid rgba(255,255,255,.62);
+  box-shadow:0 8px 22px rgba(27,62,88,.08);
+}
+
+.battle-page-tab{
+  min-height:46px;
+  border:0!important;
+  border-radius:16px!important;
+  background:transparent!important;
+  color:#60738a!important;
+  font-size:16px!important;
+  font-weight:850!important;
+  box-shadow:none!important;
+}
+
+.battle-page-tab.active{
+  background:rgba(255,255,255,.92)!important;
+  color:#15324c!important;
+  box-shadow:0 5px 14px rgba(27,62,88,.10)!important;
+}
+
+.battle-page{
+  margin-top:0!important;
+}
+
+.battle-page.hidden{
+  display:none!important;
+}
+
+/* Skill page gets enough spacing without becoming a long second screen. */
+#skillPage .actions{
+  margin-top:0!important;
+}
+
+#skillPage .log{
+  margin-top:14px!important;
+}
+
+/* Keep the two pages visually aligned. */
+#dicePage,
+#skillPage{
+  min-height:330px;
+}
+
+@media(max-width:430px){
+  #dicePage,
+  #skillPage{
+    min-height:0;
+  }
+  .battle-page-tabs{
+    margin-top:10px;
+  }
+}
+
+@media(min-width:700px){
+  body:has(#gameScreen:not(.hidden)) .battle-dex-btn{
+    min-height:52px!important;
+  }
+  .battle-page-tabs{
+    max-width:720px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+}
