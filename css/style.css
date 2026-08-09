@@ -2220,3 +2220,42 @@ body.main-home .home-footer{
     min-height:100dvh!important;
   }
 }
+
+/* =========================================================
+   V3.1.7 — iPad portrait centering fix
+   Keep phone/buttons unchanged.
+   ========================================================= */
+@media(min-width:700px) and (orientation:portrait){
+  body.main-home #modeScreen.home-screen{
+    background-position:50% 50%!important;
+    background-size:cover!important;
+  }
+
+  body.main-home .home-hero{
+    left:0!important;
+    right:0!important;
+    width:100%!important;
+    margin:0!important;
+    transform:none!important;
+  }
+
+  body.main-home .home-logo{
+    left:50%!important;
+    right:auto!important;
+    transform:translateX(-50%)!important;
+    margin-left:0!important;
+    margin-right:0!important;
+    text-align:center!important;
+  }
+}
+
+/* Wider iPads / Stage Manager portrait-like widths */
+@media(min-width:900px) and (max-width:1199px) and (orientation:portrait){
+  body.main-home #modeScreen.home-screen{
+    background-position:center center!important;
+  }
+  body.main-home .home-logo{
+    left:50%!important;
+    transform:translateX(-50%)!important;
+  }
+}
