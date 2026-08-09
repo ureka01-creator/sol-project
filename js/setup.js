@@ -54,6 +54,22 @@ function chooseSoloTeam(team){
    : `🔵 블루팀 vs 🔴 레드팀 <span class="difficulty-badge">${difficultyName()}</span>`;
  pickRender();
 }
+function backFromPokemonPick(){
+  selected=[];
+  picks=[[],[]];
+  $("#selectScreen").classList.add("hidden");
+
+  if(gameMode==="solo"){
+    $("#soloTeamScreen").classList.remove("hidden");
+    $("#subtitle").textContent="내 팀 색을 선택해";
+  }else{
+    document.body.classList.add("main-home");
+    $("#modeScreen").classList.remove("hidden");
+    $("#subtitle").textContent="게임 모드를 선택해";
+    startMenuBgm();
+  }
+}
+
 function typeAdv(att,def){
  return (att==="불꽃"&&def==="풀")||(att==="풀"&&def==="물")||(att==="물"&&def==="불꽃");
 }
