@@ -3683,3 +3683,53 @@ body:has(#gameScreen:not(.hidden)) #turnText{
     margin-right:auto!important;
   }
 }
+
+/* =========================================================
+   V3.4.0 — battle entry scroll reset + team modal cleanup
+   ========================================================= */
+
+#teamStatusModal .team-status-inner{
+  background:rgba(238,246,255,.90)!important;
+  border:1px solid rgba(255,255,255,.62)!important;
+  box-shadow:0 24px 60px rgba(15,30,50,.24)!important;
+  padding:18px!important;
+}
+
+#teamStatusModal .modal-head{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  padding:0 0 14px!important;
+}
+
+#teamStatusModal .modal-head h2{
+  background:transparent!important;
+  margin:0!important;
+}
+
+#teamStatusModal .team-status-single,
+#teamStatusModal .team-panel{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  padding:0!important;
+}
+
+#teamStatusModal .team-title{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  margin:0 0 12px!important;
+  padding:0!important;
+}
+
+#teamStatusModal .team-mon{
+  background:rgba(255,255,255,.42)!important;
+  border:1px solid rgba(255,255,255,.55)!important;
+  box-shadow:0 8px 20px rgba(20,50,80,.06)!important;
+  border-radius:18px!important;
+}
+
+#teamStatusModal .team-mon.active-mon{
+  background:rgba(244,255,247,.62)!important;
+}
