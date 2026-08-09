@@ -2304,3 +2304,151 @@ body.main-home .home-footer{
     background-position:55% 50%!important;
   }
 }
+
+/* =========================================================
+   V3.1.9 — modern glass controls only
+   Background/logo/layout intentionally untouched.
+   ========================================================= */
+
+/* Shared glass language */
+body.main-home #tapStart.hero-tap-start,
+body.main-home #homeMenu .home-play,
+body.main-home #homeMenu .home-dex{
+  -webkit-backdrop-filter:blur(22px) saturate(145%)!important;
+  backdrop-filter:blur(22px) saturate(145%)!important;
+  border:1px solid rgba(255,255,255,.52)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.58),
+    0 10px 28px rgba(17,64,91,.13)!important;
+  color:#12324d!important;
+}
+
+/* TAP TO START */
+body.main-home #tapStart.hero-tap-start{
+  background:linear-gradient(
+    135deg,
+    rgba(255,255,255,.40),
+    rgba(255,255,255,.20)
+  )!important;
+  border-radius:24px!important;
+  min-height:72px!important;
+}
+body.main-home #tapStart .tap-main{
+  font-weight:800!important;
+  letter-spacing:-.03em!important;
+  color:#12324d!important;
+}
+body.main-home #tapStart .tap-sub{
+  color:rgba(18,50,77,.58)!important;
+  letter-spacing:.24em!important;
+}
+
+/* Play buttons: remove old solid blue/red blocks */
+body.main-home #homeMenu .home-play{
+  position:relative!important;
+  overflow:hidden!important;
+  background:linear-gradient(
+    135deg,
+    rgba(255,255,255,.34),
+    rgba(255,255,255,.16)
+  )!important;
+  border-radius:24px!important;
+  min-height:76px!important;
+  height:76px!important;
+  padding:10px 18px 10px 12px!important;
+}
+
+/* very subtle distinction between the two actions */
+body.main-home #homeMenu .home-play.solo{
+  background:linear-gradient(
+    135deg,
+    rgba(229,244,255,.48),
+    rgba(255,255,255,.16)
+  )!important;
+}
+body.main-home #homeMenu .home-play.two{
+  background:linear-gradient(
+    135deg,
+    rgba(255,239,235,.44),
+    rgba(255,255,255,.16)
+  )!important;
+}
+
+/* Modern compact circular icon */
+body.main-home #homeMenu .home-play-icon{
+  width:48px!important;
+  height:48px!important;
+  min-width:48px!important;
+  border-radius:50%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  background:rgba(255,255,255,.30)!important;
+  border:1px solid rgba(255,255,255,.58)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.52)!important;
+  color:#153750!important;
+  font-size:13px!important;
+  font-weight:900!important;
+  letter-spacing:-3px!important;
+}
+
+/* Typography */
+body.main-home #homeMenu .home-play-title{
+  color:#12324d!important;
+  font-weight:800!important;
+  letter-spacing:-.035em!important;
+}
+body.main-home #homeMenu .home-play-sub{
+  color:rgba(18,50,77,.63)!important;
+  font-weight:600!important;
+}
+body.main-home #homeMenu .home-play-arrow{
+  color:rgba(18,50,77,.55)!important;
+  font-weight:400!important;
+  font-size:26px!important;
+}
+
+/* Dex becomes a slim glass pill/card */
+body.main-home #homeMenu .home-dex{
+  background:linear-gradient(
+    135deg,
+    rgba(255,255,255,.31),
+    rgba(255,255,255,.15)
+  )!important;
+  border-radius:20px!important;
+  min-height:54px!important;
+  height:54px!important;
+  font-weight:750!important;
+  color:#12324d!important;
+}
+
+/* Tap feedback */
+body.main-home #tapStart.hero-tap-start:active,
+body.main-home #homeMenu .home-play:active,
+body.main-home #homeMenu .home-dex:active{
+  transform:scale(.985)!important;
+  filter:brightness(1.06)!important;
+}
+
+/* iPad: make controls substantial without changing their position */
+@media(min-width:700px){
+  body.main-home #tapStart.hero-tap-start{
+    min-height:78px!important;
+    border-radius:26px!important;
+  }
+  body.main-home #homeMenu .home-play{
+    min-height:82px!important;
+    height:82px!important;
+    border-radius:26px!important;
+  }
+  body.main-home #homeMenu .home-dex{
+    min-height:58px!important;
+    height:58px!important;
+    border-radius:21px!important;
+  }
+  body.main-home #homeMenu .home-play-icon{
+    width:52px!important;
+    height:52px!important;
+    min-width:52px!important;
+  }
+}
