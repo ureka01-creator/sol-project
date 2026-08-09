@@ -1,3 +1,55 @@
+
+function playDiceConfirmOverlay(dieEl){
+  if(!dieEl)return;
+  try{
+    const r=dieEl.getBoundingClientRect();
+    const pop=document.createElement("div");
+    pop.className="dice-confirm-pop";
+    pop.textContent=dieEl.textContent;
+
+    const startW=r.width;
+    const startH=r.height;
+    const peakScale=1.58;
+    const peakW=startW*peakScale;
+    const peakH=startH*peakScale;
+    const startLeft=r.left;
+    const startTop=r.top;
+    const peakLeft=r.left-(peakW-startW)/2;
+    const peakTop=r.top-(peakH-startH)/2;
+
+    Object.assign(pop.style,{
+      left:startLeft+"px",
+      top:startTop+"px",
+      width:startW+"px",
+      height:startH+"px",
+      fontSize:getComputedStyle(dieEl).fontSize,
+      transition:"left 150ms ease-out, top 150ms ease-out, width 150ms ease-out, height 150ms ease-out"
+    });
+
+    document.body.appendChild(pop);
+
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        pop.classList.add("run");
+        pop.style.left=peakLeft+"px";
+        pop.style.top=peakTop+"px";
+        pop.style.width=peakW+"px";
+        pop.style.height=peakH+"px";
+
+        setTimeout(()=>{
+          pop.style.transition="left 210ms cubic-bezier(.2,.8,.2,1), top 210ms cubic-bezier(.2,.8,.2,1), width 210ms cubic-bezier(.2,.8,.2,1), height 210ms cubic-bezier(.2,.8,.2,1)";
+          pop.style.left=startLeft+"px";
+          pop.style.top=startTop+"px";
+          pop.style.width=startW+"px";
+          pop.style.height=startH+"px";
+        },155);
+      });
+    });
+
+    setTimeout(()=>pop.remove(),480);
+  }catch(e){}
+}
+
 function animateDiceRoll(forTurn,onDone){
   if(!diceRollBuffer) preloadDiceRollBuffer();
   playDiceRollInstant();
@@ -47,6 +99,7 @@ function animateDiceRoll(forTurn,onDone){
         activeIndexes.forEach(i=>{
           diceEls[i].classList.remove("rolling");
           diceEls[i].classList.add("confirmed");
+          playDiceConfirmOverlay(diceEls[i]);
         });
         diceWrap.classList.remove("burst","cpu-rolling");
 
