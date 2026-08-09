@@ -3552,3 +3552,53 @@ body:not(.main-home) .die.confirmed.keep,
 body:not(.main-home) .die.keep{
   animation:none!important;
 }
+
+/* =========================================================
+   V3.3.5 — smooth dice confirmation overlay
+   Never scale the real dice tile on iOS.
+   ========================================================= */
+body:not(.main-home) .die.confirmed{
+  animation:none!important;
+  transform:none!important;
+  will-change:auto!important;
+  z-index:1!important;
+  background:#fde047!important;
+  border-color:#eab308!important;
+}
+
+/* Floating confirmation clone created by JS. */
+.dice-confirm-pop{
+  position:fixed;
+  z-index:9999;
+  display:grid;
+  place-items:center;
+  pointer-events:none;
+  box-sizing:border-box;
+  border:2px solid #eab308;
+  border-radius:18px;
+  background:#fde047;
+  color:#172033;
+  font-weight:900;
+  box-shadow:
+    0 0 0 8px rgba(250,204,21,.18),
+    0 18px 34px rgba(27,62,88,.16);
+  opacity:1;
+}
+
+/* Width/height/top/left animate instead of transform.
+   This avoids Safari's transformed-layer flicker/jank. */
+@keyframes diceConfirmOverlayV335{
+  0%{
+    opacity:.98;
+  }
+  58%{
+    opacity:1;
+  }
+  100%{
+    opacity:0;
+  }
+}
+
+.dice-confirm-pop.run{
+  animation:diceConfirmOverlayV335 .46s ease-out forwards;
+}
