@@ -13,6 +13,8 @@ function start(){
 
  $("#selectScreen").classList.add("hidden");
  $("#gameScreen").classList.remove("hidden");
+ battlePage="dice";
+ setBattlePage("dice");
  requestAnimationFrame(()=>{
    window.scrollTo(0,0);
    document.documentElement.scrollTop=0;
@@ -140,6 +142,7 @@ function render(){
  let me=cur(turn);$("#skill1").innerHTML=`${me.s1[0]} · ${me.s1[1]}<small>${me.s1[3]}</small>`;$("#skill2").innerHTML=`${me.s2[0]} · ${me.s2[1]}<small>${me.s2[3]}</small>`;
  $$(".die").forEach((d,i)=>{d.textContent=(!rolledNow() && !keptNow()[i]) ? "?" : (diceNow()[i]??"?");d.classList.toggle("keep",keptNow()[i])});
  updateBattleTeamTabs();
+ syncBattlePage();
  const teamsEl=$("#teams");
  if(teamsEl && !$("#teamStatusModal").classList.contains("hidden")){
    renderTeamStatus(openTeamStatus.teamIndex ?? turn);
@@ -295,4 +298,27 @@ function openTeamStatus(x){
 
 function closeTeamStatus(){
  $("#teamStatusModal").classList.add("hidden");
+}
+
+
+let battlePage="dice";
+
+function setBattlePage(page){
+ battlePage=(page==="skills")?"skills":"dice";
+ const dicePage=$("#dicePage"), skillPage=$("#skillPage");
+ const diceTab=$("#dicePageTab"), skillTab=$("#skillPageTab");
+ if(!dicePage||!skillPage)return;
+
+ dicePage.classList.toggle("hidden",battlePage!=="dice");
+ skillPage.classList.toggle("hidden",battlePage!=="skills");
+ dicePage.classList.toggle("active",battlePage==="dice");
+ skillPage.classList.toggle("active",battlePage==="skills");
+ if(diceTab)diceTab.classList.toggle("active",battlePage==="dice");
+ if(skillTab)skillTab.classList.toggle("active",battlePage==="skills");
+}
+
+/* Keep a new turn on the dice page; once dice are rolled, skills are available. */
+function syncBattlePage(){
+ if(!$("#gameScreen") || $("#gameScreen").classList.contains("hidden"))return;
+ if(!turnRolled[turn] && battlePage==="skills") setBattlePage("dice");
 }
