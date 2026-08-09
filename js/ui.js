@@ -322,3 +322,9 @@ function syncBattlePage(){
  if(!$("#gameScreen") || $("#gameScreen").classList.contains("hidden"))return;
  if(!turnRolled[turn] && battlePage==="skills") setBattlePage("dice");
 }
+
+
+function quitBattle(){
+  if(!confirm("배틀을 중단하고 메인 화면으로 나갈까?")) return;
+  location.reload();
+}
