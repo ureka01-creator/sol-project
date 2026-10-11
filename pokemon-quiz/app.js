@@ -129,12 +129,13 @@ function buildOptions(answer) {
 
 function renderAnswers(answer) {
   answersEl.innerHTML = '';
-  buildOptions(answer).forEach(pokemon => {
+  buildOptions(answer).forEach((pokemon, index) => {
     const button = document.createElement('button');
     button.className = 'answer-btn';
     button.type = 'button';
     button.textContent = pokemon.name;
     button.dataset.id = String(pokemon.id);
+    button.dataset.key = String.fromCharCode(65 + index);
     button.addEventListener('click', () => chooseAnswer(pokemon.id));
     answersEl.appendChild(button);
   });
@@ -192,7 +193,7 @@ function loadQuestionImage(pokemon, token) {
   pokemonImage.alt = `${pokemon.name} 그림`;
   pokemonImage.dataset.fallback = '0';
   loadingBadge.classList.remove('hidden');
-  loadingBadge.textContent = '포켓몬 등장 중...';
+  loadingBadge.textContent = 'LOADING...';
 
   pokemonImage.onload = () => {
     if (token !== questionToken) return;
@@ -206,7 +207,7 @@ function loadQuestionImage(pokemon, token) {
       pokemonImage.dataset.fallback = '1';
       pokemonImage.src = `${SPRITE_BASE}${pokemon.id}.png`;
     } else {
-      loadingBadge.textContent = '다시 불러오는 중...';
+      loadingBadge.textContent = 'RETRYING...';
       nextHandle = setTimeout(() => {
         if (token !== questionToken) return;
         pokemonImage.dataset.fallback = '0';
@@ -218,6 +219,13 @@ function loadQuestionImage(pokemon, token) {
   pokemonImage.src = `${ART_BASE}${pokemon.id}.png`;
 }
 
+function preloadUpcomingImages() {
+  for (let i = questionIndex + 1; i <= Math.min(questionIndex + 3, questions.length - 1); i += 1) {
+    const image = new Image();
+    image.src = `${ART_BASE}${questions[i].id}.png`;
+  }
+}
+
 function showQuestion() {
   clearTimers();
   locked = true;
@@ -227,7 +235,8 @@ function showQuestion() {
 
   questionNow.textContent = String(questionIndex + 1);
   questionTotal.textContent = String(questions.length);
-  progressBar.style.width = `${(questionIndex / questions.length) * 100}%`;
+  progressBar.style.width = `${((questionIndex + 1) / questions.length) * 100}%`;
+  preloadUpcomingImages();
   scoreText.textContent = String(score);
   streakText.textContent = String(streak);
   resetTimerVisual();
@@ -346,7 +355,7 @@ retryButton.addEventListener('click', startGame);
 changeCountButton.addEventListener('click', goHome);
 soundButton.addEventListener('click', () => {
   soundOn = !soundOn;
-  soundButton.textContent = soundOn ? '🔊' : '🔇';
+  soundButton.textContent = soundOn ? 'SOUND ON' : 'SOUND OFF';
   soundButton.setAttribute('aria-label', soundOn ? '소리 끄기' : '소리 켜기');
   if (soundOn) beep(620, .06, 'triangle', .025);
 });
