@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#e53935" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>포켓몬 스피드 퀴즈</title>
+  <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="bg-decor" aria-hidden="true">
+    <div class="cloud cloud-a"></div>
+    <div class="cloud cloud-b"></div>
+    <div class="pokeball-mark mark-a"><span></span></div>
+    <div class="pokeball-mark mark-b"><span></span></div>
+  </div>
+
+  <main id="app" class="app-shell">
+    <section id="startScreen" class="screen start-screen active" aria-labelledby="gameTitle">
+      <div class="hero-card">
+        <div class="dex-chip">KANTO · No.001–151</div>
+        <h1 id="gameTitle"><span>포켓몬</span><br />스피드 도감 퀴즈</h1>
+        <p class="subtitle">포켓몬을 보고 <b>3초 안에</b> 이름을 골라봐!</p>
+
+        <div class="starter-stage" aria-hidden="true">
+          <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png" alt="" />
+          <img class="hero-pokemon" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="" />
+          <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png" alt="" />
+        </div>
+
+        <div class="rules-card">
+          <div><span class="rule-icon">⏱</span><strong>3초</strong><small>제한 시간</small></div>
+          <div><span class="rule-icon">4</span><strong>4지선다</strong><small>하나만 선택</small></div>
+          <div><span class="rule-icon">⚡</span><strong>자동 진행</strong><small>시간 끝 = 오답</small></div>
+        </div>
+
+        <div class="question-select">
+          <h2>몇 문제 도전할까?</h2>
+          <div id="countButtons" class="count-grid" role="radiogroup" aria-label="문제 수 선택">
+            <button class="count-btn" data-count="5" role="radio" aria-checked="false">5<span>문제</span></button>
+            <button class="count-btn selected" data-count="10" role="radio" aria-checked="true">10<span>문제</span></button>
+            <button class="count-btn" data-count="20" role="radio" aria-checked="false">20<span>문제</span></button>
+            <button class="count-btn" data-count="30" role="radio" aria-checked="false">30<span>문제</span></button>
+          </div>
+        </div>
+
+        <button id="startButton" class="primary-btn">
+          <span class="mini-ball" aria-hidden="true"></span>
+          퀴즈 시작!
+        </button>
+      </div>
+    </section>
+
+    <section id="quizScreen" class="screen quiz-screen" aria-label="퀴즈 화면">
+      <header class="game-header">
+        <button id="homeButton" class="icon-btn" aria-label="처음 화면으로">←</button>
+        <div class="progress-wrap">
+          <div class="progress-label"><span id="questionNow">1</span> / <span id="questionTotal">10</span></div>
+          <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+        </div>
+        <div class="score-pill"><span>★</span><strong id="scoreText">0</strong></div>
+      </header>
+
+      <div class="battle-field">
+        <div class="top-status">
+          <div class="streak-badge">연속 <strong id="streakText">0</strong></div>
+          <button id="soundButton" class="sound-btn" aria-label="소리 켜기/끄기">🔊</button>
+        </div>
+
+        <article id="pokemonCard" class="pokemon-card" aria-live="polite">
+          <div class="scan-lines" aria-hidden="true"></div>
+          <div id="loadingBadge" class="loading-badge">포켓몬 등장 중...</div>
+          <img id="pokemonImage" alt="문제 포켓몬" draggable="false" />
+          <div id="feedbackStamp" class="feedback-stamp" aria-live="assertive"></div>
+        </article>
+
+        <div class="timer-zone" aria-label="남은 시간">
+          <div id="timerNumber" class="timer-number">3</div>
+          <div class="timer-track"><div id="timerBar" class="timer-bar"></div></div>
+        </div>
+
+        <div id="answers" class="answer-grid" aria-label="정답 보기"></div>
+      </div>
+    </section>
+
+    <section id="resultScreen" class="screen result-screen" aria-labelledby="resultTitle">
+      <div class="result-card">
+        <div id="resultBadge" class="result-badge">ACE TRAINER</div>
+        <h2 id="resultTitle">도감 퀴즈 완료!</h2>
+        <div class="result-ball" aria-hidden="true"><span></span></div>
+        <div class="big-score"><strong id="finalScore">0</strong><span id="finalTotal">/ 10</span></div>
+        <p id="resultMessage" class="result-message"></p>
+
+        <div class="result-stats">
+          <div><span>정답률</span><strong id="accuracyText">0%</strong></div>
+          <div><span>최고 연속</span><strong id="bestStreakText">0</strong></div>
+        </div>
+
+        <div class="result-actions">
+          <button id="retryButton" class="primary-btn">한 번 더!</button>
+          <button id="changeCountButton" class="secondary-btn">문제 수 바꾸기</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
