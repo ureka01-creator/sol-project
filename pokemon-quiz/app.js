@@ -19,6 +19,7 @@ const POKEMON_NAMES = [
 const POKEMON = POKEMON_NAMES.map((name, index) => ({ id: index + 1, name }));
 const ART_BASE = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/';
 const SPRITE_BASE = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
+const ANSWER_DELAY = 700;
 
 const screens = {
   start: document.getElementById('startScreen'),
@@ -32,9 +33,12 @@ const homeButton = document.getElementById('homeButton');
 const soundButton = document.getElementById('soundButton');
 const retryButton = document.getElementById('retryButton');
 const changeCountButton = document.getElementById('changeCountButton');
+const battleField = document.getElementById('battleField');
 const pokemonImage = document.getElementById('pokemonImage');
 const loadingBadge = document.getElementById('loadingBadge');
 const feedbackStamp = document.getElementById('feedbackStamp');
+const sparkLayer = document.getElementById('sparkLayer');
+const messageLine = document.getElementById('messageLine');
 const answersEl = document.getElementById('answers');
 const timerNumber = document.getElementById('timerNumber');
 const timerBar = document.getElementById('timerBar');
@@ -61,7 +65,7 @@ let audioCtx = null;
 
 function shuffle(items) {
   const arr = [...items];
-  for (let i = arr.length - 1; i > 0; i--) {
+  for (let i = arr.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
@@ -73,7 +77,7 @@ function switchScreen(name) {
   screens[name].classList.add('active');
 }
 
-function beep(freq = 440, duration = .07, type = 'sine', volume = .04) {
+function beep(freq = 440, duration = .06, type = 'square', volume = .025) {
   if (!soundOn) return;
   try {
     audioCtx ||= new (window.AudioContext || window.webkitAudioContext)();
@@ -91,13 +95,13 @@ function beep(freq = 440, duration = .07, type = 'sine', volume = .04) {
 }
 
 function successSound() {
-  beep(660, .09, 'triangle', .055);
-  setTimeout(() => beep(880, .12, 'triangle', .05), 80);
+  beep(660, .07, 'square', .025);
+  setTimeout(() => beep(880, .1, 'square', .022), 65);
 }
 
 function wrongSound() {
-  beep(190, .13, 'sawtooth', .025);
-  setTimeout(() => beep(145, .14, 'sawtooth', .02), 90);
+  beep(220, .1, 'sawtooth', .018);
+  setTimeout(() => beep(165, .11, 'sawtooth', .015), 75);
 }
 
 function clearTimers() {
@@ -110,20 +114,14 @@ function clearTimers() {
 }
 
 function resetTimerVisual() {
-  timerBar.classList.remove('running');
+  timerBar.classList.remove('running', 'danger');
   void timerBar.offsetWidth;
   timerBar.style.transform = 'scaleX(1)';
   timerNumber.textContent = '3';
-  timerNumber.classList.remove('danger');
 }
 
 function buildOptions(answer) {
-  const distractors = [];
-  const candidates = shuffle(POKEMON.filter(p => p.id !== answer.id));
-  for (const p of candidates) {
-    if (!distractors.some(d => d.name === p.name)) distractors.push(p);
-    if (distractors.length === 3) break;
-  }
+  const distractors = shuffle(POKEMON.filter(p => p.id !== answer.id)).slice(0, 3);
   return shuffle([answer, ...distractors]);
 }
 
@@ -136,6 +134,7 @@ function renderAnswers(answer) {
     button.textContent = pokemon.name;
     button.dataset.id = String(pokemon.id);
     button.dataset.key = String.fromCharCode(65 + index);
+    button.disabled = true;
     button.addEventListener('click', () => chooseAnswer(pokemon.id));
     answersEl.appendChild(button);
   });
@@ -151,35 +150,41 @@ function setAnswerState(selectedId, timedOut = false) {
   });
 }
 
-function showStamp(text, correct) {
+function showFeedback(text, kind) {
   feedbackStamp.textContent = text;
-  feedbackStamp.className = `feedback-stamp ${correct ? 'correct' : 'wrong'}`;
+  feedbackStamp.className = `feedback-stamp ${kind}`;
   void feedbackStamp.offsetWidth;
   feedbackStamp.classList.add('show');
+}
+
+function showSpark() {
+  sparkLayer.classList.remove('show');
+  void sparkLayer.offsetWidth;
+  sparkLayer.classList.add('show');
+  setTimeout(() => sparkLayer.classList.remove('show'), 520);
 }
 
 function startCountdown(token) {
   if (token !== questionToken || !screens.quiz.classList.contains('active')) return;
   locked = false;
-  [...answersEl.children].forEach(button => button.disabled = false);
+  [...answersEl.children].forEach(button => { button.disabled = false; });
   loadingBadge.classList.add('hidden');
+  messageLine.textContent = '포켓몬의 이름은?';
+  messageLine.classList.remove('answer-reveal');
+
   resetTimerVisual();
   void timerBar.offsetWidth;
   timerBar.style.transform = '';
   timerBar.classList.add('running');
 
   const startedAt = performance.now();
-  beep(520, .05, 'square', .025);
+  beep(520, .04, 'square', .018);
   timerInterval = setInterval(() => {
-    const elapsed = performance.now() - startedAt;
-    const remaining = Math.max(0, 3000 - elapsed);
+    const remaining = Math.max(0, 3000 - (performance.now() - startedAt));
     const display = Math.max(1, Math.ceil(remaining / 1000));
-    if (timerNumber.textContent !== String(display)) {
-      timerNumber.textContent = String(display);
-      beep(display === 1 ? 700 : 520, .05, 'square', .022);
-    }
-    timerNumber.classList.toggle('danger', remaining <= 1000);
-  }, 70);
+    timerNumber.textContent = String(display);
+    timerBar.classList.toggle('danger', remaining <= 1000);
+  }, 60);
 
   timeoutHandle = setTimeout(() => {
     if (token !== questionToken || locked) return;
@@ -193,7 +198,7 @@ function loadQuestionImage(pokemon, token) {
   pokemonImage.alt = `${pokemon.name} 그림`;
   pokemonImage.dataset.fallback = '0';
   loadingBadge.classList.remove('hidden');
-  loadingBadge.textContent = 'LOADING...';
+  loadingBadge.textContent = 'SEARCHING...';
 
   pokemonImage.onload = () => {
     if (token !== questionToken) return;
@@ -206,14 +211,14 @@ function loadQuestionImage(pokemon, token) {
     if (pokemonImage.dataset.fallback === '0') {
       pokemonImage.dataset.fallback = '1';
       pokemonImage.src = `${SPRITE_BASE}${pokemon.id}.png`;
-    } else {
-      loadingBadge.textContent = 'RETRYING...';
-      nextHandle = setTimeout(() => {
-        if (token !== questionToken) return;
-        pokemonImage.dataset.fallback = '0';
-        pokemonImage.src = `${ART_BASE}${pokemon.id}.png?retry=${Date.now()}`;
-      }, 450);
+      return;
     }
+    loadingBadge.textContent = 'RETRYING...';
+    nextHandle = setTimeout(() => {
+      if (token !== questionToken) return;
+      pokemonImage.dataset.fallback = '0';
+      pokemonImage.src = `${ART_BASE}${pokemon.id}.png?retry=${Date.now()}`;
+    }, 400);
   };
 
   pokemonImage.src = `${ART_BASE}${pokemon.id}.png`;
@@ -226,64 +231,89 @@ function preloadUpcomingImages() {
   }
 }
 
+function animateQuestionIn() {
+  battleField.classList.remove('question-in');
+  void battleField.offsetWidth;
+  battleField.classList.add('question-in');
+  setTimeout(() => battleField.classList.remove('question-in'), 260);
+}
+
 function showQuestion() {
   clearTimers();
   locked = true;
   feedbackStamp.className = 'feedback-stamp';
+  sparkLayer.classList.remove('show');
+  messageLine.textContent = '포켓몬을 불러오는 중...';
+  messageLine.classList.remove('answer-reveal');
+
   const token = ++questionToken;
   current = questions[questionIndex];
 
   questionNow.textContent = String(questionIndex + 1);
   questionTotal.textContent = String(questions.length);
   progressBar.style.width = `${((questionIndex + 1) / questions.length) * 100}%`;
-  preloadUpcomingImages();
   scoreText.textContent = String(score);
   streakText.textContent = String(streak);
+
   resetTimerVisual();
   renderAnswers(current);
-  [...answersEl.children].forEach(button => button.disabled = true);
+  preloadUpcomingImages();
+  animateQuestionIn();
   loadQuestionImage(current, token);
+}
+
+function stopCountdown() {
+  clearInterval(timerInterval);
+  clearTimeout(timeoutHandle);
+  timerInterval = null;
+  timeoutHandle = null;
+  timerBar.classList.remove('running');
 }
 
 function chooseAnswer(selectedId) {
   if (locked) return;
   locked = true;
-  clearInterval(timerInterval);
-  clearTimeout(timeoutHandle);
-  timerBar.classList.remove('running');
-  const isCorrect = selectedId === current.id;
+  stopCountdown();
 
+  const isCorrect = selectedId === current.id;
   if (isCorrect) {
     score += 1;
     streak += 1;
     bestStreak = Math.max(bestStreak, streak);
-    showStamp('정답!', true);
+    scoreText.textContent = String(score);
+    streakText.textContent = String(streak);
+    setAnswerState(selectedId, false);
+    messageLine.textContent = '정답!';
+    showFeedback('정답!', 'correct');
+    showSpark();
     successSound();
   } else {
     streak = 0;
-    showStamp('아쉽다!', false);
+    streakText.textContent = '0';
+    setAnswerState(selectedId, false);
+    messageLine.textContent = `정답은 ${current.name}!`;
+    messageLine.classList.add('answer-reveal');
+    showFeedback('아쉽다!', 'wrong');
     wrongSound();
   }
 
-  scoreText.textContent = String(score);
-  streakText.textContent = String(streak);
-  setAnswerState(selectedId, false);
-  nextHandle = setTimeout(nextQuestion, 850);
+  nextHandle = setTimeout(nextQuestion, ANSWER_DELAY);
 }
 
 function handleTimeout() {
   locked = true;
-  clearInterval(timerInterval);
-  timerBar.classList.remove('running');
+  stopCountdown();
   timerBar.style.transform = 'scaleX(0)';
+  timerBar.classList.add('danger');
   timerNumber.textContent = '0';
-  timerNumber.classList.add('danger');
   streak = 0;
   streakText.textContent = '0';
   setAnswerState(null, true);
-  showStamp('시간 끝!', false);
+  messageLine.textContent = `시간 끝! 정답은 ${current.name}!`;
+  messageLine.classList.add('answer-reveal');
+  showFeedback('시간 끝!', 'wrong');
   wrongSound();
-  nextHandle = setTimeout(nextQuestion, 900);
+  nextHandle = setTimeout(nextQuestion, ANSWER_DELAY);
 }
 
 function nextQuestion() {
@@ -299,8 +329,8 @@ function getResultMessage(ratio) {
   if (ratio === 1) return '완벽해! 관동지방 포켓몬 박사다!';
   if (ratio >= .8) return '대단해! 포켓몬을 정말 많이 알고 있네!';
   if (ratio >= .6) return '좋아! 조금만 더 하면 포켓몬 박사!';
-  if (ratio >= .4) return '잘했어! 다시 하면 기록을 더 올릴 수 있어!';
-  return '괜찮아! 포켓몬을 하나씩 더 알아가 보자!';
+  if (ratio >= .4) return '잘했어! 한 번 더 하면 기록을 올릴 수 있어!';
+  return '좋아! 포켓몬을 하나씩 더 알아가 보자!';
 }
 
 function finishGame() {
@@ -320,7 +350,7 @@ function finishGame() {
 
 function startGame() {
   clearTimers();
-  beep(540, .06, 'triangle', .025);
+  beep(540, .05, 'square', .018);
   questions = shuffle(POKEMON).slice(0, Math.min(selectedCount, POKEMON.length));
   questionIndex = 0;
   score = 0;
@@ -340,12 +370,12 @@ function goHome() {
 countButtons.forEach(button => {
   button.addEventListener('click', () => {
     selectedCount = Number(button.dataset.count);
-    countButtons.forEach(b => {
-      const selected = b === button;
-      b.classList.toggle('selected', selected);
-      b.setAttribute('aria-checked', String(selected));
+    countButtons.forEach(item => {
+      const selected = item === button;
+      item.classList.toggle('selected', selected);
+      item.setAttribute('aria-checked', String(selected));
     });
-    beep(420, .05, 'triangle', .02);
+    beep(420, .035, 'square', .012);
   });
 });
 
@@ -353,18 +383,19 @@ startButton.addEventListener('click', startGame);
 homeButton.addEventListener('click', goHome);
 retryButton.addEventListener('click', startGame);
 changeCountButton.addEventListener('click', goHome);
+
 soundButton.addEventListener('click', () => {
   soundOn = !soundOn;
-  soundButton.textContent = soundOn ? 'SOUND ON' : 'SOUND OFF';
+  soundButton.textContent = soundOn ? '♪ ON' : '♪ OFF';
   soundButton.setAttribute('aria-label', soundOn ? '소리 끄기' : '소리 켜기');
-  if (soundOn) beep(620, .06, 'triangle', .025);
+  if (soundOn) beep(520, .05, 'square', .018);
 });
 
 window.addEventListener('keydown', event => {
   if (!screens.quiz.classList.contains('active') || locked) return;
-  const keyMap = { '1': 0, '2': 1, '3': 2, '4': 3 };
-  if (event.key in keyMap) {
-    const button = answersEl.children[keyMap[event.key]];
-    if (button) button.click();
-  }
+  const key = event.key.toUpperCase();
+  const index = ['A', 'B', 'C', 'D'].indexOf(key);
+  if (index < 0) return;
+  const button = answersEl.children[index];
+  if (button && !button.disabled) button.click();
 });
