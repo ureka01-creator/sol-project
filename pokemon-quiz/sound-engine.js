@@ -1,5 +1,6 @@
 (() => {
   const PQ_BAR_MS = 1680;
+  const PQ_TITLE_BAR_MS = 2240;
   const PQ_SCALE = {
     C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.0, A4: 440.0, B4: 493.88,
     C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, G5: 783.99, A5: 880.0, B5: 987.77,
@@ -7,9 +8,12 @@
   };
 
   let pqBgmTimer = null;
+  let pqTitleTimer = null;
   let pqBgmVoices = new Set();
   let pqTimeoutMode = false;
   let pqQuestionSerial = 0;
+  let pqAudioUnlocked = false;
+  let pqTitleVariant = 0;
 
   function pqEnsureAudio() {
     if (!soundOn) return null;
@@ -76,6 +80,29 @@
     source.stop(t1 + .01);
   }
 
+  function pqStopVoices() {
+    pqBgmVoices.forEach(osc => {
+      try { osc.stop(); } catch (_) {}
+    });
+    pqBgmVoices.clear();
+  }
+
+  function pqStopQuizBgm() {
+    if (pqBgmTimer) clearInterval(pqBgmTimer);
+    pqBgmTimer = null;
+  }
+
+  function pqStopTitleBgm() {
+    if (pqTitleTimer) clearInterval(pqTitleTimer);
+    pqTitleTimer = null;
+  }
+
+  function pqStopAllMusic() {
+    pqStopQuizBgm();
+    pqStopTitleBgm();
+    pqStopVoices();
+  }
+
   function pqMenuTick() {
     pqToneAt(PQ_SCALE.E5, 0, .028, 'square', .008);
     pqToneAt(PQ_SCALE.A5, .018, .03, 'square', .006);
@@ -136,7 +163,7 @@
 
   function pqResultFanfare() {
     if (!soundOn) return;
-    pqStopBgm();
+    pqStopAllMusic();
     const melody = [PQ_SCALE.C5, PQ_SCALE.E5, PQ_SCALE.G5, PQ_SCALE.C6, PQ_SCALE.G5, PQ_SCALE.C6, PQ_SCALE.E6];
     const times = [0, .08, .16, .25, .37, .45, .57];
     melody.forEach((note, i) => pqToneAt(note, times[i], i === melody.length - 1 ? .28 : .11, i >= 3 ? 'triangle' : 'square', .018));
@@ -144,7 +171,7 @@
     pqToneAt(PQ_SCALE.G4, .25, .45, 'square', .005);
   }
 
-  function pqScheduleBgmBar() {
+  function pqScheduleQuizBgmBar() {
     if (!soundOn || !screens.quiz.classList.contains('active')) return;
     const step = .21;
     const lead = [PQ_SCALE.C5, PQ_SCALE.E5, PQ_SCALE.G5, PQ_SCALE.E5, PQ_SCALE.D5, PQ_SCALE.F5, PQ_SCALE.G5, PQ_SCALE.D5];
@@ -158,30 +185,76 @@
     });
   }
 
-  function pqStartBgm() {
+  function pqStartQuizBgm() {
     if (!soundOn || pqBgmTimer || !screens.quiz.classList.contains('active')) return;
-    pqScheduleBgmBar();
-    pqBgmTimer = setInterval(pqScheduleBgmBar, PQ_BAR_MS);
+    pqStopTitleBgm();
+    pqStopVoices();
+    pqScheduleQuizBgmBar();
+    pqBgmTimer = setInterval(pqScheduleQuizBgmBar, PQ_BAR_MS);
   }
 
-  function pqStopBgm() {
-    if (pqBgmTimer) clearInterval(pqBgmTimer);
-    pqBgmTimer = null;
-    pqBgmVoices.forEach(osc => {
-      try { osc.stop(); } catch (_) {}
+  function pqScheduleTitleBar() {
+    if (!soundOn || !pqAudioUnlocked || !screens.start.classList.contains('active')) return;
+
+    const step = .14;
+    const leadA = [
+      PQ_SCALE.G5, PQ_SCALE.G5, PQ_SCALE.A5, PQ_SCALE.C6,
+      PQ_SCALE.B5, PQ_SCALE.A5, PQ_SCALE.G5, PQ_SCALE.E5,
+      PQ_SCALE.G5, PQ_SCALE.A5, PQ_SCALE.C6, PQ_SCALE.D6,
+      PQ_SCALE.C6, PQ_SCALE.B5, PQ_SCALE.A5, PQ_SCALE.G5
+    ];
+    const leadB = [
+      PQ_SCALE.E5, PQ_SCALE.G5, PQ_SCALE.A5, PQ_SCALE.B5,
+      PQ_SCALE.C6, PQ_SCALE.B5, PQ_SCALE.A5, PQ_SCALE.G5,
+      PQ_SCALE.F5, PQ_SCALE.A5, PQ_SCALE.C6, PQ_SCALE.E6,
+      PQ_SCALE.D6, PQ_SCALE.C6, PQ_SCALE.B5, PQ_SCALE.G5
+    ];
+    const lead = pqTitleVariant % 2 === 0 ? leadA : leadB;
+    const bass = pqTitleVariant % 2 === 0
+      ? [PQ_SCALE.C4, PQ_SCALE.G4, PQ_SCALE.A4, PQ_SCALE.F4]
+      : [PQ_SCALE.F4, PQ_SCALE.G4, PQ_SCALE.E4, PQ_SCALE.G4];
+
+    lead.forEach((note, i) => {
+      const accent = i % 4 === 0 ? .0085 : .0058;
+      pqToneAt(note, i * step, .09, i % 4 === 3 ? 'triangle' : 'square', accent, true, i % 2 ? -3 : 2);
     });
-    pqBgmVoices.clear();
+
+    bass.forEach((note, i) => {
+      pqToneAt(note, i * step * 4, .34, 'triangle', .0048, true);
+      pqToneAt(note * 2, i * step * 4 + .28, .055, 'square', .003, true);
+    });
+
+    [0, 4, 8, 12].forEach(index => pqNoise(index * step, .025, .0022));
+    pqTitleVariant += 1;
+  }
+
+  function pqStartTitleBgm() {
+    if (!soundOn || !pqAudioUnlocked || pqTitleTimer || !screens.start.classList.contains('active')) return;
+    pqStopQuizBgm();
+    pqStopVoices();
+    pqScheduleTitleBar();
+    pqTitleTimer = setInterval(pqScheduleTitleBar, PQ_TITLE_BAR_MS);
+  }
+
+  function pqUnlockAndStartTitle() {
+    if (!soundOn) return;
+    pqAudioUnlocked = true;
+    pqEnsureAudio();
+    if (screens.start.classList.contains('active')) pqStartTitleBgm();
   }
 
   const pqOriginalSwitchScreen = switchScreen;
   switchScreen = function pqSwitchScreen(name) {
     pqOriginalSwitchScreen(name);
+    pqStopAllMusic();
+
     if (name === 'quiz') {
-      setTimeout(pqStartBgm, 180);
-    } else {
-      pqStopBgm();
+      setTimeout(pqStartQuizBgm, 180);
+    } else if (name === 'start') {
+      setTimeout(pqStartTitleBgm, 80);
+    } else if (name === 'result') {
+      setTimeout(pqResultFanfare, 70);
     }
-    if (name === 'result') setTimeout(pqResultFanfare, 70);
   };
 
   const pqOriginalShowQuestion = showQuestion;
@@ -237,24 +310,34 @@
     else pqWrong();
   };
 
+  document.addEventListener('pointerdown', pqUnlockAndStartTitle, { once: true, passive: true });
+  document.addEventListener('keydown', pqUnlockAndStartTitle, { once: true });
+
   soundButton.addEventListener('click', () => {
+    pqAudioUnlocked = true;
     if (soundOn) {
       pqConfirm();
-      if (screens.quiz.classList.contains('active')) setTimeout(pqStartBgm, 100);
+      if (screens.quiz.classList.contains('active')) setTimeout(pqStartQuizBgm, 100);
+      else if (screens.start.classList.contains('active')) setTimeout(pqStartTitleBgm, 100);
     } else {
-      pqStopBgm();
+      pqStopAllMusic();
     }
   });
 
   homeButton.addEventListener('click', () => {
     if (soundOn) pqToneAt(PQ_SCALE.C5, 0, .045, 'square', .009);
-    pqStopBgm();
+    pqStopAllMusic();
   });
 
-  changeCountButton.addEventListener('click', pqStopBgm);
-  window.addEventListener('pagehide', pqStopBgm);
+  changeCountButton.addEventListener('click', pqStopAllMusic);
+  window.addEventListener('pagehide', pqStopAllMusic);
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) pqStopBgm();
-    else if (soundOn && screens.quiz.classList.contains('active')) pqStartBgm();
+    if (document.hidden) {
+      pqStopAllMusic();
+      return;
+    }
+    if (!soundOn || !pqAudioUnlocked) return;
+    if (screens.quiz.classList.contains('active')) pqStartQuizBgm();
+    else if (screens.start.classList.contains('active')) pqStartTitleBgm();
   });
 })();
