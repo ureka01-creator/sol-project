@@ -9,6 +9,16 @@
   <title>포켓몬 스피드 퀴즈</title>
   <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin />
   <link rel="stylesheet" href="./styles.css" />
+  <style>
+    .starter-stage img {
+      transition: opacity .28s ease, transform .28s ease, filter .28s ease;
+    }
+    .starter-stage img.is-swapping {
+      opacity: .12;
+      transform: translateY(10px) scale(.84);
+      filter: drop-shadow(0 6px 0 rgba(26,32,44,.08));
+    }
+  </style>
 </head>
 <body>
   <main id="app" class="game-root">
@@ -112,5 +122,74 @@
 
   <script src="./app.js"></script>
   <script src="./sound-engine.js?v=1"></script>
+  <script>
+    (() => {
+      const startScreen = document.getElementById('startScreen');
+      const slots = [...document.querySelectorAll('.starter-stage img')];
+      const base = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/';
+      const spriteBase = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
+      const pool = Array.from({ length: 151 }, (_, i) => i + 1);
+      let deck = [];
+      let cursor = 0;
+      let slotIndex = 0;
+
+      const shuffle = items => {
+        const arr = [...items];
+        for (let i = arr.length - 1; i > 0; i -= 1) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      };
+
+      const refill = () => {
+        deck = shuffle(pool);
+        cursor = 0;
+      };
+
+      const nextId = excluded => {
+        if (!deck.length || cursor >= deck.length) refill();
+        for (let tries = 0; tries < 302; tries += 1) {
+          if (cursor >= deck.length) refill();
+          const id = deck[cursor++];
+          if (!excluded.includes(id)) return id;
+        }
+        return pool.find(id => !excluded.includes(id)) || 25;
+      };
+
+      const applyPokemon = (img, id) => {
+        img.dataset.pokemonId = String(id);
+        img.dataset.fallback = '0';
+        img.src = `${base}${id}.png`;
+        img.onerror = () => {
+          if (img.dataset.fallback === '1') return;
+          img.dataset.fallback = '1';
+          img.src = `${spriteBase}${id}.png`;
+        };
+      };
+
+      refill();
+      const initial = [];
+      slots.forEach(img => {
+        const id = nextId(initial);
+        initial.push(id);
+        applyPokemon(img, id);
+      });
+
+      setInterval(() => {
+        if (!startScreen.classList.contains('active') || !slots.length) return;
+        const img = slots[slotIndex % slots.length];
+        slotIndex += 1;
+        const excluded = slots
+          .filter(slot => slot !== img)
+          .map(slot => Number(slot.dataset.pokemonId || 0));
+        const id = nextId(excluded);
+
+        img.classList.add('is-swapping');
+        setTimeout(() => applyPokemon(img, id), 170);
+        setTimeout(() => img.classList.remove('is-swapping'), 430);
+      }, 2200);
+    })();
+  </script>
 </body>
 </html>
