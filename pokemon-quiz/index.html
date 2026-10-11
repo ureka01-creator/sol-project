@@ -10,13 +10,30 @@
   <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin />
   <link rel="stylesheet" href="./styles.css" />
   <style>
-    .starter-stage img {
+    .starter-stage {
+      align-items: center;
+    }
+    .starter-stage img,
+    .starter-stage .starter-main {
+      width: min(28vw, 188px);
+      height: min(28vw, 188px);
+      max-height: none;
+      object-fit: contain;
+      object-position: center;
+      flex: 0 0 auto;
       transition: opacity .28s ease, transform .28s ease, filter .28s ease;
     }
     .starter-stage img.is-swapping {
       opacity: .12;
-      transform: translateY(10px) scale(.84);
+      transform: translateY(8px) scale(.86);
       filter: drop-shadow(0 6px 0 rgba(26,32,44,.08));
+    }
+    @media (max-width: 520px) {
+      .starter-stage img,
+      .starter-stage .starter-main {
+        width: 29vw;
+        height: 29vw;
+      }
     }
   </style>
 </head>
@@ -121,7 +138,7 @@
   </main>
 
   <script src="./app.js"></script>
-  <script src="./sound-engine.js?v=1"></script>
+  <script src="./sound-engine.js?v=2"></script>
   <script>
     (() => {
       const startScreen = document.getElementById('startScreen');
