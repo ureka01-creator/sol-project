@@ -10,9 +10,7 @@
   <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin />
   <link rel="stylesheet" href="./styles.css" />
   <style>
-    .starter-stage {
-      align-items: center;
-    }
+    .starter-stage { align-items: center; }
     .starter-stage img,
     .starter-stage .starter-main {
       width: min(28vw, 188px);
@@ -27,6 +25,22 @@
       opacity: .12;
       transform: translateY(8px) scale(.86);
       filter: drop-shadow(0 6px 0 rgba(26,32,44,.08));
+    }
+    .title-music-btn {
+      width: 100%;
+      min-height: 46px;
+      margin: 0 0 12px;
+      border: 3px solid #0f1114;
+      border-radius: 0;
+      background: #20262b;
+      color: #fffdf4;
+      font: 900 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+      letter-spacing: .06em;
+      cursor: pointer;
+    }
+    .title-music-btn.playing {
+      background: #2d7045;
+      color: #fff;
     }
     @media (max-width: 520px) {
       .starter-stage img,
@@ -62,6 +76,7 @@
         </div>
 
         <div class="start-controls">
+          <button id="titleMusicButton" class="title-music-btn" type="button" aria-pressed="false">♪ BGM 시작</button>
           <div class="menu-label">몇 문제 도전할까?</div>
           <div id="countButtons" class="count-menu" role="radiogroup" aria-label="문제 수 선택">
             <button class="count-btn" data-count="5" role="radio" aria-checked="false"><span>05</span>문제</button>
@@ -138,7 +153,7 @@
   </main>
 
   <script src="./app.js"></script>
-  <script src="./sound-engine.js?v=2"></script>
+  <script src="./sound-engine.js?v=3"></script>
   <script>
     (() => {
       const startScreen = document.getElementById('startScreen');
@@ -159,11 +174,7 @@
         return arr;
       };
 
-      const refill = () => {
-        deck = shuffle(pool);
-        cursor = 0;
-      };
-
+      const refill = () => { deck = shuffle(pool); cursor = 0; };
       const nextId = excluded => {
         if (!deck.length || cursor >= deck.length) refill();
         for (let tries = 0; tries < 302; tries += 1) {
@@ -197,11 +208,8 @@
         if (!startScreen.classList.contains('active') || !slots.length) return;
         const img = slots[slotIndex % slots.length];
         slotIndex += 1;
-        const excluded = slots
-          .filter(slot => slot !== img)
-          .map(slot => Number(slot.dataset.pokemonId || 0));
+        const excluded = slots.filter(slot => slot !== img).map(slot => Number(slot.dataset.pokemonId || 0));
         const id = nextId(excluded);
-
         img.classList.add('is-swapping');
         setTimeout(() => applyPokemon(img, id), 170);
         setTimeout(() => img.classList.remove('is-swapping'), 430);
