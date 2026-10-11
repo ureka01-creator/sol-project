@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#d9342b" />
+  <meta name="theme-color" content="#c8322c" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>포켓몬 스피드 퀴즈</title>
@@ -11,111 +11,100 @@
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <main id="app" class="app-shell">
-    <section id="startScreen" class="screen start-screen active" aria-labelledby="gameTitle">
-      <div class="device-shell start-device">
-        <div class="device-topline">
-          <span class="device-light" aria-hidden="true"></span>
-          <span>KANTO POKÉDEX / SPEED TEST</span>
-          <span class="device-code">001—151</span>
+  <main id="app" class="game-root">
+    <section id="startScreen" class="scene start-scene active" aria-labelledby="gameTitle">
+      <div class="start-panel">
+        <div class="start-top">
+          <span class="status-light" aria-hidden="true"></span>
+          <span>KANTO TRAINER TEST</span>
+          <span>001—151</span>
         </div>
 
-        <div class="device-screen hero-screen">
-          <div class="screen-label">TRAINER TEST</div>
-          <h1 id="gameTitle">누구일까?</h1>
-          <p class="subtitle">포켓몬을 보고 <strong>3초 안에</strong> 이름을 골라봐!</p>
+        <div class="start-display">
+          <div class="start-copy">
+            <span class="eyebrow">SPEED QUIZ</span>
+            <h1 id="gameTitle">누구일까?</h1>
+            <p>포켓몬이 나타나면 <strong>3초 안에</strong> 이름을 골라!</p>
+          </div>
 
           <div class="starter-stage" aria-hidden="true">
             <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png" alt="" />
-            <img class="hero-pokemon" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="" />
+            <img class="starter-main" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="" />
             <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png" alt="" />
           </div>
-
-          <div class="rule-strip" aria-label="게임 규칙">
-            <div><span>TIME</span><strong>3 SEC</strong></div>
-            <div><span>CHOICE</span><strong>4</strong></div>
-            <div><span>MISS</span><strong>AUTO NEXT</strong></div>
-          </div>
         </div>
 
-        <div class="control-panel">
-          <div class="question-select">
-            <div class="panel-title"><span>01</span> 몇 문제 도전할까?</div>
-            <div id="countButtons" class="count-grid" role="radiogroup" aria-label="문제 수 선택">
-              <button class="count-btn" data-count="5" role="radio" aria-checked="false"><strong>05</strong><span>문제</span></button>
-              <button class="count-btn selected" data-count="10" role="radio" aria-checked="true"><strong>10</strong><span>문제</span></button>
-              <button class="count-btn" data-count="20" role="radio" aria-checked="false"><strong>20</strong><span>문제</span></button>
-              <button class="count-btn" data-count="30" role="radio" aria-checked="false"><strong>30</strong><span>문제</span></button>
-            </div>
+        <div class="start-controls">
+          <div class="menu-label">몇 문제 도전할까?</div>
+          <div id="countButtons" class="count-menu" role="radiogroup" aria-label="문제 수 선택">
+            <button class="count-btn" data-count="5" role="radio" aria-checked="false"><span>05</span>문제</button>
+            <button class="count-btn selected" data-count="10" role="radio" aria-checked="true"><span>10</span>문제</button>
+            <button class="count-btn" data-count="20" role="radio" aria-checked="false"><span>20</span>문제</button>
+            <button class="count-btn" data-count="30" role="radio" aria-checked="false"><span>30</span>문제</button>
           </div>
-
-          <button id="startButton" class="primary-btn">
-            <span class="button-ball" aria-hidden="true"></span>
-            START
-          </button>
+          <button id="startButton" class="start-btn"><span class="cursor">▶</span> 퀴즈 시작</button>
         </div>
       </div>
     </section>
 
-    <section id="quizScreen" class="screen quiz-screen" aria-label="퀴즈 화면">
-      <div class="quiz-console">
-        <header class="game-header">
-          <button id="homeButton" class="text-btn" aria-label="처음 화면으로">← HOME</button>
-          <div class="round-status">
-            <span>QUESTION</span>
+    <section id="quizScreen" class="scene quiz-scene" aria-label="포켓몬 퀴즈">
+      <div class="game-frame">
+        <header class="hud">
+          <button id="homeButton" class="hud-btn" aria-label="처음 화면으로">HOME</button>
+          <div class="hud-center">
+            <span class="hud-label">QUESTION</span>
             <strong><span id="questionNow">1</span>/<span id="questionTotal">10</span></strong>
           </div>
-          <div class="score-box"><span>SCORE</span><strong id="scoreText">0</strong></div>
+          <div class="hud-score">
+            <span class="hud-label">SCORE</span>
+            <strong id="scoreText">0</strong>
+          </div>
+          <button id="soundButton" class="hud-btn sound" aria-label="소리 끄기">♪ ON</button>
         </header>
 
-        <div class="progress-track" aria-hidden="true"><div id="progressBar" class="progress-bar"></div></div>
+        <div class="progress-line" aria-hidden="true"><div id="progressBar" class="progress-fill"></div></div>
 
-        <div class="battle-field">
-          <div class="top-status">
-            <div class="streak-badge">STREAK <strong id="streakText">0</strong></div>
-            <button id="soundButton" class="sound-btn" aria-label="소리 끄기">SOUND ON</button>
-          </div>
+        <div id="battleField" class="battle-stage">
+          <div class="streak-line">STREAK <strong id="streakText">0</strong></div>
 
-          <article id="pokemonCard" class="pokemon-card" aria-live="polite">
-            <div class="screen-corners" aria-hidden="true"></div>
-            <div id="loadingBadge" class="loading-badge">LOADING...</div>
+          <div id="pokemonCard" class="pokemon-stage" aria-live="polite">
+            <div class="scan-grid" aria-hidden="true"></div>
+            <div id="loadingBadge" class="loading-badge">SEARCHING...</div>
             <img id="pokemonImage" alt="문제 포켓몬" draggable="false" />
+            <div id="sparkLayer" class="spark-layer" aria-hidden="true"></div>
             <div id="feedbackStamp" class="feedback-stamp" aria-live="assertive"></div>
-          </article>
-
-          <div class="timer-zone" aria-label="남은 시간">
-            <div class="timer-meta"><span>TIME</span><strong id="timerNumber" class="timer-number">3</strong></div>
-            <div class="timer-track"><div id="timerBar" class="timer-bar"></div></div>
           </div>
 
-          <div id="answers" class="answer-grid" aria-label="정답 보기"></div>
+          <div class="timer-panel" aria-label="남은 시간">
+            <span class="timer-caption">TIME</span>
+            <div class="timer-track"><div id="timerBar" class="timer-bar"></div></div>
+            <span id="timerNumber" class="timer-number" aria-live="off">3</span>
+          </div>
+
+          <div class="command-box">
+            <div id="messageLine" class="message-line" aria-live="polite">포켓몬의 이름은?</div>
+            <div id="answers" class="answer-menu" aria-label="정답 보기"></div>
+          </div>
         </div>
       </div>
     </section>
 
-    <section id="resultScreen" class="screen result-screen" aria-labelledby="resultTitle">
-      <div class="device-shell result-device">
-        <div class="device-topline">
-          <span class="device-light" aria-hidden="true"></span>
-          <span>KANTO POKÉDEX / RESULT</span>
-          <span class="device-code">SAVE DATA</span>
-        </div>
-
-        <div class="device-screen result-inner">
-          <div id="resultBadge" class="result-badge">ACE TRAINER</div>
+    <section id="resultScreen" class="scene result-scene" aria-labelledby="resultTitle">
+      <div class="result-panel">
+        <div class="result-header">KANTO TRAINER TEST / RESULT</div>
+        <div class="result-screen">
+          <div id="resultBadge" class="result-rank">ACE TRAINER</div>
           <h2 id="resultTitle">퀴즈 완료!</h2>
-          <div class="big-score"><strong id="finalScore">0</strong><span id="finalTotal">/ 10</span></div>
-          <p id="resultMessage" class="result-message"></p>
-
+          <div class="result-score"><strong id="finalScore">0</strong><span id="finalTotal">/10</span></div>
+          <p id="resultMessage"></p>
           <div class="result-stats">
-            <div><span>ACCURACY</span><strong id="accuracyText">0%</strong></div>
-            <div><span>BEST STREAK</span><strong id="bestStreakText">0</strong></div>
+            <div><span>정답률</span><strong id="accuracyText">0%</strong></div>
+            <div><span>최고 연속</span><strong id="bestStreakText">0</strong></div>
           </div>
         </div>
-
         <div class="result-actions">
-          <button id="retryButton" class="primary-btn">RETRY</button>
-          <button id="changeCountButton" class="secondary-btn">문제 수 바꾸기</button>
+          <button id="retryButton" class="menu-action primary"><span>▶</span> 한 번 더</button>
+          <button id="changeCountButton" class="menu-action">문제 수 바꾸기</button>
         </div>
       </div>
     </section>
