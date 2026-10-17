@@ -42,6 +42,29 @@
       background: #2d7045;
       color: #fff;
     }
+    .time-section { margin-top: 13px; }
+    .time-menu {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+    }
+    .time-btn {
+      min-height: 56px;
+      border: 3px solid #0f1114;
+      border-radius: 0;
+      background: #f4f0df;
+      color: #1d2024;
+      cursor: pointer;
+      font-weight: 900;
+    }
+    .time-btn strong {
+      display: block;
+      font: 900 22px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+      margin-bottom: 4px;
+    }
+    .time-btn span { font-size: 11px; }
+    .time-btn.selected { background: #efc64b; }
+    .time-btn.selected::before { content: "▶"; margin-right: 4px; font-size: 10px; }
     @media (max-width: 520px) {
       .starter-stage img,
       .starter-stage .starter-main {
@@ -77,6 +100,7 @@
 
         <div class="start-controls">
           <button id="titleMusicButton" class="title-music-btn" type="button" aria-pressed="false">♪ BGM 시작</button>
+
           <div class="menu-label">몇 문제 도전할까?</div>
           <div id="countButtons" class="count-menu" role="radiogroup" aria-label="문제 수 선택">
             <button class="count-btn" data-count="5" role="radio" aria-checked="false"><span>05</span>문제</button>
@@ -84,6 +108,16 @@
             <button class="count-btn" data-count="20" role="radio" aria-checked="false"><span>20</span>문제</button>
             <button class="count-btn" data-count="30" role="radio" aria-checked="false"><span>30</span>문제</button>
           </div>
+
+          <div class="time-section">
+            <div class="menu-label">제한 시간</div>
+            <div id="timeButtons" class="time-menu" role="radiogroup" aria-label="문제당 제한 시간 선택">
+              <button class="time-btn selected" data-time="3" role="radio" aria-checked="true"><strong>03</strong><span>SEC</span></button>
+              <button class="time-btn" data-time="5" role="radio" aria-checked="false"><strong>05</strong><span>SEC</span></button>
+              <button class="time-btn" data-time="10" role="radio" aria-checked="false"><strong>10</strong><span>SEC</span></button>
+            </div>
+          </div>
+
           <button id="startButton" class="start-btn"><span class="cursor">▶</span> 퀴즈 시작</button>
         </div>
       </div>
@@ -153,6 +187,7 @@
   </main>
 
   <script src="./app.js"></script>
+  <script src="./timer-config.js?v=1"></script>
   <script src="./sound-engine.js?v=3"></script>
   <script>
     (() => {
