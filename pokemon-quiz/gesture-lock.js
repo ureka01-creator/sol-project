@@ -32,6 +32,15 @@
     return body.classList.contains('screen-start') || body.classList.contains('screen-quiz');
   }
 
+  function isInteractiveTarget(target) {
+    return Boolean(target?.closest('button, a, input, select, textarea, summary, [role="button"], [role="radio"]'));
+  }
+
+  function getOptionScroller(target) {
+    if (!body.classList.contains('screen-start') || !options?.open) return null;
+    return target?.closest('.game-options') ? options : null;
+  }
+
   function syncLockClass() {
     root.classList.toggle('app-gesture-lock', isLockedScreen());
     if (isLockedScreen()) {
@@ -43,17 +52,26 @@
     }
   }
 
+  /* WebKit can begin pull-to-refresh before touchmove is cancelled.
+     Cancel touchstart on non-interactive game surfaces, while preserving taps
+     on buttons and scrolling inside the opened options card. */
   document.addEventListener('touchstart', event => {
     if (!isLockedScreen()) return;
+
     touchStartY = event.touches?.[0]?.clientY ?? 0;
-  }, { passive: true, capture: true });
+    const target = event.target instanceof Element ? event.target : null;
+    const optionScroller = getOptionScroller(target);
+
+    if (!optionScroller && !isInteractiveTarget(target) && event.cancelable) {
+      event.preventDefault();
+    }
+  }, { passive: false, capture: true });
 
   document.addEventListener('touchmove', event => {
     if (!isLockedScreen()) return;
 
     const target = event.target instanceof Element ? event.target : null;
-    const optionScroller = body.classList.contains('screen-start') &&
-      options?.open && target?.closest('.game-options') ? options : null;
+    const optionScroller = getOptionScroller(target);
 
     if (!optionScroller) {
       if (event.cancelable) event.preventDefault();
