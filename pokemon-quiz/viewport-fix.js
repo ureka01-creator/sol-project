@@ -11,26 +11,33 @@
       overflow-x: hidden;
     }
 
-    /* Main and quiz share the exact same outer frame. */
     .start-scene,
     .quiz-scene {
       width: min(100%, 860px) !important;
     }
 
-    /* Safari visualViewport.height is already the visible area.
-       Do not add visualViewport.offsetTop again. */
+    /* Start/quiz are app-like fixed screens. This prevents Safari rubber-band
+       scrolling from moving the whole game frame. */
     body.screen-start,
     body.screen-quiz {
-      height: var(--vv-height, 100dvh) !important;
-      min-height: var(--vv-height, 100dvh) !important;
-      max-height: var(--vv-height, 100dvh) !important;
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      max-height: none !important;
       overflow: hidden !important;
-      overscroll-behavior: none;
+      overscroll-behavior: none !important;
     }
 
     body.screen-start .game-root,
     body.screen-quiz .game-root {
-      width: 100%;
+      position: fixed !important;
+      left: 0 !important;
+      top: 0 !important;
+      right: 0 !important;
+      bottom: auto !important;
+      width: 100% !important;
       height: var(--vv-height, 100dvh) !important;
       min-height: 0 !important;
       max-height: var(--vv-height, 100dvh) !important;
@@ -40,6 +47,7 @@
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
+      overscroll-behavior: none !important;
     }
 
     body.screen-start .start-scene.active,
@@ -53,7 +61,6 @@
       flex: 0 0 auto;
     }
 
-    /* MAIN: same total height as in-game. */
     body.screen-start .start-panel {
       height: 100%;
       min-height: 0;
@@ -63,9 +70,7 @@
       flex-direction: column;
     }
 
-    body.screen-start .start-top {
-      flex: 0 0 auto;
-    }
+    body.screen-start .start-top { flex: 0 0 auto; }
 
     body.screen-start .start-display {
       flex: 1 1 auto;
@@ -103,37 +108,23 @@
       padding: 10px 14px 12px;
     }
 
-    body.screen-start .title-music-btn {
-      margin-bottom: 8px;
-    }
+    body.screen-start .title-music-btn,
+    body.screen-start .game-options { margin-bottom: 8px; }
+    body.screen-start .start-btn { margin-top: 0; }
 
-    body.screen-start .game-options {
-      margin-bottom: 8px;
-    }
-
-    body.screen-start .start-btn {
-      margin-top: 0;
-    }
-
-    /* Opening options keeps the same frame and scrolls only the options card. */
+    /* Opening options never grows the page. Only this card can pan vertically. */
     body.screen-start.options-open .start-display {
       flex: 0 0 auto;
       margin-top: 8px;
       margin-bottom: 8px;
     }
 
-    body.screen-start.options-open .start-copy {
-      padding: 8px 16px 7px;
-    }
-
+    body.screen-start.options-open .start-copy { padding: 8px 16px 7px; }
     body.screen-start.options-open .start-copy h1 {
       margin: 4px 0 0;
       font-size: 36px;
     }
-
-    body.screen-start.options-open .starter-stage {
-      display: none !important;
-    }
+    body.screen-start.options-open .starter-stage { display: none !important; }
 
     body.screen-start.options-open .start-controls {
       flex: 1 1 auto;
@@ -156,34 +147,31 @@
       min-height: 0;
       display: block;
       overflow-y: auto;
+      overflow-x: hidden;
       overscroll-behavior-y: contain;
       -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
       scrollbar-width: none;
       margin-bottom: 7px;
     }
 
-    body.screen-start.options-open .game-options::-webkit-scrollbar {
-      display: none;
-    }
-
+    body.screen-start.options-open .game-options::-webkit-scrollbar { display: none; }
     body.screen-start.options-open .game-options > summary {
       position: sticky;
       top: 0;
       z-index: 3;
       background: #f4f0df;
     }
-
     body.screen-start.options-open .options-body {
       height: auto !important;
       overflow: visible !important;
     }
-
     body.screen-start.options-open .start-btn {
       flex: 0 0 auto;
       margin-top: 0;
     }
 
-    /* QUIZ: one measured viewport, no page scrolling. */
+    /* Quiz always occupies one measured visible viewport. */
     body.screen-quiz .game-frame {
       height: 100%;
       min-height: 0;
@@ -195,9 +183,7 @@
     }
 
     body.screen-quiz .hud,
-    body.screen-quiz .progress-line {
-      flex: 0 0 auto;
-    }
+    body.screen-quiz .progress-line { flex: 0 0 auto; }
 
     body.screen-quiz .battle-stage {
       flex: 1 1 auto;
@@ -210,9 +196,7 @@
 
     body.screen-quiz .streak-line,
     body.screen-quiz .timer-panel,
-    body.screen-quiz .command-box {
-      flex: 0 0 auto;
-    }
+    body.screen-quiz .command-box { flex: 0 0 auto; }
 
     body.screen-quiz .pokemon-stage {
       flex: 1 1 auto;
@@ -221,58 +205,34 @@
       max-height: none !important;
     }
 
-    body.screen-quiz .timer-panel {
-      margin: 5px 0;
-    }
+    body.screen-quiz .timer-panel { margin: 5px 0; }
 
     @media (max-width: 620px) {
-      body.screen-start .start-copy h1 {
-        font-size: clamp(38px, 10vw, 52px);
-      }
-
+      body.screen-start .start-copy h1 { font-size: clamp(38px, 10vw, 52px); }
       body.screen-start .start-top {
         min-height: 42px;
         padding-top: 7px;
         padding-bottom: 7px;
       }
-
-      body.screen-start .title-music-btn {
-        min-height: 42px;
-      }
-
-      body.screen-start .game-options > summary {
-        min-height: 48px;
-      }
-
-      body.screen-start .start-btn {
-        min-height: 52px;
-      }
+      body.screen-start .title-music-btn { min-height: 42px; }
+      body.screen-start .game-options > summary { min-height: 48px; }
+      body.screen-start .start-btn { min-height: 52px; }
 
       body.screen-quiz .hud-btn,
       body.screen-quiz .hud-center,
-      body.screen-quiz .hud-score {
-        min-height: 38px;
-      }
+      body.screen-quiz .hud-score { min-height: 38px; }
 
       body.screen-quiz .game-frame,
-      body.screen-quiz .battle-stage {
-        padding: 6px;
-      }
-
-      body.screen-quiz .streak-line {
-        margin-bottom: 4px;
-      }
-
+      body.screen-quiz .battle-stage { padding: 6px; }
+      body.screen-quiz .streak-line { margin-bottom: 4px; }
       body.screen-quiz .message-line {
         min-height: 34px;
         padding: 5px 9px;
         font-size: 13px;
       }
-
       body.screen-quiz .answer-menu {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
       }
-
       body.screen-quiz .answer-btn {
         min-height: 52px !important;
         padding: 7px 8px 7px 40px;
@@ -280,15 +240,8 @@
         border-right: 2px solid #0f1114 !important;
         border-bottom: 2px solid #0f1114 !important;
       }
-
-      body.screen-quiz .answer-btn:nth-child(even) {
-        border-right: 0 !important;
-      }
-
-      body.screen-quiz .answer-btn:nth-last-child(-n+2) {
-        border-bottom: 0 !important;
-      }
-
+      body.screen-quiz .answer-btn:nth-child(even) { border-right: 0 !important; }
+      body.screen-quiz .answer-btn:nth-last-child(-n+2) { border-bottom: 0 !important; }
       body.screen-quiz .answer-btn::before {
         left: 9px;
         width: 24px;
@@ -338,6 +291,16 @@
       forceScrollTop();
     }
   }
+
+  /* iOS Safari can rubber-band even when overflow is hidden. Block page pan on
+     app screens; allow vertical pan only inside the opened options card. */
+  document.addEventListener('touchmove', event => {
+    const appScreen = body.classList.contains('screen-start') || body.classList.contains('screen-quiz');
+    if (!appScreen) return;
+    const allowOptionScroll = body.classList.contains('screen-start') &&
+      gameOptions?.open && event.target instanceof Element && event.target.closest('.game-options');
+    if (!allowOptionScroll) event.preventDefault();
+  }, { passive: false });
 
   gameOptions?.addEventListener('toggle', () => {
     syncOptionsState();
