@@ -770,3 +770,109 @@ button:focus-visible, summary:focus-visible { outline: 3px solid #327c9a; outlin
 @media (max-width: 360px) {
   #app .answer-btn.long-label { font-size: 17px; }
 }
+
+html, body { height: 100%; overflow: hidden; overscroll-behavior: none; box-sizing: border-box; }
+body { position: fixed; inset: 0; }
+#app.game-root {
+  box-sizing: border-box;
+  height: calc(var(--app-height,100dvh) - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
+  min-height: 0;
+  max-height: none;
+  grid-template-rows: minmax(0,1fr);
+  padding: 8px 6px 13px;
+}
+#app > .scene { min-height: 0; max-height: 100%; }
+#app .start-panel, #app .game-frame, #app .result-panel { min-height: 0; max-height: 100%; }
+#app .start-top { flex-shrink: 0; }
+#app .start-display { min-height: 0; }
+#app .start-copy { flex-shrink: 0; }
+#app .starter-stage.dex-hero { min-height: 0; }
+#app .dex-hero .hero-slot { max-height: 76%; }
+#app .dex-hero .hero-center { max-height: 90%; bottom: 6%; }
+#app .dex-hero .hero-left, #app .dex-hero .hero-right { bottom: 18%; }
+#app .options-body { max-height: min(196px,calc(var(--app-height,100dvh) - 350px)); overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; }
+#app .options-body::-webkit-scrollbar { display: none; }
+#app .battle-stage { min-height: 0; }
+#app .pokemon-stage { min-height: 0; height: auto; }
+#app .result-screen { flex-shrink: 0; }
+#app .dex-review { display: flex; flex-direction: column; min-height: 0; }
+#app .dex-review-heading, #app .dex-review-filters, #app .dex-review-pages { flex-shrink: 0; }
+#app .dex-review-list { flex: 1; min-height: 0; display: grid; grid-template-rows: repeat(3,minmax(0,1fr)); }
+#app .dex-review-item { min-height: 0; height: 100%; }
+#app .dex-review-empty { min-height: 0; grid-row: 1 / -1; }
+#app .result-actions { flex-shrink: 0; }
+#app .music-button {
+  position: relative; display: grid; place-items: center; flex: 0 0 44px;
+  width: 44px; min-width: 44px; height: 44px; min-height: 44px;
+  padding: 0; border: 0; border-radius: 12px;
+  font: 500 27px/1 system-ui,sans-serif;
+  background: #a93240; color: #fff8e9;
+}
+#app .music-button[aria-pressed="true"] { background: #315d4b; color: #fffdf2; }
+#app .music-button[aria-pressed="false"]::after { content: ''; position: absolute; width: 24px; height: 2px; background: currentColor; transform: rotate(-45deg); border-radius: 2px; }
+#app .hud { grid-template-columns: 48px minmax(0,1fr) 70px 44px; }
+#app .hud .music-button { align-self: center; background: #f4ead6; color: #5c6a59; }
+#app .hud .music-button[aria-pressed="true"] { background: #315d4b; color: #fffdf2; }
+#app .start-copy h1 { margin-top: 0; }
+@media (max-height: 740px) {
+  #app .start-top { min-height: 56px; padding: 7px 14px; }
+  #app .start-copy { padding-top: 19px; }
+  #app .start-copy h1 { font-size: 43px; margin-bottom: 8px; }
+  #app .start-controls { padding: 12px; }
+  #app .game-options > summary { min-height: 67px; padding: 12px 14px; }
+  #app .start-btn { min-height: 53px; margin-top: 12px; }
+  #app .game-frame { padding: 8px; }
+  #app .battle-stage { padding: 10px; }
+  #app .message-line { min-height: 56px; font-size: 22px; padding: 8px 0 12px; }
+  #app .answer-menu { min-height: 122px; height: 122px; grid-template-rows: repeat(2,minmax(0,1fr)); }
+  #app .answer-btn { min-height: 0; padding: 10px 5px; }
+  #app .result-screen { margin: 12px 12px 7px; padding: 10px; }
+  #app .result-screen h2 { font-size: 27px; margin-bottom: 5px; }
+  #app .result-score { min-height: 46px; }
+  #app .result-score strong { font-size: 41px; }
+  #app .result-screen p { display: none; }
+  #app .result-stats { margin-top: 5px; }
+  #app .dex-review { margin: 0 12px 9px; padding: 10px; }
+  #app .dex-review-heading { margin-bottom: 7px; }
+  #app .result-actions { padding: 8px 12px 12px; }
+  #app #retryButton { min-height: 48px; font-size: 22px; }
+}
+@media (max-height: 600px) {
+  #app .start-copy { padding-top: 12px; }
+  #app .start-copy h1 { font-size: 36px; }
+  #app .start-copy p { font-size: 12px; }
+  #app .start-display { margin: 10px 12px; border-width: 5px; }
+  #app .game-options > summary { min-height: 61px; }
+  #app .hud { margin-bottom: 6px; }
+  #app .hud-btn, #app .hud-center, #app .hud-score { min-height: 44px; }
+  #app .progress-line { margin-bottom: 6px; }
+  #app .streak-line { margin-bottom: 5px; }
+  #app .timer-panel { margin: 9px 0 5px; }
+  #app .message-line { min-height: 48px; font-size: 21px; }
+  #app .answer-menu { min-height: 112px; height: 112px; }
+  #app .answer-btn { font-size: 19px; }
+  #app .dex-review-item img { width: 36px; height: 36px; }
+  #app .dex-review-item { grid-template-columns: 18px 36px minmax(0,1fr) auto; }
+  #app .dex-review-info strong { font-size: 13px; }
+}
+@media (max-height: 500px) and (min-width: 640px) {
+  #app.game-root { max-width: 900px; padding: 6px 10px 11px; }
+  #app .start-panel { display: grid; grid-template-columns: minmax(0,1fr) minmax(270px,.85fr); grid-template-rows: 56px minmax(0,1fr); }
+  #app .start-top { grid-column: 1 / -1; }
+  #app .start-display { margin: 10px; }
+  #app .start-copy { padding-top: 14px; }
+  #app .start-copy h1 { font-size: 37px; }
+  #app .start-controls { align-self: stretch; display: flex; flex-direction: column; justify-content: center; margin: 0; border: 0; }
+  #app .options-body { max-height: 153px; }
+  #app .battle-stage { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); grid-template-rows: 20px 26px minmax(0,1fr); gap: 7px 12px; }
+  #app .pokemon-stage { grid-column: 1; grid-row: 1 / 4; height: 100%; }
+  #app .streak-line { grid-column: 2; grid-row: 1; margin: 0; }
+  #app .timer-panel { grid-column: 2; grid-row: 2; margin: 0; }
+  #app .command-box { grid-column: 2; grid-row: 3; display: flex; flex-direction: column; min-height: 0; }
+  #app .message-line { min-height: 49px; padding: 5px 0; }
+  #app .answer-menu { flex: 1; min-height: 112px; height: auto; }
+  #app .result-panel { display: grid; grid-template-columns: minmax(0,.8fr) minmax(0,1fr); grid-template-rows: minmax(0,1fr) 65px; }
+  #app .result-screen { grid-column: 1; grid-row: 1; align-self: center; }
+  #app .dex-review { grid-column: 2; grid-row: 1 / 3; margin: 12px 12px 12px 0; }
+  #app .result-actions { grid-column: 1; grid-row: 2; margin: 0; }
+}

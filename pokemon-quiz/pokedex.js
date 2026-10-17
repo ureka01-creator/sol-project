@@ -1398,12 +1398,7 @@ homeButton.addEventListener('click', goHome);
 retryButton.addEventListener('click', goHome);
 changeCountButton.addEventListener('click', goHome);
 
-soundButton.addEventListener('click', () => {
-  soundOn = !soundOn;
-  soundButton.textContent = soundOn ? '♪ ON' : '♪ OFF';
-  soundButton.setAttribute('aria-label', soundOn ? '소리 끄기' : '소리 켜기');
-  if (soundOn) beep(520, .05, 'square', .018);
-});
+
 
 window.addEventListener('keydown', event => {
   if (!screens.quiz.classList.contains('active') || locked) return;
@@ -1586,10 +1581,16 @@ window.addEventListener('keydown', event => {
   let pqAudioUnlocked = false;
   let pqTitleEnabled = false;
   let pqTitleVariant = 0;
+  let pqMasterGain = null;
 
   function pqGetContext() {
     try {
       audioCtx ||= new (window.AudioContext || window.webkitAudioContext)();
+      if (!pqMasterGain) {
+        pqMasterGain = audioCtx.createGain();
+        pqMasterGain.gain.value = soundOn ? 1 : 0;
+        pqMasterGain.connect(audioCtx.destination);
+      }
       return audioCtx;
     } catch (_) {
       return null;
@@ -1602,7 +1603,7 @@ window.addEventListener('keydown', event => {
     if (!ctx) return false;
     try {
       if (ctx.state === 'suspended') await ctx.resume();
-      pqAudioUnlocked = ctx.state === 'running';
+      pqAudioUnlocked = soundOn && ctx.state === 'running';
       return pqAudioUnlocked;
     } catch (_) {
       return false;
@@ -1626,14 +1627,12 @@ window.addEventListener('keydown', event => {
     gain.gain.exponentialRampToValueAtTime(Math.max(.0002, volume), t0 + .008);
     gain.gain.exponentialRampToValueAtTime(.0001, t1);
 
-    osc.connect(gain).connect(ctx.destination);
+    osc.connect(gain).connect(pqMasterGain);
     osc.start(t0);
     osc.stop(t1 + .02);
 
-    if (music) {
-      pqVoices.add(osc);
-      osc.addEventListener('ended', () => pqVoices.delete(osc), { once: true });
-    }
+    pqVoices.add(osc);
+    osc.addEventListener('ended', () => pqVoices.delete(osc), { once: true });
     return osc;
   }
 
@@ -1655,7 +1654,9 @@ window.addEventListener('keydown', event => {
     gain.gain.setValueAtTime(volume, t0);
     gain.gain.exponentialRampToValueAtTime(.0001, t0 + duration);
     source.buffer = buffer;
-    source.connect(filter).connect(gain).connect(ctx.destination);
+    source.connect(filter).connect(gain).connect(pqMasterGain);
+    pqVoices.add(source);
+    source.addEventListener('ended', () => pqVoices.delete(source), { once: true });
     source.start(t0);
     source.stop(t0 + duration + .02);
   }
@@ -1801,13 +1802,13 @@ window.addEventListener('keydown', event => {
   }
 
   function pqUpdateTitleButton() {
-    if (!titleMusicButton) return;
-    const playing = Boolean(pqTitleTimer) && soundOn && pqTitleEnabled && screens.start.classList.contains('active');
-    titleMusicButton.classList.toggle('playing', playing);
-    titleMusicButton.setAttribute('aria-pressed', String(playing));
-    if (playing) titleMusicButton.textContent = '♪ 음악 끄기';
-    else if (pqTitleEnabled && !soundOn) titleMusicButton.textContent = '♪ 음악 켜기';
-    else titleMusicButton.textContent = '♪ 음악 켜기';
+    [[titleMusicButton, soundOn && pqTitleEnabled], [soundButton, soundOn]].forEach(([button, enabled]) => {
+      if (!button) return;
+      button.textContent = '♪';
+      button.setAttribute('aria-pressed', String(enabled));
+      button.setAttribute('aria-label', enabled ? '음악 끄기' : '음악 켜기');
+      button.classList.toggle('playing', enabled);
+    });
   }
 
   function pqStartTitleBgm() {
@@ -1822,30 +1823,27 @@ window.addEventListener('keydown', event => {
     pqUpdateTitleButton();
   }
 
+  let pqAudioIntent = 0;
   async function pqToggleTitleMusic(event) {
     event?.preventDefault();
-    if (!pqTitleEnabled || !pqTitleTimer) {
-      pqTitleEnabled = true;
-      if (!soundOn) {
-        soundOn = true;
-        soundButton.textContent = '♪ ON';
-        soundButton.setAttribute('aria-label', '소리 끄기');
-      }
-      const unlocked = await pqUnlockAudio();
-      if (!unlocked) {
-        pqUpdateTitleButton();
-        return;
-      }
-      pqStopTitleBgm();
-      pqStopVoices();
-      pqConfirm();
-      setTimeout(pqStartTitleBgm, 120);
-    } else {
-      pqTitleEnabled = false;
-      pqStopTitleBgm();
-      pqStopVoices();
-      pqUpdateTitleButton();
+    const intent = ++pqAudioIntent;
+    const fromTitle = event?.currentTarget === titleMusicButton;
+    const enabled = soundOn && (!fromTitle || pqTitleEnabled);
+    soundOn = !enabled;
+    pqTitleEnabled = soundOn;
+    pqStopAllMusic();
+    const ctx = pqGetContext();
+    if (ctx && pqMasterGain) {
+      pqMasterGain.gain.cancelScheduledValues(ctx.currentTime);
+      pqMasterGain.gain.setValueAtTime(soundOn ? 1 : 0, ctx.currentTime);
     }
+    pqUpdateTitleButton();
+    if (!soundOn) return;
+    const unlocked = await pqUnlockAudio();
+    if (!unlocked || intent !== pqAudioIntent || !soundOn) return;
+    if (screens.quiz.classList.contains('active')) pqStartQuizBgm();
+    else if (screens.start.classList.contains('active')) pqStartTitleBgm();
+    pqUpdateTitleButton();
   }
 
   const pqOriginalSwitchScreen = switchScreen;
@@ -1901,17 +1899,7 @@ window.addEventListener('keydown', event => {
 
   if (titleMusicButton) titleMusicButton.addEventListener('click', pqToggleTitleMusic);
 
-  soundButton.addEventListener('click', async () => {
-    if (soundOn) {
-      await pqUnlockAudio();
-      pqConfirm();
-      if (screens.quiz.classList.contains('active')) setTimeout(pqStartQuizBgm, 90);
-      else if (screens.start.classList.contains('active') && pqTitleEnabled) setTimeout(pqStartTitleBgm, 90);
-    } else {
-      pqStopAllMusic();
-    }
-    pqUpdateTitleButton();
-  });
+  soundButton.addEventListener('click', pqToggleTitleMusic);
 
   homeButton.addEventListener('click', () => pqStopAllMusic());
   changeCountButton.addEventListener('click', pqStopAllMusic);
@@ -2065,3 +2053,18 @@ window.addEventListener('keydown', event => {
   syncAccessibility();
 })();
 
+
+(() => {
+  let frame = 0;
+  function fitViewport() {
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(() => {
+      const height = window.visualViewport?.height || window.innerHeight;
+      document.documentElement.style.setProperty('--app-height', height + 'px');
+    });
+  }
+  window.addEventListener('resize', fitViewport, { passive: true });
+  window.addEventListener('pageshow', fitViewport, { passive: true });
+  window.visualViewport?.addEventListener('resize', fitViewport, { passive: true });
+  fitViewport();
+})();

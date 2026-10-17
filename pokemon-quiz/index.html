@@ -11,18 +11,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="stylesheet" href="./pokedex.css?v=20261017-gen9">
+  <link rel="stylesheet" href="./pokedex.css?v=20261017-audio-fit">
 </head>
 <body>
-  <!-- POKEDEX_GEN9_20261017 -->
+  <!-- POKEDEX_VIEWPORT_AUDIO_20261017 -->
   <main id="app" class="game-root">
     <section id="startScreen" class="scene start-scene active" aria-labelledby="gameTitle">
       <div class="start-panel">
-        <div class="start-top"><span class="status-light" aria-hidden="true"></span><span class="dex-brand">포켓몬 도감</span><button id="titleMusicButton" class="cursor-interaction title-music-btn" type="button" aria-pressed="false">♪ 음악 켜기</button></div>
+        <div class="start-top"><span class="status-light" aria-hidden="true"></span><span class="dex-brand">포켓몬 도감</span><button id="titleMusicButton" class="music-button cursor-interaction title-music-btn" type="button" aria-pressed="false">♪</button></div>
 
         <div class="start-display">
           <div class="start-copy">
-            <span class="eyebrow">1~9세대 포켓몬 퀴즈</span>
             <h1 id="gameTitle">누구일까?</h1><p>포켓몬을 보고 이름을 맞혀봐!</p>
           </div>
 
@@ -84,7 +83,7 @@
             <span class="hud-label">정답</span>
             <strong id="scoreText">0</strong>
           </div>
-          <button id="soundButton" class="cursor-interaction hud-btn sound" aria-label="소리 끄기">♪ ON</button>
+          <button id="soundButton" class="music-button cursor-interaction hud-btn sound" aria-label="소리 끄기">♪</button>
         </header>
 
         <div class="progress-line" aria-hidden="true"><div id="progressBar" class="progress-fill"></div></div>
@@ -149,6 +148,6 @@
       </div>
     </section>
   </main>
-  <script src="./pokedex.js?v=20261017-gen9" defer></script>
+  <script src="./pokedex.js?v=20261017-audio-fit" defer></script>
 </body>
 </html>
