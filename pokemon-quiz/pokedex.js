@@ -1165,17 +1165,24 @@ function setAnswerState(selectedId, timedOut = false) {
 }
 
 function showFeedback(text, kind) {
-  feedbackStamp.textContent = text;
+  const timedOut = text.includes('시간');
+  feedbackStamp.textContent = kind === 'correct' ? '✓ 정답' : timedOut ? '시간 초과' : '× 오답';
   feedbackStamp.className = `feedback-stamp ${kind}`;
+  pokemonImage.parentElement.dataset.feedback = kind;
+  messageLine.classList.add('is-feedback');
+  const caption = document.createElement('span');
+  caption.className = 'feedback-caption';
+  caption.textContent = kind === 'correct' ? '맞혔어!' : '정답은';
+  const name = document.createElement('strong');
+  name.className = 'feedback-name';
+  name.textContent = current.name;
+  messageLine.replaceChildren(caption, name);
   void feedbackStamp.offsetWidth;
   feedbackStamp.classList.add('show');
 }
 
 function showSpark() {
   sparkLayer.classList.remove('show');
-  void sparkLayer.offsetWidth;
-  sparkLayer.classList.add('show');
-  setTimeout(() => sparkLayer.classList.remove('show'), 520);
 }
 
 function startCountdown(token) {
@@ -1184,7 +1191,7 @@ function startCountdown(token) {
   [...answersEl.children].forEach(button => { button.disabled = false; });
   loadingBadge.classList.add('hidden');
   messageLine.textContent = '이 포켓몬의 이름은?';
-  messageLine.classList.remove('answer-reveal');
+  messageLine.classList.remove('answer-reveal', 'is-feedback');
 
   resetTimerVisual();
   void timerBar.offsetWidth;
@@ -1256,9 +1263,10 @@ function showQuestion() {
   clearTimers();
   locked = true;
   feedbackStamp.className = 'feedback-stamp';
+  delete pokemonImage.parentElement.dataset.feedback;
   sparkLayer.classList.remove('show');
   messageLine.textContent = '포켓몬을 불러오는 중...';
-  messageLine.classList.remove('answer-reveal');
+  messageLine.classList.remove('answer-reveal', 'is-feedback');
 
   const token = ++questionToken;
   current = questions[questionIndex];
@@ -1447,7 +1455,7 @@ window.addEventListener('keydown', event => {
     [...answersEl.children].forEach(button => { button.disabled = false; });
     loadingBadge.classList.add('hidden');
     messageLine.textContent = '이 포켓몬의 이름은?';
-    messageLine.classList.remove('answer-reveal');
+    messageLine.classList.remove('answer-reveal', 'is-feedback');
 
     resetTimerVisual();
     void timerBar.offsetWidth;
