@@ -2123,7 +2123,7 @@ window.addEventListener('keydown', event => {
     };
     silhouette.src = `${ART_BASE}${pokemon.id}.png`;
     prompt.replaceChildren();
-    question.clues.forEach(line => {
+    [...new Set(question.clues)].forEach(line => {
       const paragraph = document.createElement('p');
       paragraph.textContent = line;
       prompt.append(paragraph);
