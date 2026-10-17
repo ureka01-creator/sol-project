@@ -11,18 +11,19 @@
       overflow-x: hidden;
     }
 
-    /* Main and quiz use exactly the same outer width. */
+    /* Main and quiz share the exact same outer frame. */
     .start-scene,
     .quiz-scene {
       width: min(100%, 860px) !important;
     }
 
-    /* Lock interactive screens to Safari's measured visible viewport. */
+    /* Safari visualViewport.height is already the visible area.
+       Do not add visualViewport.offsetTop again. */
     body.screen-start,
     body.screen-quiz {
-      height: calc(var(--vv-top, 0px) + var(--vv-height, 100dvh)) !important;
-      min-height: calc(var(--vv-top, 0px) + var(--vv-height, 100dvh)) !important;
-      max-height: calc(var(--vv-top, 0px) + var(--vv-height, 100dvh)) !important;
+      height: var(--vv-height, 100dvh) !important;
+      min-height: var(--vv-height, 100dvh) !important;
+      max-height: var(--vv-height, 100dvh) !important;
       overflow: hidden !important;
       overscroll-behavior: none;
     }
@@ -33,7 +34,7 @@
       height: var(--vv-height, 100dvh) !important;
       min-height: 0 !important;
       max-height: var(--vv-height, 100dvh) !important;
-      margin-top: var(--vv-top, 0px) !important;
+      margin: 0 !important;
       padding: 8px 10px !important;
       overflow: hidden !important;
       display: flex !important;
@@ -43,48 +44,17 @@
 
     body.screen-start .start-scene.active,
     body.screen-quiz .quiz-scene.active {
+      width: min(100%, 860px) !important;
+      height: calc(var(--vv-height, 100dvh) - 16px) !important;
+      min-height: 0 !important;
+      max-height: calc(var(--vv-height, 100dvh) - 16px) !important;
       margin: 0 auto !important;
+      overflow: hidden !important;
       flex: 0 0 auto;
     }
 
-    /* MAIN: closed options stays centered. */
-    body.screen-start.options-closed .start-panel {
-      max-height: calc(var(--vv-height, 100dvh) - 16px);
-      overflow: hidden;
-    }
-
-    /* Short visible viewports: shrink the title screen itself, using measured viewport height. */
-    body.vv-compact.screen-start.options-closed .start-display {
-      margin-top: 10px;
-      margin-bottom: 10px;
-    }
-
-    body.vv-compact.screen-start.options-closed .start-copy {
-      padding-top: 12px;
-    }
-
-    body.vv-compact.screen-start.options-closed .start-copy h1 {
-      margin-top: 6px;
-      font-size: 46px;
-    }
-
-    body.vv-compact.screen-start.options-closed .starter-stage {
-      height: 170px;
-    }
-
-    body.vv-compact.screen-start.options-closed .starter-stage img,
-    body.vv-compact.screen-start.options-closed .starter-stage .starter-main {
-      width: 140px !important;
-      height: 140px !important;
-    }
-
-    /* MAIN: opening options must not grow the whole page. */
-    body.screen-start.options-open .start-scene.active {
-      height: calc(var(--vv-height, 100dvh) - 16px);
-      min-height: 0;
-    }
-
-    body.screen-start.options-open .start-panel {
+    /* MAIN: same total height as in-game. */
+    body.screen-start .start-panel {
       height: 100%;
       min-height: 0;
       max-height: 100%;
@@ -93,19 +63,67 @@
       flex-direction: column;
     }
 
-    body.screen-start.options-open .start-top {
+    body.screen-start .start-top {
       flex: 0 0 auto;
     }
 
+    body.screen-start .start-display {
+      flex: 1 1 auto;
+      min-height: 0;
+      margin: 10px 14px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body.screen-start .start-copy {
+      flex: 0 0 auto;
+      padding-top: 14px;
+      padding-bottom: 2px;
+    }
+
+    body.screen-start .starter-stage {
+      flex: 1 1 auto;
+      min-height: 0;
+      height: auto !important;
+      align-items: center !important;
+      padding-bottom: 4px;
+    }
+
+    body.screen-start .starter-stage img,
+    body.screen-start .starter-stage .starter-main {
+      width: min(28vw, 188px) !important;
+      height: min(28vw, 188px) !important;
+      max-width: 30%;
+      max-height: 92% !important;
+      object-fit: contain;
+    }
+
+    body.screen-start .start-controls {
+      flex: 0 0 auto;
+      padding: 10px 14px 12px;
+    }
+
+    body.screen-start .title-music-btn {
+      margin-bottom: 8px;
+    }
+
+    body.screen-start .game-options {
+      margin-bottom: 8px;
+    }
+
+    body.screen-start .start-btn {
+      margin-top: 0;
+    }
+
+    /* Opening options keeps the same frame and scrolls only the options card. */
     body.screen-start.options-open .start-display {
       flex: 0 0 auto;
-      min-height: 0;
       margin-top: 8px;
       margin-bottom: 8px;
     }
 
     body.screen-start.options-open .start-copy {
-      padding: 10px 16px 8px;
+      padding: 8px 16px 7px;
     }
 
     body.screen-start.options-open .start-copy h1 {
@@ -122,27 +140,26 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
-      padding-top: 10px;
-      padding-bottom: 10px;
       overflow: hidden;
+      padding-top: 8px;
+      padding-bottom: 8px;
     }
 
     body.screen-start.options-open .title-music-btn {
       flex: 0 0 auto;
       min-height: 38px;
-      margin-bottom: 8px;
+      margin-bottom: 7px;
     }
 
-    /* Scroll the option card itself so every setting remains reachable on short iPhones. */
     body.screen-start.options-open .game-options {
       flex: 1 1 0;
       min-height: 0;
-      margin-bottom: 8px;
       display: block;
       overflow-y: auto;
       overscroll-behavior-y: contain;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
+      margin-bottom: 7px;
     }
 
     body.screen-start.options-open .game-options::-webkit-scrollbar {
@@ -152,13 +169,13 @@
     body.screen-start.options-open .game-options > summary {
       position: sticky;
       top: 0;
-      z-index: 2;
+      z-index: 3;
       background: #f4f0df;
     }
 
     body.screen-start.options-open .options-body {
       height: auto !important;
-      overflow: visible;
+      overflow: visible !important;
     }
 
     body.screen-start.options-open .start-btn {
@@ -166,14 +183,7 @@
       margin-top: 0;
     }
 
-    /* QUIZ: the whole game must fit in one measured viewport. */
-    body.screen-quiz .quiz-scene.active {
-      height: calc(var(--vv-height, 100dvh) - 16px);
-      min-height: 0;
-      max-height: calc(var(--vv-height, 100dvh) - 16px);
-      overflow: hidden;
-    }
-
+    /* QUIZ: one measured viewport, no page scrolling. */
     body.screen-quiz .game-frame {
       height: 100%;
       min-height: 0;
@@ -184,12 +194,9 @@
       padding: 7px;
     }
 
-    body.screen-quiz .hud {
-      flex: 0 0 auto;
-    }
-
+    body.screen-quiz .hud,
     body.screen-quiz .progress-line {
-      flex: 0 0 8px;
+      flex: 0 0 auto;
     }
 
     body.screen-quiz .battle-stage {
@@ -215,31 +222,45 @@
     }
 
     body.screen-quiz .timer-panel {
-      margin: 6px 0;
+      margin: 5px 0;
     }
 
-    /* Keep four answers compact on phones, including narrow iPhones. */
     @media (max-width: 620px) {
+      body.screen-start .start-copy h1 {
+        font-size: clamp(38px, 10vw, 52px);
+      }
+
+      body.screen-start .start-top {
+        min-height: 42px;
+        padding-top: 7px;
+        padding-bottom: 7px;
+      }
+
+      body.screen-start .title-music-btn {
+        min-height: 42px;
+      }
+
+      body.screen-start .game-options > summary {
+        min-height: 48px;
+      }
+
+      body.screen-start .start-btn {
+        min-height: 52px;
+      }
+
       body.screen-quiz .hud-btn,
       body.screen-quiz .hud-center,
       body.screen-quiz .hud-score {
         min-height: 38px;
       }
 
-      body.screen-quiz .game-frame {
-        padding: 6px;
-      }
-
+      body.screen-quiz .game-frame,
       body.screen-quiz .battle-stage {
         padding: 6px;
       }
 
       body.screen-quiz .streak-line {
         margin-bottom: 4px;
-      }
-
-      body.screen-quiz .timer-panel {
-        margin: 5px 0;
       }
 
       body.screen-quiz .message-line {
@@ -285,18 +306,13 @@
     } catch (_) {}
   }
 
-  function readViewport() {
+  function readViewportHeight() {
     const viewport = window.visualViewport;
-    const height = Math.max(1, Math.round(viewport?.height || window.innerHeight || root.clientHeight));
-    const top = Math.max(0, Math.round(viewport?.offsetTop || 0));
-    return { height, top };
+    return Math.max(1, Math.round(viewport?.height || window.innerHeight || root.clientHeight));
   }
 
   function syncViewportMetrics() {
-    const { height, top } = readViewport();
-    root.style.setProperty('--vv-height', `${height}px`);
-    root.style.setProperty('--vv-top', `${top}px`);
-    body.classList.toggle('vv-compact', height < 670);
+    root.style.setProperty('--vv-height', `${readViewportHeight()}px`);
   }
 
   function syncOptionsState() {
@@ -346,5 +362,4 @@
   window.addEventListener('pageshow', resyncViewport, { passive: true });
   window.addEventListener('orientationchange', () => setTimeout(resyncViewport, 80), { passive: true });
   window.visualViewport?.addEventListener('resize', resyncViewport, { passive: true });
-  window.visualViewport?.addEventListener('scroll', resyncViewport, { passive: true });
 })();
