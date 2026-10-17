@@ -92,8 +92,8 @@
       height: 100svh;
       min-height: 100svh;
       max-height: 100svh;
-      overflow-y: hidden;
-      overscroll-behavior-y: none;
+      overflow: hidden;
+      overscroll-behavior: none;
     }
 
     body.screen-start.options-closed .game-root {
@@ -101,15 +101,17 @@
       min-height: 100svh;
       max-height: 100svh;
       overflow: hidden;
-      place-items: start center;
-      align-content: start;
+      display: grid;
+      place-items: center;
+      align-content: center;
       padding-top: max(8px, env(safe-area-inset-top));
-      padding-bottom: 0;
+      padding-bottom: max(8px, env(safe-area-inset-bottom));
     }
 
     body.screen-start.options-closed .start-scene.active {
-      max-height: none;
+      max-height: calc(100svh - max(16px, env(safe-area-inset-top)) - max(16px, env(safe-area-inset-bottom)));
       overflow: visible;
+      margin: 0 auto;
     }
 
     body.screen-start.options-open {
@@ -126,6 +128,7 @@
       max-height: none;
       overflow: visible;
       place-items: start center;
+      align-content: start;
       padding-top: max(8px, env(safe-area-inset-top));
       padding-bottom: max(10px, env(safe-area-inset-bottom));
     }
@@ -133,6 +136,7 @@
     body.screen-start.options-open .start-scene.active {
       overflow: visible;
       max-height: none;
+      margin: 0 auto;
     }
   `;
   document.head.appendChild(viewportStyle);
@@ -156,9 +160,7 @@
   function syncBodyScreenClass(name) {
     const onStart = name === 'start';
     document.body.classList.toggle('screen-start', onStart);
-    if (!onStart) {
-      document.body.classList.remove('options-open', 'options-closed');
-    }
+    if (!onStart) document.body.classList.remove('options-open', 'options-closed');
     syncOptionsState();
   }
 
