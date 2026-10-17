@@ -53,6 +53,31 @@
       overflow: hidden;
     }
 
+    /* Short visible viewports: shrink the title screen itself, using measured viewport height. */
+    body.vv-compact.screen-start.options-closed .start-display {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    body.vv-compact.screen-start.options-closed .start-copy {
+      padding-top: 12px;
+    }
+
+    body.vv-compact.screen-start.options-closed .start-copy h1 {
+      margin-top: 6px;
+      font-size: 46px;
+    }
+
+    body.vv-compact.screen-start.options-closed .starter-stage {
+      height: 170px;
+    }
+
+    body.vv-compact.screen-start.options-closed .starter-stage img,
+    body.vv-compact.screen-start.options-closed .starter-stage .starter-main {
+      width: 140px !important;
+      height: 140px !important;
+    }
+
     /* MAIN: opening options must not grow the whole page. */
     body.screen-start.options-open .start-scene.active {
       height: calc(var(--vv-height, 100dvh) - 16px);
@@ -73,31 +98,23 @@
     }
 
     body.screen-start.options-open .start-display {
-      flex: 0 1 auto;
+      flex: 0 0 auto;
       min-height: 0;
-      margin-top: 10px;
-      margin-bottom: 10px;
+      margin-top: 8px;
+      margin-bottom: 8px;
     }
 
     body.screen-start.options-open .start-copy {
-      padding-top: 12px;
-      padding-bottom: 2px;
+      padding: 10px 16px 8px;
     }
 
     body.screen-start.options-open .start-copy h1 {
-      margin-top: 7px;
-      font-size: clamp(34px, 7vw, 54px);
+      margin: 4px 0 0;
+      font-size: 36px;
     }
 
     body.screen-start.options-open .starter-stage {
-      height: clamp(108px, 18vh, 150px);
-      padding-bottom: 4px;
-    }
-
-    body.screen-start.options-open .starter-stage img,
-    body.screen-start.options-open .starter-stage .starter-main {
-      width: min(24vw, 145px) !important;
-      height: min(24vw, 145px) !important;
+      display: none !important;
     }
 
     body.screen-start.options-open .start-controls {
@@ -112,33 +129,36 @@
 
     body.screen-start.options-open .title-music-btn {
       flex: 0 0 auto;
+      min-height: 38px;
       margin-bottom: 8px;
     }
 
+    /* Scroll the option card itself so every setting remains reachable on short iPhones. */
     body.screen-start.options-open .game-options {
-      flex: 1 1 auto;
+      flex: 1 1 0;
       min-height: 0;
       margin-bottom: 8px;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    body.screen-start.options-open .game-options > summary {
-      flex: 0 0 auto;
-    }
-
-    body.screen-start.options-open .options-body {
-      flex: 1 1 auto;
-      min-height: 0;
+      display: block;
       overflow-y: auto;
       overscroll-behavior-y: contain;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
     }
 
-    body.screen-start.options-open .options-body::-webkit-scrollbar {
+    body.screen-start.options-open .game-options::-webkit-scrollbar {
       display: none;
+    }
+
+    body.screen-start.options-open .game-options > summary {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #f4f0df;
+    }
+
+    body.screen-start.options-open .options-body {
+      height: auto !important;
+      overflow: visible;
     }
 
     body.screen-start.options-open .start-btn {
@@ -276,6 +296,7 @@
     const { height, top } = readViewport();
     root.style.setProperty('--vv-height', `${height}px`);
     root.style.setProperty('--vv-top', `${top}px`);
+    body.classList.toggle('vv-compact', height < 670);
   }
 
   function syncOptionsState() {
