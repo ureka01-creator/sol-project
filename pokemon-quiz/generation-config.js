@@ -79,6 +79,43 @@
 })();
 
 (() => {
+  const viewportStyle = document.createElement('style');
+  viewportStyle.textContent = `
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    body.screen-start {
+      height: 100svh;
+      max-height: 100svh;
+      overflow-y: hidden;
+    }
+
+    body.screen-start .game-root {
+      height: 100svh;
+      min-height: 0;
+      place-items: start center;
+      overflow: hidden;
+      padding-top: max(8px, env(safe-area-inset-top));
+      padding-bottom: max(8px, env(safe-area-inset-bottom));
+    }
+
+    body.screen-start .start-scene.active {
+      max-height: 100%;
+      overflow-y: auto;
+      overscroll-behavior-y: contain;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    body.screen-start .start-scene.active::-webkit-scrollbar {
+      display: none;
+    }
+  `;
+  document.head.appendChild(viewportStyle);
+
   function forceScrollTop() {
     try {
       window.scrollTo(0, 0);
@@ -87,9 +124,17 @@
     } catch (_) {}
   }
 
+  function syncBodyScreenClass(name) {
+    document.body.classList.toggle('screen-start', name === 'start');
+  }
+
+  syncBodyScreenClass('start');
+  forceScrollTop();
+
   const originalSwitchScreen = switchScreen;
-  switchScreen = function switchScreenWithScrollReset(name) {
+  switchScreen = function switchScreenWithViewportFix(name) {
     originalSwitchScreen(name);
+    syncBodyScreenClass(name);
     forceScrollTop();
     requestAnimationFrame(() => {
       forceScrollTop();
