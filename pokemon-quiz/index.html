@@ -1,190 +1,82 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#c8322c" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>포켓몬 스피드 퀴즈</title>
-  <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin />
-  <link rel="stylesheet" href="./styles.css" />
-  <style>
-    .starter-stage { align-items: center; }
-    .starter-stage img,
-    .starter-stage .starter-main {
-      width: min(28vw, 188px);
-      height: min(28vw, 188px);
-      max-height: none;
-      object-fit: contain;
-      object-position: center;
-      flex: 0 0 auto;
-      transition: opacity .28s ease, transform .28s ease, filter .28s ease;
-    }
-    .starter-stage img.is-swapping {
-      opacity: .12;
-      transform: translateY(8px) scale(.86);
-      filter: drop-shadow(0 6px 0 rgba(26,32,44,.08));
-    }
-    .start-copy { padding-bottom: 8px; }
-
-    .title-music-btn {
-      width: 100%;
-      min-height: 46px;
-      margin: 0 0 12px;
-      border: 3px solid #0f1114;
-      border-radius: 0;
-      background: #20262b;
-      color: #fffdf4;
-      font: 900 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
-      letter-spacing: .06em;
-      cursor: pointer;
-    }
-    .title-music-btn.playing { background: #2d7045; color: #fff; }
-
-    .game-options {
-      border: 3px solid #0f1114;
-      background: #f4f0df;
-      margin: 0 0 12px;
-    }
-    .game-options > summary {
-      list-style: none;
-      min-height: 54px;
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      cursor: pointer;
-      user-select: none;
-      font-weight: 1000;
-    }
-    .game-options > summary::-webkit-details-marker { display: none; }
-    .option-title { font-size: 17px; }
-    .option-current {
-      text-align: right;
-      font: 900 12px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
-      color: #53604d;
-    }
-    .option-chevron {
-      font-size: 13px;
-      transition: transform .16s ease;
-    }
-    .game-options[open] .option-chevron { transform: rotate(90deg); }
-    .options-body {
-      border-top: 3px solid #0f1114;
-      padding: 12px;
-      background: #a92924;
-    }
-    .option-group + .option-group { margin-top: 13px; }
-    .option-group .menu-label { margin-bottom: 8px; }
-
-    .time-menu,
-    .gen-menu {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 7px;
-    }
-    .time-btn,
-    .gen-btn {
-      min-height: 56px;
-      border: 3px solid #0f1114;
-      border-radius: 0;
-      background: #f4f0df;
-      color: #1d2024;
-      cursor: pointer;
-      font-weight: 900;
-    }
-    .time-btn strong,
-    .gen-btn strong {
-      display: block;
-      font: 900 21px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
-      margin-bottom: 4px;
-    }
-    .time-btn span,
-    .gen-btn span { font-size: 11px; }
-    .time-btn.selected,
-    .gen-btn.selected { background: #efc64b; }
-    .time-btn.selected::before,
-    .gen-btn.selected::before { content: "▶"; margin-right: 4px; font-size: 10px; }
-
-    @media (max-width: 520px) {
-      .starter-stage img,
-      .starter-stage .starter-main {
-        width: 29vw;
-        height: 29vw;
-      }
-      .option-current { font-size: 10px; }
-      .game-options > summary { padding-inline: 10px; }
-      .gen-btn strong { font-size: 18px; }
-    }
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#c74248">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="description" content="1·2세대 포켓몬 사진을 보고 이름을 맞히는 포켓몬 도감 퀴즈.">
+  <title>누구일까? · 포켓몬 도감 퀴즈</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="./pokedex.css?v=20261017">
 </head>
 <body>
+  <!-- POKEDEX_UI_20261017 -->
   <main id="app" class="game-root">
     <section id="startScreen" class="scene start-scene active" aria-labelledby="gameTitle">
       <div class="start-panel">
-        <div class="start-top">
-          <span class="status-light" aria-hidden="true"></span>
-          <span>POKÉMON TRAINER TEST</span>
-          <span>001—251</span>
-        </div>
+        <div class="start-top"><span class="status-light" aria-hidden="true"></span><span class="dex-brand">포켓몬 도감</span><button id="titleMusicButton" class="cursor-interaction title-music-btn" type="button" aria-pressed="false">♪ 음악 켜기</button></div>
 
         <div class="start-display">
           <div class="start-copy">
-            <span class="eyebrow">SPEED QUIZ</span>
-            <h1 id="gameTitle">누구일까?</h1>
+            <span class="eyebrow">포켓몬 이름 맞히기</span>
+            <h1 id="gameTitle">누구일까?</h1><p>포켓몬을 보고 이름을 맞혀봐!</p>
           </div>
 
-          <div class="starter-stage" aria-hidden="true">
-            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png" alt="" />
-            <img class="starter-main" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="" />
-            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/152.png" alt="" />
-          </div>
+          <div class="starter-stage dex-hero" role="group" aria-label="포켓몬을 누르면 반응해">
+  <button type="button" class="hero-slot hero-left cursor-interaction" aria-label="왼쪽 포켓몬"><img alt="" width="150" height="150" /></button>
+  <button type="button" class="hero-slot hero-center cursor-interaction" aria-label="가운데 포켓몬"><img alt="" width="210" height="210" /></button>
+  <button type="button" class="hero-slot hero-right cursor-interaction" aria-label="오른쪽 포켓몬"><img alt="" width="150" height="150" /></button>
+</div>
+
         </div>
 
         <div class="start-controls">
-          <button id="titleMusicButton" class="title-music-btn" type="button" aria-pressed="false">♪ BGM 시작</button>
+          
 
           <details id="gameOptions" class="game-options">
-            <summary>
-              <span class="option-title">⚙ 옵션</span>
-              <span id="optionSummaryText" class="option-current">10문제 · 3초 · 1+2세대</span>
-              <span class="option-chevron" aria-hidden="true">▶</span>
-            </summary>
+            <summary class="cursor-interaction">
+  <span class="settings-heading">퀴즈 설정</span>
+  <span class="option-chevron" aria-hidden="true">⌄</span>
+  <span id="optionSummaryText" class="settings-summary" aria-live="polite">10문제 · 3초 · 1+2세대</span>
+</summary>
+
 
             <div class="options-body">
               <div class="option-group">
                 <div class="menu-label">문제 수</div>
                 <div id="countButtons" class="count-menu" role="radiogroup" aria-label="문제 수 선택">
-                  <button class="count-btn" data-count="5" role="radio" aria-checked="false"><span>05</span>문제</button>
-                  <button class="count-btn selected" data-count="10" role="radio" aria-checked="true"><span>10</span>문제</button>
-                  <button class="count-btn" data-count="20" role="radio" aria-checked="false"><span>20</span>문제</button>
-                  <button class="count-btn" data-count="30" role="radio" aria-checked="false"><span>30</span>문제</button>
+                  <button class="cursor-interaction count-btn" data-count="5" role="radio" aria-checked="false"><span>5</span>문제</button>
+                  <button class="cursor-interaction count-btn selected" data-count="10" role="radio" aria-checked="true"><span>10</span>문제</button>
+                  <button class="cursor-interaction count-btn" data-count="20" role="radio" aria-checked="false"><span>20</span>문제</button>
+                  <button class="cursor-interaction count-btn" data-count="30" role="radio" aria-checked="false"><span>30</span>문제</button>
                 </div>
               </div>
 
               <div class="option-group">
                 <div class="menu-label">제한 시간</div>
                 <div id="timeButtons" class="time-menu" role="radiogroup" aria-label="문제당 제한 시간 선택">
-                  <button class="time-btn selected" data-time="3" role="radio" aria-checked="true"><strong>03</strong><span>SEC</span></button>
-                  <button class="time-btn" data-time="5" role="radio" aria-checked="false"><strong>05</strong><span>SEC</span></button>
-                  <button class="time-btn" data-time="10" role="radio" aria-checked="false"><strong>10</strong><span>SEC</span></button>
+                  <button class="cursor-interaction time-btn selected" data-time="3" role="radio" aria-checked="true">3초</button>
+                  <button class="cursor-interaction time-btn" data-time="5" role="radio" aria-checked="false">5초</button>
+                  <button class="cursor-interaction time-btn" data-time="10" role="radio" aria-checked="false">10초</button>
                 </div>
               </div>
 
               <div class="option-group">
-                <div class="menu-label">출제 세대</div>
+                <div class="menu-label">출제 범위</div>
                 <div id="generationButtons" class="gen-menu" role="radiogroup" aria-label="포켓몬 세대 선택">
-                  <button class="gen-btn" data-gen="gen1" role="radio" aria-checked="false"><strong>1세대</strong><span>001—151</span></button>
-                  <button class="gen-btn" data-gen="gen2" role="radio" aria-checked="false"><strong>2세대</strong><span>152—251</span></button>
-                  <button class="gen-btn selected" data-gen="all" role="radio" aria-checked="true"><strong>전체</strong><span>001—251</span></button>
+                  <button class="cursor-interaction gen-btn" data-gen="gen1" role="radio" aria-checked="false">1세대</button>
+                  <button class="cursor-interaction gen-btn" data-gen="gen2" role="radio" aria-checked="false">2세대</button>
+                  <button class="cursor-interaction gen-btn selected" data-gen="all" role="radio" aria-checked="true">1+2세대</button>
                 </div>
               </div>
             </div>
           </details>
 
-          <button id="startButton" class="start-btn"><span class="cursor">▶</span> 퀴즈 시작</button>
+          <button id="startButton" class="cursor-interaction start-btn"><span class="cursor">▶</span> 퀴즈 시작</button>
         </div>
       </div>
     </section>
@@ -192,39 +84,39 @@
     <section id="quizScreen" class="scene quiz-scene" aria-label="포켓몬 퀴즈">
       <div class="game-frame">
         <header class="hud">
-          <button id="homeButton" class="hud-btn" aria-label="처음 화면으로">HOME</button>
+          <button id="homeButton" class="cursor-interaction hud-btn" aria-label="처음 화면으로">처음</button>
           <div class="hud-center">
-            <span class="hud-label">QUESTION</span>
+            <span class="hud-label">문제</span>
             <strong><span id="questionNow">1</span>/<span id="questionTotal">10</span></strong>
           </div>
           <div class="hud-score">
-            <span class="hud-label">SCORE</span>
+            <span class="hud-label">정답</span>
             <strong id="scoreText">0</strong>
           </div>
-          <button id="soundButton" class="hud-btn sound" aria-label="소리 끄기">♪ ON</button>
+          <button id="soundButton" class="cursor-interaction hud-btn sound" aria-label="소리 끄기">♪ ON</button>
         </header>
 
         <div class="progress-line" aria-hidden="true"><div id="progressBar" class="progress-fill"></div></div>
 
         <div id="battleField" class="battle-stage">
-          <div class="streak-line">STREAK <strong id="streakText">0</strong></div>
+          <div class="streak-line">연속 정답 <strong id="streakText">0</strong></div>
 
           <div id="pokemonCard" class="pokemon-stage" aria-live="polite">
             <div class="scan-grid" aria-hidden="true"></div>
-            <div id="loadingBadge" class="loading-badge">SEARCHING...</div>
+            <div id="loadingBadge" class="loading-badge">포켓몬을 찾는 중…</div>
             <img id="pokemonImage" alt="문제 포켓몬" draggable="false" />
             <div id="sparkLayer" class="spark-layer" aria-hidden="true"></div>
             <div id="feedbackStamp" class="feedback-stamp" aria-live="assertive"></div>
           </div>
 
           <div class="timer-panel" aria-label="남은 시간">
-            <span class="timer-caption">TIME</span>
+            <span class="timer-caption">남은 시간</span>
             <div class="timer-track"><div id="timerBar" class="timer-bar"></div></div>
             <span id="timerNumber" class="timer-number" aria-live="off">3</span>
           </div>
 
           <div class="command-box">
-            <div id="messageLine" class="message-line" aria-live="polite">포켓몬의 이름은?</div>
+            <div id="messageLine" class="message-line" aria-live="polite">이 포켓몬의 이름은?</div>
             <div id="answers" class="answer-menu" aria-label="정답 보기"></div>
           </div>
         </div>
@@ -233,9 +125,9 @@
 
     <section id="resultScreen" class="scene result-scene" aria-labelledby="resultTitle">
       <div class="result-panel">
-        <div class="result-header">POKÉMON TRAINER TEST / RESULT</div>
+        
         <div class="result-screen">
-          <div id="resultBadge" class="result-rank">ACE TRAINER</div>
+          <span id="resultBadge" hidden></span>
           <h2 id="resultTitle">퀴즈 완료!</h2>
           <div class="result-score"><strong id="finalScore">0</strong><span id="finalTotal">/10</span></div>
           <p id="resultMessage"></p>
@@ -244,83 +136,28 @@
             <div><span>최고 연속</span><strong id="bestStreakText">0</strong></div>
           </div>
         </div>
-        <div class="result-actions">
-          <button id="retryButton" class="menu-action primary"><span>▶</span> 한 번 더</button>
-          <button id="changeCountButton" class="menu-action">옵션 바꾸기</button>
+        <section class="dex-review" aria-labelledby="reviewTitle">
+  <div class="dex-review-heading"><h3 id="reviewTitle">문제별 결과</h3><span id="reviewCount">0문제</span></div>
+  <div class="dex-review-filters" role="group" aria-label="문제 결과 필터">
+    <button type="button" class="cursor-interaction" data-review-filter="all" aria-pressed="true">전체</button>
+    <button type="button" class="cursor-interaction" data-review-filter="correct" aria-pressed="false">맞힌 문제</button>
+    <button type="button" class="cursor-interaction" data-review-filter="wrong" aria-pressed="false">틀린 문제</button>
+  </div>
+  <div id="reviewList" class="dex-review-list" aria-live="polite"></div>
+  <div class="dex-review-pages">
+    <button id="reviewPrevious" type="button" class="cursor-interaction" aria-label="이전 문제 목록">이전</button>
+    <span id="reviewPage" aria-live="polite">0 / 0</span>
+    <button id="reviewNext" type="button" class="cursor-interaction" aria-label="다음 문제 목록">다음</button>
+  </div>
+</section>
+
+<div class="result-actions">
+          <button id="retryButton" class="cursor-interaction menu-action primary">처음으로</button>
+          <button hidden id="changeCountButton" class="cursor-interaction menu-action">옵션 바꾸기</button>
         </div>
       </div>
     </section>
   </main>
-
-  <script src="./app.js"></script>
-  <script src="./timer-config.js?v=1"></script>
-  <script src="./image-load-fix.js?v=1"></script>
-  <script src="./generation-config.js?v=4"></script>
-  <script src="./viewport-fix.js?v=5"></script>
-  <script src="./gesture-lock.js?v=2"></script>
-  <script src="./result-history.js?v=2"></script>
-  <script src="./sound-engine.js?v=3"></script>
-  <script>
-    (() => {
-      const startScreen = document.getElementById('startScreen');
-      const slots = [...document.querySelectorAll('.starter-stage img')];
-      const base = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/';
-      const spriteBase = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
-      const pool = Array.from({ length: 251 }, (_, i) => i + 1);
-      let deck = [];
-      let cursor = 0;
-      let slotIndex = 0;
-
-      const shuffle = items => {
-        const arr = [...items];
-        for (let i = arr.length - 1; i > 0; i -= 1) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-        return arr;
-      };
-
-      const refill = () => { deck = shuffle(pool); cursor = 0; };
-      const nextId = excluded => {
-        if (!deck.length || cursor >= deck.length) refill();
-        for (let tries = 0; tries < 502; tries += 1) {
-          if (cursor >= deck.length) refill();
-          const id = deck[cursor++];
-          if (!excluded.includes(id)) return id;
-        }
-        return pool.find(id => !excluded.includes(id)) || 25;
-      };
-
-      const applyPokemon = (img, id) => {
-        img.dataset.pokemonId = String(id);
-        img.dataset.fallback = '0';
-        img.src = `${base}${id}.png`;
-        img.onerror = () => {
-          if (img.dataset.fallback === '1') return;
-          img.dataset.fallback = '1';
-          img.src = `${spriteBase}${id}.png`;
-        };
-      };
-
-      refill();
-      const initial = [];
-      slots.forEach(img => {
-        const id = nextId(initial);
-        initial.push(id);
-        applyPokemon(img, id);
-      });
-
-      setInterval(() => {
-        if (!startScreen.classList.contains('active') || !slots.length) return;
-        const img = slots[slotIndex % slots.length];
-        slotIndex += 1;
-        const excluded = slots.filter(slot => slot !== img).map(slot => Number(slot.dataset.pokemonId || 0));
-        const id = nextId(excluded);
-        img.classList.add('is-swapping');
-        setTimeout(() => applyPokemon(img, id), 170);
-        setTimeout(() => img.classList.remove('is-swapping'), 430);
-      }, 2200);
-    })();
-  </script>
+  <script src="./pokedex.js?v=20261017" defer></script>
 </body>
 </html>
