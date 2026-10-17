@@ -11,7 +11,15 @@
       overflow-x: hidden;
     }
 
-    body.screen-start.options-closed {
+    /* Main and quiz use exactly the same outer width. */
+    .start-scene,
+    .quiz-scene {
+      width: min(100%, 860px) !important;
+    }
+
+    /* Lock interactive screens to Safari's measured visible viewport. */
+    body.screen-start,
+    body.screen-quiz {
       height: calc(var(--vv-top, 0px) + var(--vv-height, 100dvh)) !important;
       min-height: calc(var(--vv-top, 0px) + var(--vv-height, 100dvh)) !important;
       max-height: calc(var(--vv-top, 0px) + var(--vv-height, 100dvh)) !important;
@@ -19,43 +27,232 @@
       overscroll-behavior: none;
     }
 
-    body.screen-start.options-closed .game-root {
+    body.screen-start .game-root,
+    body.screen-quiz .game-root {
+      width: 100%;
       height: var(--vv-height, 100dvh) !important;
       min-height: 0 !important;
       max-height: var(--vv-height, 100dvh) !important;
       margin-top: var(--vv-top, 0px) !important;
+      padding: 8px 10px !important;
+      overflow: hidden !important;
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
-      overflow: hidden !important;
-      padding: 8px 10px !important;
     }
 
-    body.screen-start.options-closed .start-scene.active {
-      width: min(100%, 900px);
+    body.screen-start .start-scene.active,
+    body.screen-quiz .quiz-scene.active {
       margin: 0 auto !important;
-      overflow: visible !important;
       flex: 0 0 auto;
     }
 
-    body.screen-start.options-open {
-      height: auto !important;
-      min-height: var(--vv-height, 100dvh) !important;
-      max-height: none !important;
-      overflow-y: auto !important;
-      overscroll-behavior-y: auto;
+    /* MAIN: closed options stays centered. */
+    body.screen-start.options-closed .start-panel {
+      max-height: calc(var(--vv-height, 100dvh) - 16px);
+      overflow: hidden;
     }
 
-    body.screen-start.options-open .game-root {
+    /* MAIN: opening options must not grow the whole page. */
+    body.screen-start.options-open .start-scene.active {
+      height: calc(var(--vv-height, 100dvh) - 16px);
+      min-height: 0;
+    }
+
+    body.screen-start.options-open .start-panel {
+      height: 100%;
+      min-height: 0;
+      max-height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body.screen-start.options-open .start-top {
+      flex: 0 0 auto;
+    }
+
+    body.screen-start.options-open .start-display {
+      flex: 0 1 auto;
+      min-height: 0;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    body.screen-start.options-open .start-copy {
+      padding-top: 12px;
+      padding-bottom: 2px;
+    }
+
+    body.screen-start.options-open .start-copy h1 {
+      margin-top: 7px;
+      font-size: clamp(34px, 7vw, 54px);
+    }
+
+    body.screen-start.options-open .starter-stage {
+      height: clamp(108px, 18vh, 150px);
+      padding-bottom: 4px;
+    }
+
+    body.screen-start.options-open .starter-stage img,
+    body.screen-start.options-open .starter-stage .starter-main {
+      width: min(24vw, 145px) !important;
+      height: min(24vw, 145px) !important;
+    }
+
+    body.screen-start.options-open .start-controls {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      overflow: hidden;
+    }
+
+    body.screen-start.options-open .title-music-btn {
+      flex: 0 0 auto;
+      margin-bottom: 8px;
+    }
+
+    body.screen-start.options-open .game-options {
+      flex: 1 1 auto;
+      min-height: 0;
+      margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    body.screen-start.options-open .game-options > summary {
+      flex: 0 0 auto;
+    }
+
+    body.screen-start.options-open .options-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overscroll-behavior-y: contain;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    body.screen-start.options-open .options-body::-webkit-scrollbar {
+      display: none;
+    }
+
+    body.screen-start.options-open .start-btn {
+      flex: 0 0 auto;
+      margin-top: 0;
+    }
+
+    /* QUIZ: the whole game must fit in one measured viewport. */
+    body.screen-quiz .quiz-scene.active {
+      height: calc(var(--vv-height, 100dvh) - 16px);
+      min-height: 0;
+      max-height: calc(var(--vv-height, 100dvh) - 16px);
+      overflow: hidden;
+    }
+
+    body.screen-quiz .game-frame {
+      height: 100%;
+      min-height: 0;
+      max-height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 7px;
+    }
+
+    body.screen-quiz .hud {
+      flex: 0 0 auto;
+    }
+
+    body.screen-quiz .progress-line {
+      flex: 0 0 8px;
+    }
+
+    body.screen-quiz .battle-stage {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 7px;
+    }
+
+    body.screen-quiz .streak-line,
+    body.screen-quiz .timer-panel,
+    body.screen-quiz .command-box {
+      flex: 0 0 auto;
+    }
+
+    body.screen-quiz .pokemon-stage {
+      flex: 1 1 auto;
+      min-height: 0 !important;
       height: auto !important;
-      min-height: var(--vv-height, 100dvh) !important;
       max-height: none !important;
-      margin-top: 0 !important;
-      display: grid !important;
-      place-items: start center !important;
-      align-content: start !important;
-      overflow: visible !important;
-      padding: max(8px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom)) !important;
+    }
+
+    body.screen-quiz .timer-panel {
+      margin: 6px 0;
+    }
+
+    /* Keep four answers compact on phones, including narrow iPhones. */
+    @media (max-width: 620px) {
+      body.screen-quiz .hud-btn,
+      body.screen-quiz .hud-center,
+      body.screen-quiz .hud-score {
+        min-height: 38px;
+      }
+
+      body.screen-quiz .game-frame {
+        padding: 6px;
+      }
+
+      body.screen-quiz .battle-stage {
+        padding: 6px;
+      }
+
+      body.screen-quiz .streak-line {
+        margin-bottom: 4px;
+      }
+
+      body.screen-quiz .timer-panel {
+        margin: 5px 0;
+      }
+
+      body.screen-quiz .message-line {
+        min-height: 34px;
+        padding: 5px 9px;
+        font-size: 13px;
+      }
+
+      body.screen-quiz .answer-menu {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+
+      body.screen-quiz .answer-btn {
+        min-height: 52px !important;
+        padding: 7px 8px 7px 40px;
+        font-size: clamp(15px, 3.8vw, 20px);
+        border-right: 2px solid #0f1114 !important;
+        border-bottom: 2px solid #0f1114 !important;
+      }
+
+      body.screen-quiz .answer-btn:nth-child(even) {
+        border-right: 0 !important;
+      }
+
+      body.screen-quiz .answer-btn:nth-last-child(-n+2) {
+        border-bottom: 0 !important;
+      }
+
+      body.screen-quiz .answer-btn::before {
+        left: 9px;
+        width: 24px;
+        height: 24px;
+      }
     }
   `;
   document.head.appendChild(style);
@@ -63,8 +260,8 @@
   function forceScrollTop() {
     try {
       window.scrollTo(0, 0);
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
+      root.scrollTop = 0;
+      body.scrollTop = 0;
     } catch (_) {}
   }
 
@@ -86,20 +283,23 @@
     const open = Boolean(gameOptions?.open);
     body.classList.toggle('options-open', onStart && open);
     body.classList.toggle('options-closed', onStart && !open);
-    if (onStart && !open) forceScrollTop();
   }
 
   function syncScreenState(name) {
-    const onStart = name === 'start';
-    body.classList.toggle('screen-start', onStart);
-    if (!onStart) body.classList.remove('options-open', 'options-closed');
+    body.classList.toggle('screen-start', name === 'start');
+    body.classList.toggle('screen-quiz', name === 'quiz');
+    body.classList.toggle('screen-result', name === 'result');
+    if (name !== 'start') body.classList.remove('options-open', 'options-closed');
     syncViewportMetrics();
     syncOptionsState();
+    if (name === 'start' || name === 'quiz') forceScrollTop();
   }
 
   function resyncViewport() {
     syncViewportMetrics();
-    if (body.classList.contains('screen-start') && !gameOptions?.open) forceScrollTop();
+    if (body.classList.contains('screen-start') || body.classList.contains('screen-quiz')) {
+      forceScrollTop();
+    }
   }
 
   gameOptions?.addEventListener('toggle', () => {
@@ -108,7 +308,9 @@
     setTimeout(resyncViewport, 80);
   });
 
-  const initialScreen = document.getElementById('startScreen')?.classList.contains('active') ? 'start' : 'quiz';
+  let initialScreen = 'result';
+  if (document.getElementById('startScreen')?.classList.contains('active')) initialScreen = 'start';
+  else if (document.getElementById('quizScreen')?.classList.contains('active')) initialScreen = 'quiz';
   syncScreenState(initialScreen);
 
   const originalSwitchScreen = switchScreen;
