@@ -10,23 +10,36 @@
       border: 4px solid #0f1114;
       background: #f4f0df;
     }
+    .review-panel > summary {
+      list-style: none;
+      cursor: pointer;
+      user-select: none;
+    }
+    .review-panel > summary::-webkit-details-marker { display: none; }
     .review-head {
+      min-height: 58px;
       padding: 12px;
-      border-bottom: 3px solid #0f1114;
-      display: flex;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
       align-items: center;
-      justify-content: space-between;
       gap: 10px;
     }
+    .review-panel[open] .review-head { border-bottom: 3px solid #0f1114; }
     .review-head strong {
       font-size: 17px;
       font-weight: 1000;
     }
     .review-count {
+      justify-self: end;
       font: 900 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
       color: #53604d;
       white-space: nowrap;
     }
+    .review-chevron {
+      font-size: 13px;
+      transition: transform .16s ease;
+    }
+    .review-panel[open] .review-chevron { transform: rotate(90deg); }
     .review-filters {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -112,19 +125,21 @@
       .review-item { grid-template-columns: 30px 58px minmax(0, 1fr) auto; min-height: 82px; padding: 7px 8px; }
       .review-sprite { width: 54px; height: 54px; }
       .review-name { font-size: 16px; }
-      .review-head { padding: 10px; }
+      .review-head { min-height: 54px; padding: 10px; }
+      .review-count { font-size: 10px; }
     }
   `;
   document.head.appendChild(style);
 
-  const panel = document.createElement('section');
+  const panel = document.createElement('details');
   panel.className = 'review-panel';
   panel.setAttribute('aria-label', '출제 문제 확인');
   panel.innerHTML = `
-    <div class="review-head">
+    <summary class="review-head">
       <strong>출제 문제 확인</strong>
       <span id="reviewCount" class="review-count">0문제</span>
-    </div>
+      <span class="review-chevron" aria-hidden="true">▶</span>
+    </summary>
     <div class="review-filters" role="tablist" aria-label="결과 필터">
       <button class="review-filter active" type="button" data-filter="all">전체</button>
       <button class="review-filter" type="button" data-filter="correct">맞힌 문제</button>
@@ -142,9 +157,14 @@
   let attempts = [];
   let activeFilter = 'all';
 
+  function closeReview() {
+    panel.open = false;
+  }
+
   function resetAttempts() {
     attempts = [];
     activeFilter = 'all';
+    closeReview();
     filterButtons.forEach(button => button.classList.toggle('active', button.dataset.filter === 'all'));
     renderAttempts();
   }
@@ -233,7 +253,10 @@
   const originalFinishGame = finishGame;
   finishGame = function finishGameWithHistory() {
     originalFinishGame();
+    activeFilter = 'all';
+    filterButtons.forEach(button => button.classList.toggle('active', button.dataset.filter === 'all'));
     renderAttempts();
+    closeReview();
   };
 
   resetAttempts();
