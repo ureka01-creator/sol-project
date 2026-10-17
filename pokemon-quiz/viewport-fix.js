@@ -106,11 +106,59 @@
     body.screen-start .start-controls {
       flex: 0 0 auto;
       padding: 10px 14px 12px;
+      display: flex;
+      flex-direction: column;
     }
 
-    body.screen-start .title-music-btn,
-    body.screen-start .game-options { margin-bottom: 8px; }
-    body.screen-start .start-btn { margin-top: 0; }
+    /* Main menu order: BGM -> Quiz Start -> Options */
+    body.screen-start .title-music-btn {
+      order: 1;
+      margin-bottom: 8px;
+    }
+    body.screen-start .start-btn {
+      order: 2;
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+    body.screen-start .game-options {
+      order: 3;
+      margin-bottom: 0;
+    }
+
+    /* Keep the option title visually centered regardless of summary text width. */
+    body.screen-start .game-options > summary {
+      position: relative;
+      display: block !important;
+      min-height: 54px;
+      padding: 10px 12px;
+    }
+    body.screen-start .option-title {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      text-align: center;
+    }
+    body.screen-start .option-current {
+      position: absolute;
+      right: 34px;
+      top: 50%;
+      transform: translateY(-50%);
+      max-width: 44%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    body.screen-start .option-chevron {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    body.screen-start .game-options[open] .option-chevron {
+      transform: translateY(-50%) rotate(90deg);
+    }
 
     /* Opening options never grows the page. Only this card can pan vertically. */
     body.screen-start.options-open .start-display {
@@ -142,6 +190,12 @@
       margin-bottom: 7px;
     }
 
+    body.screen-start.options-open .start-btn {
+      flex: 0 0 auto;
+      margin-top: 0;
+      margin-bottom: 7px;
+    }
+
     body.screen-start.options-open .game-options {
       flex: 1 1 0;
       min-height: 0;
@@ -152,7 +206,7 @@
       -webkit-overflow-scrolling: touch;
       touch-action: pan-y;
       scrollbar-width: none;
-      margin-bottom: 7px;
+      margin-bottom: 0;
     }
 
     body.screen-start.options-open .game-options::-webkit-scrollbar { display: none; }
@@ -165,10 +219,6 @@
     body.screen-start.options-open .options-body {
       height: auto !important;
       overflow: visible !important;
-    }
-    body.screen-start.options-open .start-btn {
-      flex: 0 0 auto;
-      margin-top: 0;
     }
 
     /* Quiz always occupies one measured visible viewport. */
@@ -217,6 +267,7 @@
       body.screen-start .title-music-btn { min-height: 42px; }
       body.screen-start .game-options > summary { min-height: 48px; }
       body.screen-start .start-btn { min-height: 52px; }
+      body.screen-start .option-current { max-width: 42%; font-size: 10px; }
 
       body.screen-quiz .hud-btn,
       body.screen-quiz .hud-center,
