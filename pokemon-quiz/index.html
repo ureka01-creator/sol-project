@@ -6,15 +6,15 @@
   <meta name="theme-color" content="#c74248">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="description" content="1~9세대 포켓몬 1,025마리의 사진을 보고 이름을 맞히는 포켓몬 도감 퀴즈.">
+  <meta name="description" content="1,025문항의 설명 퀴즈와 사진 퀴즈로 즐기는 포켓몬 도감.">
   <title>누구일까? · 포켓몬 도감 퀴즈</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="stylesheet" href="./pokedex.css?v=20261017-feedback">
+  <link rel="stylesheet" href="./pokedex.css?v=20261017-clues">
 </head>
 <body>
-  <!-- POKEDEX_REFINED_FEEDBACK_20261017 -->
+  <!-- POKEDEX_CLUE_QUIZ_20261017 -->
   <main id="app" class="game-root">
     <section id="startScreen" class="scene start-scene active" aria-labelledby="gameTitle">
       <div class="start-panel">
@@ -34,6 +34,11 @@
         </div>
 
         <div class="start-controls">
+<div class="quiz-mode-switch" role="group" aria-label="퀴즈 방식">
+  <button type="button" class="cursor-interaction" data-quiz-mode="description" aria-pressed="true">설명 퀴즈</button>
+  <button type="button" class="cursor-interaction" data-quiz-mode="photo" aria-pressed="false">사진 퀴즈</button>
+</div>
+
           
 
           <details id="gameOptions" class="game-options">
@@ -93,6 +98,7 @@
 
           <div id="pokemonCard" class="pokemon-stage" aria-live="polite">
             <div class="scan-grid" aria-hidden="true"></div>
+<div id="cluePrompt" hidden role="group" aria-label="문제 설명" aria-live="polite"></div>
             <div id="loadingBadge" class="loading-badge">포켓몬을 찾는 중…</div>
             <img id="pokemonImage" alt="문제 포켓몬" draggable="false" />
             <div id="sparkLayer" class="spark-layer" aria-hidden="true"></div>
@@ -148,6 +154,7 @@
       </div>
     </section>
   </main>
-  <script src="./pokedex.js?v=20261017-feedback" defer></script>
+  <script src="./question-bank.js?v=20261017-clues" defer></script>
+  <script src="./pokedex.js?v=20261017-clues" defer></script>
 </body>
 </html>

@@ -2039,6 +2039,88 @@ window.addEventListener('keydown', event => {
     wasActive = active;
   }).observe(screens.start,{attributes:true,attributeFilter:['class']});
   displayTrio();
+(() => {
+  const data = globalThis.POKEMON_QUESTION_BANK;
+  const hasBank = Array.isArray(data) && data.length >= 1000;
+  const bank = new Map((hasBank ? data : []).map(question => [question.id, question]));
+  let selectedQuizMode = hasBank ? 'description' : 'photo';
+  const modeButtons = [...root.querySelectorAll('[data-quiz-mode]')];
+  const timeGroup = root.querySelector('#timeButtons').closest('.option-group');
+  const summary = root.querySelector('#optionSummaryText');
+  const timerPanel = root.querySelector('.timer-panel');
+  const intro = root.querySelector('.start-copy p');
+  const prompt = root.querySelector('#cluePrompt');
+  function fitClues() {
+    if (selectedQuizMode !== 'description' || !prompt.children.length) return;
+    let size = root.clientWidth <= 360 ? 19 : 22;
+    prompt.style.fontSize = size + 'px';
+    const contentHeight = () => [...prompt.children].reduce((sum,child) => sum + child.getBoundingClientRect().height,0) + parseFloat(getComputedStyle(prompt).gap) * Math.max(0,prompt.children.length - 1);
+    while (contentHeight() > prompt.clientHeight + 1 && size > 15) {
+      prompt.style.fontSize = (--size) + 'px';
+    }
+  }
+  new ResizeObserver(fitClues).observe(root.querySelector('#pokemonCard'));
+  document.fonts?.addEventListener('loadingdone',fitClues);
+  function updateSummary() {
+    const count = root.querySelector('.count-btn.selected')?.dataset.count || '10';
+    const time = root.querySelector('.time-btn.selected')?.dataset.time || '3';
+    summary.textContent = selectedQuizMode === 'description' ? `${count}문제 · 시간 제한 없음` : `${count}문제 · ${time}초`;
+  }
+  function updateMode() {
+    root.dataset.quizMode = selectedQuizMode;
+    modeButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.quizMode === selectedQuizMode)));
+    timeGroup.hidden = selectedQuizMode === 'description';
+    timerPanel.hidden = selectedQuizMode === 'description';
+    intro.textContent = selectedQuizMode === 'description' ? '단서를 읽고 포켓몬 이름을 맞혀봐!' : '포켓몬을 보고 이름을 맞혀봐!';
+    prompt.hidden = selectedQuizMode !== 'description';
+    pokemonImage.hidden = selectedQuizMode === 'description';
+    updateSummary();
+  }
+  modeButtons.forEach(button => {
+    button.disabled = !hasBank && button.dataset.quizMode === 'description';
+    button.addEventListener('click', () => { selectedQuizMode = button.dataset.quizMode; updateMode(); });
+  });
+  root.querySelectorAll('.count-btn,.time-btn').forEach(button => button.addEventListener('click',updateSummary));
+  const photoBuildOptions = buildOptions;
+  buildOptions = function modeBuildOptions(answer) {
+    if (selectedQuizMode === 'photo') return photoBuildOptions(answer);
+    const question = bank.get(answer.id);
+    return shuffle(question.choices.map(id => POKEMON[id - 1]));
+  };
+  const photoPreload = preloadUpcomingImages;
+  preloadUpcomingImages = function modePreload() { if (selectedQuizMode === 'photo') photoPreload(); };
+  const photoCountdown = startCountdown;
+  startCountdown = function modeCountdown(token) {
+    if (selectedQuizMode === 'photo') return photoCountdown(token);
+    if (token !== questionToken || !screens.quiz.classList.contains('active')) return;
+    locked = false;
+    [...answersEl.children].forEach(button => { button.disabled = false; });
+    loadingBadge.classList.add('hidden');
+    messageLine.textContent = '설명에 맞는 포켓몬은?';
+    messageLine.classList.remove('answer-reveal','is-feedback');
+  };
+  const photoLoad = loadQuestionImage;
+  loadQuestionImage = function modeLoadQuestion(pokemon, token) {
+    if (selectedQuizMode === 'photo') {
+      prompt.hidden = true; pokemonImage.hidden = false;
+      return photoLoad(pokemon,token);
+    }
+    const question = bank.get(pokemon.id);
+    pokemonImage.hidden = true; pokemonImage.removeAttribute('src');
+    prompt.hidden = false;
+    prompt.replaceChildren();
+    question.clues.forEach(line => {
+      const paragraph = document.createElement('p');
+      paragraph.textContent = line;
+      prompt.append(paragraph);
+    });
+    loadingBadge.classList.add('hidden');
+    startCountdown(token);
+    requestAnimationFrame(fitClues);
+  };
+  updateMode();
+})();
+
 })();
 
 })();
