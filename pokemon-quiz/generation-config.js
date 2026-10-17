@@ -77,3 +77,24 @@
 
   syncGenerationButtons();
 })();
+
+(() => {
+  function forceScrollTop() {
+    try {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    } catch (_) {}
+  }
+
+  const originalSwitchScreen = switchScreen;
+  switchScreen = function switchScreenWithScrollReset(name) {
+    originalSwitchScreen(name);
+    forceScrollTop();
+    requestAnimationFrame(() => {
+      forceScrollTop();
+      requestAnimationFrame(forceScrollTop);
+    });
+    setTimeout(forceScrollTop, 80);
+  };
+})();
