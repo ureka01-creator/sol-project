@@ -26,6 +26,8 @@
       transform: translateY(8px) scale(.86);
       filter: drop-shadow(0 6px 0 rgba(26,32,44,.08));
     }
+    .start-copy { padding-bottom: 8px; }
+
     .title-music-btn {
       width: 100%;
       min-height: 46px;
@@ -38,17 +40,53 @@
       letter-spacing: .06em;
       cursor: pointer;
     }
-    .title-music-btn.playing {
-      background: #2d7045;
-      color: #fff;
+    .title-music-btn.playing { background: #2d7045; color: #fff; }
+
+    .game-options {
+      border: 3px solid #0f1114;
+      background: #f4f0df;
+      margin: 0 0 12px;
     }
-    .time-section { margin-top: 13px; }
-    .time-menu {
+    .game-options > summary {
+      list-style: none;
+      min-height: 54px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 1000;
+    }
+    .game-options > summary::-webkit-details-marker { display: none; }
+    .option-title { font-size: 17px; }
+    .option-current {
+      text-align: right;
+      font: 900 12px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: #53604d;
+    }
+    .option-chevron {
+      font-size: 13px;
+      transition: transform .16s ease;
+    }
+    .game-options[open] .option-chevron { transform: rotate(90deg); }
+    .options-body {
+      border-top: 3px solid #0f1114;
+      padding: 12px;
+      background: #a92924;
+    }
+    .option-group + .option-group { margin-top: 13px; }
+    .option-group .menu-label { margin-bottom: 8px; }
+
+    .time-menu,
+    .gen-menu {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 7px;
     }
-    .time-btn {
+    .time-btn,
+    .gen-btn {
       min-height: 56px;
       border: 3px solid #0f1114;
       border-radius: 0;
@@ -57,20 +95,28 @@
       cursor: pointer;
       font-weight: 900;
     }
-    .time-btn strong {
+    .time-btn strong,
+    .gen-btn strong {
       display: block;
-      font: 900 22px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+      font: 900 21px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
       margin-bottom: 4px;
     }
-    .time-btn span { font-size: 11px; }
-    .time-btn.selected { background: #efc64b; }
-    .time-btn.selected::before { content: "▶"; margin-right: 4px; font-size: 10px; }
+    .time-btn span,
+    .gen-btn span { font-size: 11px; }
+    .time-btn.selected,
+    .gen-btn.selected { background: #efc64b; }
+    .time-btn.selected::before,
+    .gen-btn.selected::before { content: "▶"; margin-right: 4px; font-size: 10px; }
+
     @media (max-width: 520px) {
       .starter-stage img,
       .starter-stage .starter-main {
         width: 29vw;
         height: 29vw;
       }
+      .option-current { font-size: 10px; }
+      .game-options > summary { padding-inline: 10px; }
+      .gen-btn strong { font-size: 18px; }
     }
   </style>
 </head>
@@ -80,43 +126,63 @@
       <div class="start-panel">
         <div class="start-top">
           <span class="status-light" aria-hidden="true"></span>
-          <span>KANTO TRAINER TEST</span>
-          <span>001—151</span>
+          <span>POKÉMON TRAINER TEST</span>
+          <span>001—251</span>
         </div>
 
         <div class="start-display">
           <div class="start-copy">
             <span class="eyebrow">SPEED QUIZ</span>
             <h1 id="gameTitle">누구일까?</h1>
-            <p>포켓몬이 나타나면 <strong>3초 안에</strong> 이름을 골라!</p>
           </div>
 
           <div class="starter-stage" aria-hidden="true">
             <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png" alt="" />
             <img class="starter-main" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="" />
-            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png" alt="" />
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/152.png" alt="" />
           </div>
         </div>
 
         <div class="start-controls">
           <button id="titleMusicButton" class="title-music-btn" type="button" aria-pressed="false">♪ BGM 시작</button>
 
-          <div class="menu-label">몇 문제 도전할까?</div>
-          <div id="countButtons" class="count-menu" role="radiogroup" aria-label="문제 수 선택">
-            <button class="count-btn" data-count="5" role="radio" aria-checked="false"><span>05</span>문제</button>
-            <button class="count-btn selected" data-count="10" role="radio" aria-checked="true"><span>10</span>문제</button>
-            <button class="count-btn" data-count="20" role="radio" aria-checked="false"><span>20</span>문제</button>
-            <button class="count-btn" data-count="30" role="radio" aria-checked="false"><span>30</span>문제</button>
-          </div>
+          <details id="gameOptions" class="game-options">
+            <summary>
+              <span class="option-title">⚙ 옵션</span>
+              <span id="optionSummaryText" class="option-current">10문제 · 3초 · 1+2세대</span>
+              <span class="option-chevron" aria-hidden="true">▶</span>
+            </summary>
 
-          <div class="time-section">
-            <div class="menu-label">제한 시간</div>
-            <div id="timeButtons" class="time-menu" role="radiogroup" aria-label="문제당 제한 시간 선택">
-              <button class="time-btn selected" data-time="3" role="radio" aria-checked="true"><strong>03</strong><span>SEC</span></button>
-              <button class="time-btn" data-time="5" role="radio" aria-checked="false"><strong>05</strong><span>SEC</span></button>
-              <button class="time-btn" data-time="10" role="radio" aria-checked="false"><strong>10</strong><span>SEC</span></button>
+            <div class="options-body">
+              <div class="option-group">
+                <div class="menu-label">문제 수</div>
+                <div id="countButtons" class="count-menu" role="radiogroup" aria-label="문제 수 선택">
+                  <button class="count-btn" data-count="5" role="radio" aria-checked="false"><span>05</span>문제</button>
+                  <button class="count-btn selected" data-count="10" role="radio" aria-checked="true"><span>10</span>문제</button>
+                  <button class="count-btn" data-count="20" role="radio" aria-checked="false"><span>20</span>문제</button>
+                  <button class="count-btn" data-count="30" role="radio" aria-checked="false"><span>30</span>문제</button>
+                </div>
+              </div>
+
+              <div class="option-group">
+                <div class="menu-label">제한 시간</div>
+                <div id="timeButtons" class="time-menu" role="radiogroup" aria-label="문제당 제한 시간 선택">
+                  <button class="time-btn selected" data-time="3" role="radio" aria-checked="true"><strong>03</strong><span>SEC</span></button>
+                  <button class="time-btn" data-time="5" role="radio" aria-checked="false"><strong>05</strong><span>SEC</span></button>
+                  <button class="time-btn" data-time="10" role="radio" aria-checked="false"><strong>10</strong><span>SEC</span></button>
+                </div>
+              </div>
+
+              <div class="option-group">
+                <div class="menu-label">출제 세대</div>
+                <div id="generationButtons" class="gen-menu" role="radiogroup" aria-label="포켓몬 세대 선택">
+                  <button class="gen-btn" data-gen="gen1" role="radio" aria-checked="false"><strong>1세대</strong><span>001—151</span></button>
+                  <button class="gen-btn" data-gen="gen2" role="radio" aria-checked="false"><strong>2세대</strong><span>152—251</span></button>
+                  <button class="gen-btn selected" data-gen="all" role="radio" aria-checked="true"><strong>전체</strong><span>001—251</span></button>
+                </div>
+              </div>
             </div>
-          </div>
+          </details>
 
           <button id="startButton" class="start-btn"><span class="cursor">▶</span> 퀴즈 시작</button>
         </div>
@@ -167,7 +233,7 @@
 
     <section id="resultScreen" class="scene result-scene" aria-labelledby="resultTitle">
       <div class="result-panel">
-        <div class="result-header">KANTO TRAINER TEST / RESULT</div>
+        <div class="result-header">POKÉMON TRAINER TEST / RESULT</div>
         <div class="result-screen">
           <div id="resultBadge" class="result-rank">ACE TRAINER</div>
           <h2 id="resultTitle">퀴즈 완료!</h2>
@@ -180,7 +246,7 @@
         </div>
         <div class="result-actions">
           <button id="retryButton" class="menu-action primary"><span>▶</span> 한 번 더</button>
-          <button id="changeCountButton" class="menu-action">문제 수 바꾸기</button>
+          <button id="changeCountButton" class="menu-action">옵션 바꾸기</button>
         </div>
       </div>
     </section>
@@ -188,6 +254,7 @@
 
   <script src="./app.js"></script>
   <script src="./timer-config.js?v=1"></script>
+  <script src="./generation-config.js?v=1"></script>
   <script src="./sound-engine.js?v=3"></script>
   <script>
     (() => {
@@ -195,7 +262,7 @@
       const slots = [...document.querySelectorAll('.starter-stage img')];
       const base = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/';
       const spriteBase = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
-      const pool = Array.from({ length: 151 }, (_, i) => i + 1);
+      const pool = Array.from({ length: 251 }, (_, i) => i + 1);
       let deck = [];
       let cursor = 0;
       let slotIndex = 0;
@@ -212,7 +279,7 @@
       const refill = () => { deck = shuffle(pool); cursor = 0; };
       const nextId = excluded => {
         if (!deck.length || cursor >= deck.length) refill();
-        for (let tries = 0; tries < 302; tries += 1) {
+        for (let tries = 0; tries < 502; tries += 1) {
           if (cursor >= deck.length) refill();
           const id = deck[cursor++];
           if (!excluded.includes(id)) return id;
