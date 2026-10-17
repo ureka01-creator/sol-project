@@ -6,15 +6,15 @@
   <meta name="theme-color" content="#c74248">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="description" content="1·2세대 포켓몬 사진을 보고 이름을 맞히는 포켓몬 도감 퀴즈.">
+  <meta name="description" content="1~9세대 포켓몬 1,025마리의 사진을 보고 이름을 맞히는 포켓몬 도감 퀴즈.">
   <title>누구일까? · 포켓몬 도감 퀴즈</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="stylesheet" href="./pokedex.css?v=20261017">
+  <link rel="stylesheet" href="./pokedex.css?v=20261017-gen9">
 </head>
 <body>
-  <!-- POKEDEX_UI_20261017 -->
+  <!-- POKEDEX_GEN9_20261017 -->
   <main id="app" class="game-root">
     <section id="startScreen" class="scene start-scene active" aria-labelledby="gameTitle">
       <div class="start-panel">
@@ -22,7 +22,7 @@
 
         <div class="start-display">
           <div class="start-copy">
-            <span class="eyebrow">포켓몬 이름 맞히기</span>
+            <span class="eyebrow">1~9세대 포켓몬 퀴즈</span>
             <h1 id="gameTitle">누구일까?</h1><p>포켓몬을 보고 이름을 맞혀봐!</p>
           </div>
 
@@ -41,7 +41,7 @@
             <summary class="cursor-interaction">
   <span class="settings-heading">퀴즈 설정</span>
   <span class="option-chevron" aria-hidden="true">⌄</span>
-  <span id="optionSummaryText" class="settings-summary" aria-live="polite">10문제 · 3초 · 1+2세대</span>
+  <span id="optionSummaryText" class="settings-summary" aria-live="polite">10문제 · 3초</span>
 </summary>
 
 
@@ -62,15 +62,6 @@
                   <button class="cursor-interaction time-btn selected" data-time="3" role="radio" aria-checked="true">3초</button>
                   <button class="cursor-interaction time-btn" data-time="5" role="radio" aria-checked="false">5초</button>
                   <button class="cursor-interaction time-btn" data-time="10" role="radio" aria-checked="false">10초</button>
-                </div>
-              </div>
-
-              <div class="option-group">
-                <div class="menu-label">출제 범위</div>
-                <div id="generationButtons" class="gen-menu" role="radiogroup" aria-label="포켓몬 세대 선택">
-                  <button class="cursor-interaction gen-btn" data-gen="gen1" role="radio" aria-checked="false">1세대</button>
-                  <button class="cursor-interaction gen-btn" data-gen="gen2" role="radio" aria-checked="false">2세대</button>
-                  <button class="cursor-interaction gen-btn selected" data-gen="all" role="radio" aria-checked="true">1+2세대</button>
                 </div>
               </div>
             </div>
@@ -158,6 +149,6 @@
       </div>
     </section>
   </main>
-  <script src="./pokedex.js?v=20261017" defer></script>
+  <script src="./pokedex.js?v=20261017-gen9" defer></script>
 </body>
 </html>

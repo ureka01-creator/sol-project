@@ -767,3 +767,6 @@ button:focus-visible, summary:focus-visible { outline: 3px solid #327c9a; outlin
   height: 90%;
 }
 #app .dex-brand { font-family: 'Noto Sans KR', -apple-system, sans-serif; }
+@media (max-width: 360px) {
+  #app .answer-btn.long-label { font-size: 17px; }
+}
