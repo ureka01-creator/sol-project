@@ -2050,6 +2050,8 @@ window.addEventListener('keydown', event => {
   const timerPanel = root.querySelector('.timer-panel');
   const intro = root.querySelector('.start-copy p');
   const prompt = root.querySelector('#cluePrompt');
+  const artwork = root.querySelector('#clueArtwork');
+  const silhouette = root.querySelector('#clueSilhouette');
   function fitClues() {
     if (selectedQuizMode !== 'description' || !prompt.children.length) return;
     let size = root.clientWidth <= 360 ? 19 : 22;
@@ -2073,6 +2075,7 @@ window.addEventListener('keydown', event => {
     timerPanel.hidden = selectedQuizMode === 'description';
     intro.textContent = selectedQuizMode === 'description' ? '단서를 읽고 포켓몬 이름을 맞혀봐!' : '포켓몬을 보고 이름을 맞혀봐!';
     prompt.hidden = selectedQuizMode !== 'description';
+    artwork.hidden = selectedQuizMode !== 'description';
     pokemonImage.hidden = selectedQuizMode === 'description';
     updateSummary();
   }
@@ -2102,12 +2105,23 @@ window.addEventListener('keydown', event => {
   const photoLoad = loadQuestionImage;
   loadQuestionImage = function modeLoadQuestion(pokemon, token) {
     if (selectedQuizMode === 'photo') {
-      prompt.hidden = true; pokemonImage.hidden = false;
+      prompt.hidden = true; artwork.hidden = true; pokemonImage.hidden = false;
       return photoLoad(pokemon,token);
     }
     const question = bank.get(pokemon.id);
     pokemonImage.hidden = true; pokemonImage.removeAttribute('src');
     prompt.hidden = false;
+    artwork.hidden = false;
+    artwork.classList.remove('is-ready','is-revealed');
+    silhouette.alt = '정체를 맞혀 볼 포켓몬의 실루엣';
+    silhouette.onload = () => { if (token === questionToken) artwork.classList.add('is-ready'); };
+    let fallback = false;
+    silhouette.onerror = () => {
+      if (token !== questionToken) return;
+      if (!fallback) { fallback = true; silhouette.src = `${SPRITE_BASE}${pokemon.id}.png`; }
+      else artwork.classList.remove('is-ready');
+    };
+    silhouette.src = `${ART_BASE}${pokemon.id}.png`;
     prompt.replaceChildren();
     question.clues.forEach(line => {
       const paragraph = document.createElement('p');
@@ -2117,6 +2131,14 @@ window.addEventListener('keydown', event => {
     loadingBadge.classList.add('hidden');
     startCountdown(token);
     requestAnimationFrame(fitClues);
+  };
+  const previousChooseAnswer = chooseAnswer;
+  chooseAnswer = function clueChooseAnswer(id) {
+    if (!locked && selectedQuizMode === 'description') {
+      artwork.classList.add('is-revealed');
+      silhouette.alt = current.name + ' 그림';
+    }
+    previousChooseAnswer(id);
   };
   updateMode();
 })();
