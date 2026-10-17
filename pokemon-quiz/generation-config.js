@@ -79,6 +79,7 @@
 })();
 
 (() => {
+  const gameOptions = document.getElementById('gameOptions');
   const viewportStyle = document.createElement('style');
   viewportStyle.textContent = `
     html, body {
@@ -87,31 +88,51 @@
       overflow-x: hidden;
     }
 
-    body.screen-start {
+    body.screen-start.options-closed {
       height: 100svh;
+      min-height: 100svh;
       max-height: 100svh;
       overflow-y: hidden;
+      overscroll-behavior-y: none;
     }
 
-    body.screen-start .game-root {
+    body.screen-start.options-closed .game-root {
       height: 100svh;
-      min-height: 0;
-      place-items: start center;
+      min-height: 100svh;
+      max-height: 100svh;
       overflow: hidden;
+      place-items: start center;
+      align-content: start;
       padding-top: max(8px, env(safe-area-inset-top));
-      padding-bottom: max(8px, env(safe-area-inset-bottom));
+      padding-bottom: 0;
     }
 
-    body.screen-start .start-scene.active {
-      max-height: 100%;
+    body.screen-start.options-closed .start-scene.active {
+      max-height: none;
+      overflow: visible;
+    }
+
+    body.screen-start.options-open {
+      height: auto;
+      min-height: 100svh;
+      max-height: none;
       overflow-y: auto;
-      overscroll-behavior-y: contain;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
+      overscroll-behavior-y: auto;
     }
 
-    body.screen-start .start-scene.active::-webkit-scrollbar {
-      display: none;
+    body.screen-start.options-open .game-root {
+      height: auto;
+      min-height: 100svh;
+      max-height: none;
+      overflow: visible;
+      place-items: start center;
+      padding-top: max(8px, env(safe-area-inset-top));
+      padding-bottom: max(10px, env(safe-area-inset-bottom));
+    }
+
+    body.screen-start.options-open .start-scene.active {
+      overflow: visible;
+      max-height: none;
     }
   `;
   document.head.appendChild(viewportStyle);
@@ -124,9 +145,30 @@
     } catch (_) {}
   }
 
-  function syncBodyScreenClass(name) {
-    document.body.classList.toggle('screen-start', name === 'start');
+  function syncOptionsState() {
+    const onStart = document.body.classList.contains('screen-start');
+    const open = Boolean(gameOptions?.open);
+    document.body.classList.toggle('options-open', onStart && open);
+    document.body.classList.toggle('options-closed', onStart && !open);
+    if (onStart && !open) forceScrollTop();
   }
+
+  function syncBodyScreenClass(name) {
+    const onStart = name === 'start';
+    document.body.classList.toggle('screen-start', onStart);
+    if (!onStart) {
+      document.body.classList.remove('options-open', 'options-closed');
+    }
+    syncOptionsState();
+  }
+
+  gameOptions?.addEventListener('toggle', () => {
+    syncOptionsState();
+    if (!gameOptions.open) {
+      requestAnimationFrame(forceScrollTop);
+      setTimeout(forceScrollTop, 60);
+    }
+  });
 
   syncBodyScreenClass('start');
   forceScrollTop();
